@@ -7,6 +7,11 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+
  
  
 public class Screen extends JPanel implements ActionListener {
@@ -20,6 +25,7 @@ public class Screen extends JPanel implements ActionListener {
 	private int pin;
 	private Account acc;
 	private boolean access = false;
+	
 	private Account accounts[] = {	new Account("Jennifer", 999.99, 1234), 
 									new Account("Jose", 500.01, 4321),
 									new Account("McClane", 1000000, 5432),
@@ -80,9 +86,19 @@ public class Screen extends JPanel implements ActionListener {
 		//draw instructions
         Font font = new Font("Arial", Font.PLAIN, 20);
         g.setFont(font);
-        g.setColor(Color.blue);
-        g.drawString("Welcome "+name, 100, 20);
+        g.setColor(Color.red);
+		g.drawString("Welcome "+name, 100, 20);
+
 		if(access) {
+			//draw the picture
+			try {
+				BufferedImage image = ImageIO.read(new File("images\\"+name+".jpg"));
+				g.drawImage(image, 0,0, 800, 400, this);
+			} catch(IOException ex) {
+				System.out.println(ex);
+				System.out.println("couldn't get image");
+			}
+			g.drawString("Welcome "+name, 100, 20);
 			b1.setVisible(false);
 			usernameField.setVisible(false);
 			pinField.setVisible(false);
@@ -90,6 +106,7 @@ public class Screen extends JPanel implements ActionListener {
 			amount.setVisible(true);
             submit.setVisible(true);
 			g.drawString("Balance "+acc.getBalance(), 10, 75);
+			
 		}
 		else {
 			b1.setVisible(true);
@@ -99,11 +116,11 @@ public class Screen extends JPanel implements ActionListener {
 			amount.setVisible(false);
             submit.setVisible(false);
 			//draw instructions
-			g.setColor(Color.blue);
+			g.setColor(Color.red);
 			g.drawString("name", 10, 75);        
 			
 			//draw instructions
-			g.setColor(Color.blue);
+			g.setColor(Color.red);
 			g.drawString("pin", 10, 95);
 		}
     }
@@ -145,6 +162,7 @@ public class Screen extends JPanel implements ActionListener {
         }
 		else if(e.getSource() == logoutButton) {
 			access = false;
+			name = "";
 			repaint();
 		}
     }
