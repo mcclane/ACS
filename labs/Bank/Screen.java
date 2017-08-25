@@ -47,8 +47,8 @@ public class Screen extends JPanel implements ActionListener {
 		this.add(b1); //add to JPanel
 		
 		//Button
-		submit = new JButton("Withdraw/Deposit");
-		submit.setBounds(100,140, 200, 30); //sets the location and size
+		submit = new JButton("Withdraw/Deposit (Enter negative number to withdraw)");
+		submit.setBounds(100,140, 350, 30); //sets the location and size
 		submit.addActionListener(this); //add the listener
 		submit.setVisible(false);
 		this.add(submit); //add to JPanel
