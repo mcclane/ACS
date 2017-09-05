@@ -11,9 +11,16 @@ import java.util.ArrayList;
 
 public class Screen extends JPanel implements ActionListener {
 	private JButton pButton;
-	private ArrayList<JButton> empsDeleteButtons;
+	private JButton tButton;
+	private JButton eButton;
+	private JButton bButton;
+	private JButton sButton;
+	private JButton cButton;
+
     private JTextField search;
+
 	private ArrayList<Employee> emps;
+    private ArrayList<Employee> displayList;
 
     public Screen() {
 		emps = new ArrayList<>();
@@ -25,54 +32,126 @@ public class Screen extends JPanel implements ActionListener {
 		emps.add(new Company("Nick", "Nick.jpg", "Banker", "Wells Fargo"));
 		emps.add(new Company("Sharkeisha", "Sharkeisha.jpg", "Engineer", "Uber"));
 		emps.add(new Government("Wong", "Wong.jpg", "Engineer", "Tesla"));
-		empsDeleteButtons = new ArrayList<JButton>();
+        displayList = new ArrayList<Employee>();
+        for(Employee e : emps) {
+            displayList.add(e);
+        }
 		int x = 100;
 		int y = 100;
-		for(Employee emp : emps) {
+		for(Employee emp : displayList) {
 			JButton temp = new JButton("Delete");
-			temp.setBounds(x,y,100,30);
-			temp.addActionListener(this);
 			this.add(temp);
-			empsDeleteButtons.add(temp);
-			y += 50;
+            temp.setVisible(false);
+			temp.addActionListener(this);
+            emp.setDeleteButton(temp);
 		}
         this.setLayout(null);
-		pButton = new JButton("Show Police Officers");
-		pButton.setBounds(100,170, 200, 30); //sets the location and size
+        
+        sButton = new JButton("Search");
+		sButton.setBounds(150,50, 100, 30); //sets the location and size
+		sButton.addActionListener(this); //add the listener
+		this.add(sButton); //add to JPanel
+
+		pButton = new JButton("Police Officers");
+		pButton.setBounds(250,50, 100, 30); //sets the location and size
 		pButton.addActionListener(this); //add the listener
 		this.add(pButton); //add to JPanel
+
+		tButton = new JButton("Teachers");
+		tButton.setBounds(350,50, 100, 30); //sets the location and size
+		tButton.addActionListener(this); //add the listener
+		this.add(tButton); //add to JPanel
+
+		bButton = new JButton("Bankers");
+		bButton.setBounds(450,50, 100, 30); //sets the location and size
+		bButton.addActionListener(this); //add the listener
+		this.add(bButton); //add to JPanel
+
+		eButton = new JButton("Engineers");
+		eButton.setBounds(550,50, 100, 30); //sets the location and size
+	    eButton.addActionListener(this); //add the listener
+		this.add(eButton); //add to JPanel
+
+		cButton = new JButton("Clear Filter");
+		cButton.setBounds(650,50, 200, 30); //sets the location and size
+	    cButton.addActionListener(this); //add the listener
+		this.add(cButton); //add to JPanel
 	 
 		//TextField
 		search = new JTextField(20);
-		search.setBounds(100,50, 80, 30);
+		search.setBounds(50,50, 80, 30);
 		this.add(search);
     }
     public Dimension getPreferredSize() {
         //Sets the size of the panel
-        return new Dimension(800,400);
+        return new Dimension(800,600);
     }
     public void paintComponent(Graphics g) {
 		//draw background
         g.setColor(Color.white);
-        g.fillRect(0,0,800,400);
+        g.fillRect(0,0,800,600);
         
-		//draw instructions
-        Font font = new Font("Arial", Font.PLAIN, 20);
+        Font font = new Font("Arial", Font.PLAIN, 16);
         g.setFont(font);
         g.setColor(Color.red);
-		int x = 250;
+		int x = 150;
 		int y = 100;
-		for(Employee emp : emps) {
+        for(Employee emp : emps) {
+            emp.getDeleteButton().setVisible(false);
+        }
+		for(Employee emp : displayList) {
+
+			emp.getDeleteButton().setBounds(550,y,100,30);
+            emp.getDeleteButton().setVisible(true);
+
 			g.drawString(emp.toString(), x, y+10);
 			emp.drawPhoto(g, x-50, y);
 			y += 50;
 		}
 
     }
+    public void updateDisplayList(String query) {
+        displayList.clear();
+        for(Employee emp : emps) {
+            if(emp.getJobTitle().equals(query) || emp.getName().equals(query)) {
+                displayList.add(emp);
+            }
+        }
+    }
+    public void updateDisplayList() {
+        displayList.clear();
+        for(Employee emp : emps) {
+            displayList.add(emp);
+        }
+    }
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pButton) { 
-            System.out.println("police");
-            repaint();
+            updateDisplayList("Police Officer");
         }
+        else if (e.getSource() == tButton) { 
+            updateDisplayList("Teacher");
+        }
+        else if (e.getSource() == eButton) { 
+            updateDisplayList("Engineer");
+        }
+        else if (e.getSource() == bButton) { 
+            updateDisplayList("Banker");
+        }
+        else if(e.getSource() == cButton) {
+            updateDisplayList();
+        }
+        else if(e.getSource() == sButton) {
+            updateDisplayList(search.getText());
+        }
+        else {
+            for(int i = 0;i < displayList.size(); i++) {
+                if(displayList.get(i).getDeleteButton() == e.getSource()) {
+                    emps.remove(displayList.get(i));
+                    displayList.remove(i);
+                    i--;
+                }
+            }
+        }
+        repaint();
     }
 }
