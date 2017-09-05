@@ -3,11 +3,13 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.awt.Graphics;
+import javax.swing.JButton;
 
 public abstract class Employee {
 	private String name;
 	private String photoFile;
 	private String jobTitle;
+    private JButton deleteButton;
 	public Employee(String name, String photoFile, String jobTitle) {
 		this.name = name;
 		this.photoFile = photoFile;
@@ -17,7 +19,7 @@ public abstract class Employee {
 	public void drawPhoto(Graphics g, int x, int y) {
 		//draw the picture
 		try {
-			BufferedImage image = ImageIO.read(new File("images\\"+photoFile));
+			BufferedImage image = ImageIO.read(new File("images/"+photoFile));
 			g.drawImage(image, x,y, 50, 50, null);
 		} catch(IOException ex) {
 			System.out.println(ex);
@@ -30,4 +32,13 @@ public abstract class Employee {
 	public String getJobTitle() {
 		return jobTitle;
 	}
+    public String getName() {
+        return name;
+    }
+    public void setDeleteButton(JButton deleteButton) {
+        this.deleteButton = deleteButton;
+    }
+    public JButton getDeleteButton() {
+        return deleteButton;
+    }
 }
