@@ -1,14 +1,14 @@
 public class Pair<K,V> {
-    private K object1;
-    private V object2;
-    public Pair(K object1, V object2) {
-        this.object1 = object1;
-        this.object2 = object2;
+    private K key;
+    private V value;
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
-    public K getObject1() {
-        return object1;
+    public K getKey() {
+        return key;
     }
-    public V getObject2() {
-        return object2;
+    public V getValue() {
+        return value;
     }
 }
