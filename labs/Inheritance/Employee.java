@@ -19,7 +19,7 @@ public abstract class Employee {
 	public void drawPhoto(Graphics g, int x, int y) {
 		//draw the picture
 		try {
-			BufferedImage image = ImageIO.read(new File("images/"+photoFile));
+			BufferedImage image = ImageIO.read(new File("images\\"+photoFile));
 			g.drawImage(image, x,y, 50, 50, null);
 		} catch(IOException ex) {
 			System.out.println(ex);
