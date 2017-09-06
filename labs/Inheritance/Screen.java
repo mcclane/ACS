@@ -146,6 +146,7 @@ public class Screen extends JPanel implements ActionListener {
         else {
             for(int i = 0;i < displayList.size(); i++) {
                 if(displayList.get(i).getDeleteButton() == e.getSource()) {
+					displayList.get(i).getDeleteButton().setVisible(false);
                     emps.remove(displayList.get(i));
                     displayList.remove(i);
                     i--;
