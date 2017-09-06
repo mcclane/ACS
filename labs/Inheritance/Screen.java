@@ -23,7 +23,7 @@ public class Screen extends JPanel implements ActionListener {
     private ArrayList<Employee> displayList;
 
     public Screen() {
-		emps = new ArrayList<>();
+		emps = new ArrayList<Employee>();
 		emps.add(new Government("Austin", "Austin.jpg", "Police Officer", "San Jose"));
 		emps.add(new Government("Jennifer", "Jennifer.jpg", "Police Officer", "Oakland"));
 		emps.add(new Government("Jose", "Jose.jpg", "Teacher", "Ferguson"));
