@@ -58,11 +58,10 @@ public class Screen extends JPanel implements ActionListener {
 		this.add(clear); //add to JPanel
 
 		addClassPeriod = new JButton("addClassPeriod");
-		addClassPeriod.setBounds(350, 50, 100, 30); //sets the location and size
+		addClassPeriod.setBounds(450, 300, 200, 30); //sets the location and size
 	    addClassPeriod.addActionListener(this); //add the listener
 		this.add(addClassPeriod); //add to JPanel
         addClassPeriod.setVisible(false);
-
 
 		//TextField
 		search = new JTextField(20);
@@ -70,16 +69,14 @@ public class Screen extends JPanel implements ActionListener {
 		this.add(search);
 
         addPeriod = new JTextField(20);
-		addPeriod.setBounds(50,50, 80, 30);
+		addPeriod.setBounds(450,250, 50, 30);
 		this.add(addPeriod);
         addPeriod.setVisible(false);
         
         addClass = new JTextField(20);
-		addClass.setBounds(50,50, 80, 30);
+		addClass.setBounds(510, 250, 200, 30);
 		this.add(addClass);
         addClass.setVisible(false);
-
-
     }
     public Dimension getPreferredSize() {
         //Sets the size of the panel
@@ -97,14 +94,22 @@ public class Screen extends JPanel implements ActionListener {
         int x = 150;
         int y = 200;
         if(selected) {
+            //draw the student
             selectedStudent.getKey().drawStudent(g, x, y);
             String lines[] = selectedStudent.getValue().toString().split("\\n");
             for(String l : lines) {
                 g.drawString(l, x+110, y+30);
                 y += 20;
             }
+            //set the textfields and jbuttons to visible
+            addClass.setVisible(true);
+            addPeriod.setVisible(true);
+            addClassPeriod.setVisible(true);
         }
         else {
+            addClass.setVisible(false);
+            addPeriod.setVisible(false);
+            addClassPeriod.setVisible(false);
             for(Pair<Student, Schedule> ss : sl) {
                 ss.getKey().drawStudent(g, x, y);
                 y += 100;
@@ -127,6 +132,10 @@ public class Screen extends JPanel implements ActionListener {
             selected = false;
             System.out.println("cleared");
         }
+        else if(e.getSource() == addClassPeriod) {
+            selectedStudent.getValue().addClass(Integer.parseInt(addPeriod.getText()), addClass.getText());
+        }
         repaint();
     }
 }
+

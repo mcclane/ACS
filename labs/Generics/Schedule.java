@@ -21,6 +21,15 @@ public class Schedule {
     }
     public String toString() {
         String str = "";
+        for(int i = 0;i < mySchedule.size()-1;i++) {
+            for(int j = i;j < mySchedule.size();j++) {
+                if (mySchedule.get(j).getKey() < mySchedule.get(i).getKey()) {
+                    Pair<Integer, String> temp = mySchedule.get(j);
+                    mySchedule.set(j, mySchedule.get(i));
+                    mySchedule.set(i, temp);
+                }
+            }
+        }
         for(Pair<Integer, String> p : mySchedule) {
             str += p.getKey()+" : "+p.getValue()+"\n";
         }
