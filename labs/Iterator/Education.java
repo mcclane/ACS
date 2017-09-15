@@ -8,7 +8,7 @@ public class Education {
 		this.date = date;
 	}
 	public String toString() {
-		return name+"\n"+location+"\n"+"Graduation: "+date;
+		return name+", "+location+", Graduation: "+date;
 	}
 	public int getDate() {
 		return Integer.parseInt(date.replace("-",""));
