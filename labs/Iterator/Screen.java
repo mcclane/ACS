@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Arrays;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 
-public class Screen extends JPanel implements ActionListener {
+public class Screen extends JPanel implements ActionListener, MouseWheelListener {
 
 	//Jack Black, 123 Fake Street, yahoo@gmail.com, 1234567890
 	//Harvard, Massachussetts, 2022-01
@@ -36,8 +38,11 @@ public class Screen extends JPanel implements ActionListener {
 	boolean jobAdded = false;
 	private JButton deleteJob;
 	
+	int ydiff;
+	
     public Screen() {
         this.setLayout(null);
+		this.addMouseWheelListener(this);
         //Contact Info
         //JButton
 		addContactInfo = new JButton("Add contact info");
@@ -86,6 +91,8 @@ public class Screen extends JPanel implements ActionListener {
         return new Dimension(1500,800);
     }
     public void paintComponent(Graphics g) {
+		int x = 1000;
+		int y = 50 + ydiff;
 		//draw background
         g.setColor(Color.black);
         g.fillRect(0,0,1500,800);
@@ -95,7 +102,7 @@ public class Screen extends JPanel implements ActionListener {
 		g.fillRect(750, 20, 550, 750);
 		//draw the lines
 		g.setColor(Color.cyan);
-		for(int i = 80;i < 770;i += 20) {
+		for(int i = y+30;i < 770;i += 20) {
 			g.fillRect(760, i, 530, 3);
 		}
 		g.setColor(Color.red);
@@ -115,9 +122,10 @@ public class Screen extends JPanel implements ActionListener {
 		
 		//display resume
 		g.setColor(Color.black);
-		g.drawString("Resume", 1000, 50);
-		int x = 900;
-		int y = 100;
+
+		g.drawString("Resume", x, y);
+		x -= 100;
+		y += 50;
 		//contact info
 		if(contactInfoAdded) {
 			g.drawString("Contact Information", x-40, y);
@@ -211,9 +219,15 @@ public class Screen extends JPanel implements ActionListener {
 			}
 		}
 		else if(e.getSource() == deleteEducation) {
-			
 		}
         repaint();
     }
+	public void mouseWheelMoved(MouseWheelEvent e)  {
+		System.out.println("wheel moved");
+		if(ydiff >= 0) {
+			ydiff += e.getWheelRotation();
+			repaint();
+		}
+	}
 }
 
