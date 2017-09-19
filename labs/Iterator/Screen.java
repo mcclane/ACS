@@ -12,6 +12,8 @@ import java.util.ListIterator;
 import java.util.Arrays;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
+import javax.swing.ImageIcon;
+import java.awt.Image;
 
 public class Screen extends JPanel implements ActionListener, MouseWheelListener {
 
@@ -38,18 +40,20 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 	boolean jobAdded = false;
 	private JButton deleteJob;
 	
-	int ydiff;
+    //scrolling offset
+	int ydiff = 0;
+
+    //earth gif
+    Image earth;
 	
     public Screen() {
         this.setLayout(null);
 		this.addMouseWheelListener(this);
         //Contact Info
-        //JButton
 		addContactInfo = new JButton("Add contact info");
 		addContactInfo.setBounds(350, 50, 200, 30); //sets the location and size
 	    addContactInfo.addActionListener(this); //add the listener
 		this.add(addContactInfo); //add to JPanel
-		//TextField
 		contactInfoField = new JTextField();
 		contactInfoField.setBounds(50,50, 300, 30);
 		this.add(contactInfoField);
@@ -60,11 +64,9 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 		addEducation.setBounds(350, 100, 200, 30); //sets the location and size
 	    addEducation.addActionListener(this); //add the listener
 		this.add(addEducation); //add to JPanel
-		//TextField
 		educationField = new JTextField();
 		educationField.setBounds(50,100, 300, 30);
 		this.add(educationField);
-		//delete button
 		deleteEducation = new JButton("Delete Job Info");
 		deleteEducation.setBounds(550, 100, 200, 30); //sets the location and size
 	    deleteEducation.addActionListener(this); //add the listener
@@ -76,15 +78,17 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 		addJob.setBounds(350, 150, 200, 30); //sets the location and size
 	    addJob.addActionListener(this); //add the listener
 		this.add(addJob); //add to JPanel
-		//TextField
 		jobField = new JTextField();
 		jobField.setBounds(50,150, 300, 30);
 		this.add(jobField);
-		//delete button
 		deleteJob = new JButton("Delete Job Info");
 		deleteJob.setBounds(550, 150, 200, 30); //sets the location and size
 	    deleteJob.addActionListener(this); //add the listener
 		this.add(deleteJob); //add to JPanel
+
+        //earth gif
+        earth = new ImageIcon("earth.gif").getImage();
+       
     }
     public Dimension getPreferredSize() {
         //Sets the size of the panel
@@ -92,23 +96,37 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
     }
     public void paintComponent(Graphics g) {
 		int x = 1000;
-		int y = 50 + ydiff;
+		int y = 50 + ydiff; //account for scroll offset
+
 		//draw background
         g.setColor(Color.black);
         g.fillRect(0,0,1500,800);
+
+        //title and earth gif
+        Font font = new Font("Arial", Font.PLAIN, 40);
+        g.setFont(font);
+        g.setColor(Color.white);
+        g.drawString("Resume Builder", 120, 300);
+        g.drawImage(earth, 100, 350, null);
 		
 		//draw the paper
 		g.setColor(Color.white);
-		g.fillRect(750, 20, 550, 750);
-		//draw the lines
+		g.fillRect(800, 20, 650, 750);
+
+		//draw the horizontal lines
 		g.setColor(Color.cyan);
+        int start = 0;
 		for(int i = y+30;i < 770;i += 20) {
-			g.fillRect(760, i, 530, 3);
+			g.fillRect(810, i, 630, 3);
 		}
+        //draw a rectangle at the top of the lines to stop the horizontal lines from appearing off the paper.
+        g.setColor(Color.black);
+        g.fillRect(810, 0, 650, 20);
+        //vertical line
 		g.setColor(Color.red);
-		g.fillRect(810, 20, 3, 750);
+		g.fillRect(870, 20, 3, 750);
         
-        Font font = new Font("Arial", Font.PLAIN, 16);
+        font = new Font("Arial", Font.PLAIN, 16);
         g.setFont(font);
         g.setColor(Color.white);
 		
@@ -128,7 +146,7 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 		y += 50;
 		//contact info
 		if(contactInfoAdded) {
-			g.drawString("Contact Information", x-40, y);
+			g.drawString("Contact Information", x-25, y);
 			y+=20;
 			ListIterator<String> contactIterator = contactInfo.listIterator();
 			while(contactIterator.hasNext()) {
@@ -139,7 +157,7 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 		}
 		//education
 		if(educationAdded) {
-			g.drawString("Education", x-40, y);
+			g.drawString("Education", x-25, y);
 			y+=20;
 			ListIterator<Education> educationIterator = educationList.listIterator();
 			while(educationIterator.hasNext()) {
@@ -149,7 +167,7 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 			y+=20;
 		}
 		if(jobAdded) {
-			g.drawString("Job Experience", x-40, y);
+			g.drawString("Job Experience", x-25, y);
 			y+=20;
 			ListIterator<Job> jobIterator = jobList.listIterator();
 			while(jobIterator.hasNext()) {
@@ -211,23 +229,43 @@ public class Screen extends JPanel implements ActionListener, MouseWheelListener
 			String toString = split[0].trim()+", "+split[1].trim()+", "+split[2].trim()+", from "+split[3].trim()+" to "+ split[4].trim(); 
 			ListIterator<Job> lit = jobList.listIterator();
 			while(lit.hasNext()) {
-				if(lit.next().toString() == toString) {
-					lit.next();
+				if(lit.next().toString().equals(toString)) {
 					lit.remove();
 					break;
 				}
 			}
 		}
 		else if(e.getSource() == deleteEducation) {
+            String[] split = educationField.getText().split(",");
+            String toString = split[0].trim()+", "+split[1].trim()+", Graduation: "+split[2].trim(); 
+            ListIterator<Education> lit = educationList.listIterator();
+            while(lit.hasNext()) {
+                if(lit.next().toString().equals(toString)) {
+                    lit.remove();
+                    break;
+                }
+            }
 		}
         repaint();
     }
 	public void mouseWheelMoved(MouseWheelEvent e)  {
-		System.out.println("wheel moved");
-		if(ydiff >= 0) {
-			ydiff += e.getWheelRotation();
+		if(ydiff <= 0) {
+			ydiff += e.getWheelRotation()*2;
 			repaint();
 		}
+        else {
+            ydiff = 0;
+        }
 	}
+    public void animate() {
+        while(true) {
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            repaint();
+        }
+    }
 }
 
