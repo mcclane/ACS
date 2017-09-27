@@ -1,0 +1,100 @@
+cranberries,1
+cranberries,1
+plum tomatoes,3
+tomato juice,4
+apple pie spice,5
+sazon,1
+chicken,2
+Havarti cheese,3
+yogurt,4
+soymilk,5
+spinach,1
+canola oil,2
+hoisin sauce,3
+red beans,4
+sherry,3
+curry powder,1
+garlic,2
+olive oil,3
+lemon juice,4
+cannellini beans,5
+leeks,5
+oatmeal,2
+carrots,3
+ketchup,2
+mussels,5
+monkfish,1
+tomato juice,2
+honey,3
+barbecue sauce,4
+pig's feet,5
+squid,1
+coffee,2
+chile peppers,3
+portabella mushrooms,4
+limes,5
+black olives,1
+coconut oil,2
+crayfish,3
+cinnamon,4
+ketchup,2
+alligator,1
+melons,2
+beef,3
+rose water,4
+jack cheese,5
+ginger ale,1
+green onions,2
+brown rice,3
+plum tomatoes,4
+Worcestershire sauce,5
+corn syrup,1
+snapper,4
+Parmesan cheese,3
+habanero chilies,4
+arugula,5
+turtle,1
+duck,2
+ketchup,3
+tomato sauce,4
+pistachios,5
+pineapples,1
+potatoes,2
+romaine lettuce,3
+peanut butter,4
+black-eyed peas,5
+focaccia,1
+lamb,2
+quail,8
+tea,4
+guavas,5
+tomato paste,1
+olives,2
+eel,3
+figs,4
+papayas,5
+wild rice,1
+wild rice,1
+shallots,3
+raw sugar,3
+grouper,5
+pears,1
+pork,2
+brown sugar,3
+tuna,4
+molasses,5
+venison,1
+peas,2
+molasses,6
+liver,4
+red chile powder,5
+coconut oil,1
+cloves,2
+provolone,3
+prunes,4
+artichokes,1
+corn,1
+jack cheese,2
+jack cheese,2
+rice paper,4
+oranges,5

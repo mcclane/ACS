@@ -1,0 +1,100 @@
+scallops,1
+cocoa powder,2
+flax seed,3
+figs,4
+apple pie spice,5
+almonds,1
+chaurice sausage,2
+avocados,3
+chestnuts,4
+cremini mushrooms,5
+hot sauce,1
+kidney beans,2
+sherry,3
+tomato puree,4
+fennel,5
+brown rice,3
+turkeys,2
+gelatin,3
+lemon juice,4
+creme fraiche,5
+rice paper,1
+anchovy paste,2
+portabella mushrooms,3
+focaccia,4
+leeks,5
+leeks,5
+tomato juice,2
+tomatoes,3
+sea cucumbers,4
+pea beans,5
+corned beef,1
+ketchup,2
+chile peppers,3
+dried leeks,4
+spinach,5
+beets,1
+leeks,5
+lima beans,3
+wild rice,4
+flour,5
+parsley,1
+melons,2
+croutons,3
+apple butter,4
+cheddar cheese,5
+cinnamon,1
+peas,2
+snapper,3
+plum tomatoes,4
+paprika,5
+corn flour,1
+canola oil,2
+bananas,3
+alligator,4
+tarragon,5
+turtle,1
+french fries,2
+Marsala,3
+cider vinegar,4
+pistachios,5
+vanilla,1
+maraschino cherries,2
+quail,3
+bagels,4
+hoisin sauce,5
+habanero chilies,1
+venison,2
+mayonnaise,3
+dumpling,4
+pico de gallo,5
+alfredo sauce,1
+curry paste,2
+provolone,3
+red beans,4
+rabbits,5
+brunoise,1
+hamburger,2
+basil,3
+white chocolate,4
+raw sugar,5
+sauerkraut,1
+breadfruit,2
+balsamic vinegar,3
+steak,4
+molasses,5
+bean threads,1
+corn,2
+crabs,3
+olive oil,4
+colby cheese,5
+coconut oil,1
+artichokes,2
+cantaloupes,3
+gouda,4
+haddock,5
+granola,1
+jack cheese,2
+marmalade,3
+rice vinegar,4
+rice vinegar,4
