@@ -26,6 +26,9 @@ public class Screen extends JPanel implements ActionListener {
     private JButton displayAll;
     private JButton displayAUnique;
     private JButton displayBUnique;
+    private JButton addA;
+    private JButton addB;
+    private JTextField add;
     
     Set<Item> A, B;
     
@@ -94,10 +97,24 @@ public class Screen extends JPanel implements ActionListener {
 	    submitSearch.addActionListener(this); //add the listener
 		this.add(submitSearch); //add to JPanel
         
+        addA = new JButton("Add to Store A");
+		addA.setBounds(1000, 600, 150, 30); //sets the location and size
+	    addA.addActionListener(this); //add the listener
+		this.add(addA); //add to JPanel
+        
+        addB = new JButton("Add to Store B");
+		addB.setBounds(1150, 600, 150, 30); //sets the location and size
+	    addB.addActionListener(this); //add the listener
+		this.add(addB); //add to JPanel  
+        
         // textFields
         search = new JTextField(100);
         search.setBounds(900, 100, 200, 30);
         this.add(search);
+        
+        add = new JTextField(100);
+        add.setBounds(800, 600, 200, 30);
+        this.add(add);
 		
         // TextAreas
         textAreaA = new JTextArea(200,250); //sets the location and size
@@ -127,6 +144,7 @@ public class Screen extends JPanel implements ActionListener {
         scrollPaneR.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPaneR.setBounds(1300,50,300,700);
         this.add(scrollPaneR);
+        
     }
     public Dimension getPreferredSize() {
         // Sets the size of the panel
@@ -217,6 +235,9 @@ public class Screen extends JPanel implements ActionListener {
                 displayTextR += "Store B: "+temp+"\n";
             }
             textAreaR.setText(displayTextR);
+        }
+        else if(e.getSource() == addA) {
+            
         }
         repaint();
     }
