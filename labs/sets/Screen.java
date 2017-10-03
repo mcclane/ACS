@@ -244,6 +244,14 @@ public class Screen extends JPanel implements ActionListener {
             }
             textAreaA.setText(displayTextA);
         }
+        else if(e.getSource() == addB) {
+            String[] tba = add.getText().split(",");
+            Item temp = new Item(tba[0], Integer.parseInt(tba[1].trim()));
+            if(B.add(temp)) {
+                displayTextB += B.size()+". "+temp+"\n";
+            }
+            textAreaB.setText(displayTextB);
+        }
         repaint();
     }
 }
