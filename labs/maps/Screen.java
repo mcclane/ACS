@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.TreeMap;
+import javax.swing.ImageIcon;
 
 public class Screen extends JPanel implements ActionListener {
     
@@ -27,17 +28,16 @@ public class Screen extends JPanel implements ActionListener {
 
     HashMap<Item, Integer> store;
     TreeMap<Item, Integer> cart;
-    
 	
     public Screen() {
         this.setLayout(null);
         
         store = new HashMap<Item, Integer>();
-        store.put(new Item("Oranges", 100, "orange.jpg"), 10);
-        store.put(new Item("Apples", 200, "apple.jpg"), 10);
-        store.put(new Item("Bananas", 300, "banan.jpg"), 10);
-        store.put(new Item("Kiwis", 400, "kiwi.jpg"), 10);
-        store.put(new Item("Grapes", 500, "grape.jpg"), 10);
+        store.put(new Item("Oranges", 100, "orange.jpg", 1), 10);
+        store.put(new Item("Apples", 200, "apple.jpg", 2), 10);
+        store.put(new Item("Bananas", 300, "banan.jpg", 3), 10);
+        store.put(new Item("Kiwis", 400, "kiwi.jpg", 4), 10);
+        store.put(new Item("Grapes", 500, "grape.jpg", 5), 10);
         
         cart = new TreeMap<Item, Integer>();
         
@@ -62,11 +62,16 @@ public class Screen extends JPanel implements ActionListener {
                 this.add(i.addButton);
                 i.addButton.addActionListener(this);
             }
+            if(i.imageButton.getParent() == null) {
+                this.add(i.imageButton);
+                i.imageButton.addActionListener(this);
+            }
             y += 100;
         }
         x = 500;
         y = 50;
         int total = 0;
+        int totalWeight = 0;
         for(Item i : cart.keySet()) {
             if(cart.get(i) == 0) {
                 i.addButton.setVisible(false);
@@ -78,39 +83,66 @@ public class Screen extends JPanel implements ActionListener {
                 this.add(i.addButton);
                 i.addButton.addActionListener(this);
             }
+            if(i.imageButton.getParent() == null) {
+                this.add(i.imageButton);
+                i.imageButton.addActionListener(this);
+            }
             i.addButton.setText("Remove");
             total += i.price*cart.get(i);
+            totalWeight += i.weight*cart.get(i);
             y += 100;
         }
-        g.drawString("Total: $"+total, x, y);
+        g.drawString("Total Item Cost: $"+total, x, y);
+        g.drawString("Total Shipping Cost: $"+totalWeight/2, x, y+20);
+        g.drawString("Total: $"+(totalWeight/2 + total), x, y+40);
     }
     public void actionPerformed(ActionEvent e) {
         for(Item i : store.keySet()) {
             if(e.getSource() == i.addButton) {
                 if(cart.containsKey(i) && store.get(i) > 0) {
-                    Item temp = new Item(i.name, i.price, i.filename);
+                    Item temp = new Item(i.name, i.price, i.filename, i.weight);
                     cart.put(temp, cart.get(temp)+1);
                     store.put(i, store.get(i)-1);
                 }
                 else if(store.get(i) > 0){
-                    cart.put(new Item(i.name, i.price, i.filename), 1);
+                    cart.put(new Item(i.name, i.price, i.filename, i.weight), 1);
                     store.put(i, store.get(i)-1);
                 }
                 break;
+            }
+            if(e.getSource() == i.imageButton) {
+                if(i.iw == 200) {
+                    i.iw = 50;
+                    i.ih = 50;
+                }
+                else {
+                    i.iw = 200;
+                    i.ih = 200;
+                }
             }
         }
         for(Item i : cart.keySet()) {
             if(e.getSource() == i.addButton) {
                 if(store.containsKey(i) && cart.get(i) > 0) {
-                    Item temp = new Item(i.name, i.price, i.filename);
+                    Item temp = new Item(i.name, i.price, i.filename, i.weight);
                     store.put(temp, store.get(temp)+1);
                     cart.put(i, cart.get(i)-1);
                 }
                 else if(cart.get(i) > 0){
-                    store.put(new Item(i.name, i.price, i.filename), 1);
+                    store.put(new Item(i.name, i.price, i.filename, i.weight), 1);
                     cart.put(i, cart.get(i)-1);
                 }
                 break;
+            }
+            if(e.getSource() == i.imageButton) {
+                if(i.iw == 200) {
+                    i.iw = 50;
+                    i.ih = 50;
+                }
+                else {
+                    i.iw = 200;
+                    i.ih = 200;
+                }
             }
         }
         repaint();
