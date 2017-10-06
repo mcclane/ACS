@@ -29,14 +29,14 @@ public class Item implements Comparable {
         addButton = new JButton("Add");
         imageButton = new JButton("image goes here");
         try {
-            img = ImageIO.read(new File("images/"+filename));
+            img = ImageIO.read(new File("images\\"+filename));
             imageButton.setIcon(new ImageIcon(img));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     public void drawMe(Graphics g, int quantity, int x, int y) {
-        g.drawString(name+" $"+price+" Quantity: "+quantity+" weight: "+weight+" pounds", x, y);
+        g.drawString(name+" $"+price+" Quantity: "+quantity+" weight: "+weight*quantity+" pounds", x, y);
         //g.drawImage(img, x+200, y, 50,50, null);
         imageButton.setBounds(x+200, y, iw, ih);
         imageButton.setVisible(true);

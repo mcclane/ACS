@@ -28,6 +28,8 @@ public class Screen extends JPanel implements ActionListener {
 
     HashMap<Item, Integer> store;
     TreeMap<Item, Integer> cart;
+    
+    private Image background;
 	
     public Screen() {
         this.setLayout(null);
@@ -41,6 +43,8 @@ public class Screen extends JPanel implements ActionListener {
         
         cart = new TreeMap<Item, Integer>();
         
+        background = new ImageIcon("images\\giphy.gif").getImage();
+
     }
     public Dimension getPreferredSize() {
         // Sets the size of the panel
@@ -50,6 +54,7 @@ public class Screen extends JPanel implements ActionListener {
 		// draw background
         g.setColor(Color.black);
         g.fillRect(0,0,1000,800);
+        g.drawImage(background, 0, 0, 1000, 800, null);
 	
         Font font = new Font("Arial", Font.PLAIN, 16);
         g.setFont(font);
@@ -75,6 +80,7 @@ public class Screen extends JPanel implements ActionListener {
         for(Item i : cart.keySet()) {
             if(cart.get(i) == 0) {
                 i.addButton.setVisible(false);
+                i.imageButton.setVisible(false);
                 continue;
             }
             i.addButton.setVisible(false);
@@ -92,6 +98,8 @@ public class Screen extends JPanel implements ActionListener {
             totalWeight += i.weight*cart.get(i);
             y += 100;
         }
+        g.drawString("Store", 50, 20);
+        g.drawString("Cart", 500, 20);
         g.drawString("Total Item Cost: $"+total, x, y);
         g.drawString("Total Shipping Cost: $"+totalWeight/2, x, y+20);
         g.drawString("Total: $"+(totalWeight/2 + total), x, y+40);
@@ -111,13 +119,13 @@ public class Screen extends JPanel implements ActionListener {
                 break;
             }
             if(e.getSource() == i.imageButton) {
-                if(i.iw == 200) {
+                if(i.iw == 400) {
                     i.iw = 50;
                     i.ih = 50;
                 }
                 else {
-                    i.iw = 200;
-                    i.ih = 200;
+                    i.iw = 400;
+                    i.ih = 400;
                 }
             }
         }
@@ -135,16 +143,30 @@ public class Screen extends JPanel implements ActionListener {
                 break;
             }
             if(e.getSource() == i.imageButton) {
-                if(i.iw == 200) {
+                if(i.iw == 400) {
                     i.iw = 50;
                     i.ih = 50;
                 }
                 else {
-                    i.iw = 200;
-                    i.ih = 200;
+                    i.iw = 400;
+                    i.ih = 400;
                 }
             }
         }
         repaint();
+    }
+    public void animate() {
+ 
+        while (true) {
+            //Wait 
+            try {
+                Thread.sleep(100); //milliseconds
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+ 
+            repaint();
+        }
+ 
     }
 }
