@@ -108,11 +108,14 @@ public class Screen extends JPanel implements ActionListener, DocumentListener {
         g.drawString("Enter new words in format \"Spanish=English\"", 100, 500);
     }
     public void updateText() {
-        String[] words = textAreaInput.getText().split("\\s+");
+        String[] words = textAreaInput.getText().split(" ");
         String translatedWords = "";
         for(String w : words) {
-            if(StoE.containsKey(w)) {
-                translatedWords += StoE.get(w)+" ";
+            if(StoE.containsKey(w.trim())) {
+                translatedWords += StoE.get(w.trim())+" ";
+                if(w.contains("\n")) {
+                    translatedWords += "\n";
+                }
             }
             else {
                 translatedWords += w+" ";
