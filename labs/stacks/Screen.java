@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.MouseInfo;
 import java.util.Stack;
 
 public class Screen extends JPanel implements ActionListener, MouseListener {
@@ -20,6 +21,8 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     private int y = 30;
     private int gridSize = 800;
     private int squareSize = gridSize/16;
+    
+    private boolean mouseHeld;
     
     private JButton undoButton;
     
@@ -38,6 +41,7 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
                 grid[i][j] = new Square();
             }
         }
+        
         undoStack = new Stack<Square[][]>();
         undoStack.push(copyArray(grid));
         
@@ -91,8 +95,11 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == undoButton) {
-            if(undoStack.size() > 0) {
-                grid = copyArray(undoStack.pop());
+            if(undoStack.size() > 1) {
+                System.out.println("undoStack before pop: "+undoStack);
+                undoStack.pop();
+                grid = copyArray(undoStack.peek());
+                System.out.println("undoStack after pop: "+undoStack);
                 repaint();
             }
             else {
@@ -101,10 +108,12 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         }
     }
     public void mousePressed(MouseEvent e) {
-        
+        mouseHeld = true;
     }
     public void mouseReleased(MouseEvent e) {
-        
+        mouseHeld = false;
+        undoStack.push(copyArray(grid));
+        System.out.println("Pushed: "+undoStack);
     }
     public void mouseEntered(MouseEvent e) {
         
@@ -115,20 +124,44 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     public void mouseClicked(MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
+        /*
         if(mx <= x+gridSize && mx >= x && my >= y && my <= y+gridSize) {
             int xindex = (mx-x)/squareSize;
             int yindex = (my-y)/squareSize;
             if(xindex < 16 && xindex >= 0 && yindex < 16 && yindex >= 0) {
                 grid[xindex][yindex].setColor(color);
                 undoStack.push(copyArray(grid));
+                System.out.println("Pushed: "+undoStack);
             }
             repaint();
-        }
-        else if(mx <= paletteX+200 && mx >= paletteX && my <= paletteY+1000 && my >= paletteY) {
+        }*/
+        if(mx <= paletteX+200 && mx >= paletteX && my <= paletteY+1000 && my >= paletteY) {
             int red = my%255;
             int green = mx%255;
             int blue = my%255;
             color = new Color(red, green, blue);
+        }
+    }
+    public void animate() {
+        while(true) {
+            if(mouseHeld) {
+                int mx = MouseInfo.getPointerInfo().getLocation().x;
+                int my = MouseInfo.getPointerInfo().getLocation().y - y - 10;
+                if(mx <= x+gridSize && mx >= x && my >= y && my <= y+gridSize) {
+                    int xindex = (mx-x)/squareSize;
+                    int yindex = (my-y)/squareSize;
+                    if(xindex < 16 && xindex >= 0 && yindex < 16 && yindex >= 0) {
+                        grid[xindex][yindex].setColor(color);
+                    }
+                }
+                repaint();
+            }
+            try {
+                Thread.sleep(5);
+            }
+            catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }
