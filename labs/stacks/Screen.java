@@ -17,6 +17,7 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         
     private Square[][] grid;
     private Stack<Square[][]> undoStack;
+    private Stack<Square[][]> redoStack;
     private int x = 30;
     private int y = 30;
     private int gridSize = 800;
@@ -25,6 +26,7 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     private boolean mouseHeld;
     
     private JButton undoButton;
+    private JButton redoButton;
     
     private Color color = new Color(0, 0, 0);
     
@@ -45,10 +47,17 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         undoStack = new Stack<Square[][]>();
         undoStack.push(copyArray(grid));
         
+        redoStack = new Stack<Square[][]>();
+        
         undoButton = new JButton("Undo");
         undoButton.setBounds(x+gridSize, y, 100, 30);
         undoButton.addActionListener(this);
         this.add(undoButton);
+        
+        redoButton = new JButton("Redo");
+        redoButton.setBounds(x+gridSize+100, y, 100, 30);
+        redoButton.addActionListener(this);
+        this.add(redoButton);
         
     }
     public Dimension getPreferredSize() {
@@ -96,14 +105,20 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == undoButton) {
             if(undoStack.size() > 1) {
-                System.out.println("undoStack before pop: "+undoStack);
-                undoStack.pop();
+                redoStack.push(copyArray(undoStack.pop()));
                 grid = copyArray(undoStack.peek());
-                System.out.println("undoStack after pop: "+undoStack);
                 repaint();
             }
-            else {
-                System.out.println("nothing left to undo");
+        }
+        else if(e.getSource() == redoButton) {
+            if(redoStack.size() > 1) {
+                Square[][] temp = redoStack.pop();
+                undoStack.push(copyArray(temp));
+                grid = copyArray(temp);
+                
+                //undoStack.push(copyArray(redoStack.pop()));
+                //grid = copyArray(redoStack.peek());
+                repaint();
             }
         }
     }
@@ -113,7 +128,6 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     public void mouseReleased(MouseEvent e) {
         mouseHeld = false;
         undoStack.push(copyArray(grid));
-        System.out.println("Pushed: "+undoStack);
     }
     public void mouseEntered(MouseEvent e) {
         
