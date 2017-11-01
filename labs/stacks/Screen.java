@@ -159,8 +159,8 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     public void animate() {
         while(true) {
             if(mouseHeld) {
-                int mx = MouseInfo.getPointerInfo().getLocation().x;
-                int my = MouseInfo.getPointerInfo().getLocation().y - y - 10;
+                int mx = MouseInfo.getPointerInfo().getLocation().x - this.getLocationOnScreen().x;
+                int my = MouseInfo.getPointerInfo().getLocation().y - this.getLocationOnScreen().y;
                 if(mx <= x+gridSize && mx >= x && my >= y && my <= y+gridSize) {
                     int xindex = (mx-x)/squareSize;
                     int yindex = (my-y)/squareSize;
