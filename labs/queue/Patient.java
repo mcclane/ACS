@@ -1,6 +1,8 @@
+import java.awt.Graphics;
+
 public class Patient implements Comparable<Patient> {
-    private String lastName, firstName, illness, note;
-    private int priority, price, time;
+    String lastName, firstName, illness, note;
+    int priority, price, time;
     public Patient(String firstName, String lastName, String illness, int priority, int time) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -17,5 +19,8 @@ public class Patient implements Comparable<Patient> {
         else if(p.getPriority() < getPriority())
             return -1;
         return 0;
+    }
+    public String toString() {
+        return firstName+" "+lastName+" illness: "+illness+" Priority: "+ priority;
     }
 }
