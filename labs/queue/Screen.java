@@ -19,19 +19,21 @@ public class Screen extends JPanel implements ActionListener {
 
     //nurse stuff
     private JButton addPatientButton;
-    private JTextField searchPatient;
-    private JTextField addPatientField;
     private JTextArea nurseTextArea;
     private JScrollPane scrollPaneNurse;
     private JButton editPatientButton;
-    private JTextField editPatientName;
+	private JButton searchPatientButton;
+    private JTextField editPatientFirstName;
+    private JTextField editPatientLastName;
     private JTextField editPatientIllness;
     private JTextField editPatientPriority;
     
     private Color colorOne;
     private Color colorTwo;
     
-    private int time = 0;
+    private int time = 6;
+	
+	private Patient editingPatient;
     
     PriorityQueue<Patient> patients;
     public Screen() {
@@ -55,38 +57,44 @@ public class Screen extends JPanel implements ActionListener {
         this.add(v4);
         
         //nurse stuff
-        addPatientButton = new JButton("Add Patient");
+        addPatientButton = new JButton("Update Patient");
         addPatientButton.setBounds(50, 700, 200, 30);
         addPatientButton.addActionListener(this);
         this.add(addPatientButton);
         addPatientButton.setVisible(false);
+
+        searchPatientButton = new JButton("Search Patient");
+        searchPatientButton.setBounds(250, 700, 200, 30);
+        searchPatientButton.addActionListener(this);
+        this.add(searchPatientButton);
+        searchPatientButton.setVisible(false);
         
         editPatientButton = new JButton("edit patient");
-        editPatientButton.setBounds(250, 700, 200, 30);
+        editPatientButton.setBounds(450, 700, 200, 30);
         editPatientButton.addActionListener(this);
         this.add(editPatientButton);
         editPatientButton.setVisible(false);
         
-        addPatientField = new JTextField(100);
-        addPatientField.setBounds(50,600, 300, 30);
-        addPatientField.addActionListener(this);
-        this.add(addPatientField);
-        addPatientField.setVisible(false);
-        
-        editPatientName = new JTextField(100);
-        editPatientName.setBounds(50,750, 300, 30);
-        editPatientName.addActionListener(this);
-        this.add(editPatientName);
-        editPatientName.setVisible(false);
+        editPatientFirstName = new JTextField(100);
+        editPatientFirstName.setBounds(200,750, 300, 30);
+        editPatientFirstName.addActionListener(this);
+        this.add(editPatientFirstName);
+        editPatientFirstName.setVisible(false);
+
+        editPatientLastName = new JTextField(100);
+        editPatientLastName.setBounds(200,780, 300, 30);
+        editPatientLastName.addActionListener(this);
+        this.add(editPatientLastName);
+        editPatientLastName.setVisible(false);
         
         editPatientIllness = new JTextField(100);
-        editPatientIllness.setBounds(50,780, 300, 30);
+        editPatientIllness.setBounds(200,810, 300, 30);
         editPatientIllness.addActionListener(this);
         this.add(editPatientIllness);
         editPatientIllness.setVisible(false);
  
         editPatientPriority = new JTextField(100);
-        editPatientPriority.setBounds(50,810, 300, 30);
+        editPatientPriority.setBounds(200,840, 300, 30);
         editPatientPriority.addActionListener(this);
         this.add(editPatientPriority);
         editPatientPriority.setVisible(false);
@@ -163,16 +171,25 @@ public class Screen extends JPanel implements ActionListener {
     public void drawNurseView(Graphics g) {
         g.setColor(Color.red);
         g.drawString("Nurse View", 500, 400);
-        g.drawString("Enter in firstname, lastname, illness, priority(2/1/0)", 50, 550);
+		g.drawString("First Name", 30, 770);
+		g.drawString("Last Name", 30, 800);
+		g.drawString("Illness", 30, 830);
+		g.drawString("Priority", 30, 870);
+
         addPatientButton.setVisible(true);
-        addPatientField.setVisible(true);
         scrollPaneNurse.setVisible(true);
         editPatientButton.setVisible(true);
+		editPatientFirstName.setVisible(true);
+		editPatientLastName.setVisible(true);
+		editPatientIllness.setVisible(true);
+		editPatientPriority.setVisible(true);
+        searchPatientButton.setVisible(true);
         
         String text = "";
-        for(Patient p : patients) {
-            text += p+"\n";
-        }
+		PriorityQueue<Patient> copy = new PriorityQueue<Patient>(patients);
+		while(!copy.isEmpty()) {
+			text += copy.poll()+"\n";
+		}
         nurseTextArea.setText(text);
     }
     public void drawDoctorView(Graphics g) {
@@ -202,31 +219,59 @@ public class Screen extends JPanel implements ActionListener {
             repaint();
         }
         else if(e.getSource() == addPatientButton) {
-            String[] splitted = addPatientField.getText().split(",");
-            patients.add(new Patient(splitted[0].trim(), splitted[1].trim(), splitted[2].trim(), Integer.parseInt(splitted[3].trim()), time));
+            patients.add(new Patient(editPatientFirstName.getText().trim(), editPatientLastName.getText().trim(), editPatientIllness.getText().trim(), Integer.parseInt(editPatientPriority.getText().trim()), time));
             time++;
             repaint();
         }
+		else if(e.getSource() == searchPatientButton) {
+			boolean found = false;
+			String firstName = editPatientFirstName.getText().trim();
+			String lastName = editPatientLastName.getText().trim();
+			for(Patient p : patients) {
+				if(p.lastName.equals(lastName) && p.firstName.equals(firstName)) {
+					editPatientIllness.setText(p.illness);
+					editPatientPriority.setText(""+p.priority);
+					editingPatient = p;
+					found = true;
+					break;
+				}	
+			}
+			if(!found) {
+				editPatientIllness.setText("");
+				editPatientPriority.setText("");
+			}
+		}
         else if(e.getSource() == editPatientButton) {
-            String[] splitted = addPatientField.getText().split(",");
-            Patient editedPatient = new Patient(splitted[0].trim(), splitted[1].trim(), splitted[2].trim(), Integer.parseInt(splitted[3].trim()), time);
-            PriorityQueue<Patient> temp = new PriorityQueue<Patient>();
+			String firstName = editPatientFirstName.getText().trim();
+			String lastName = editPatientLastName.getText().trim();
+			String illness = editPatientIllness.getText().trim();
+			int priority = Integer.parseInt(editPatientPriority.getText().trim());
+			if(patients.remove(editingPatient)) {
+				patients.add(new Patient(firstName, lastName, illness, priority, editingPatient.time));
+			}
+					
+            /*PriorityQueue<Patient> temp = new PriorityQueue<Patient>();
             while(!patients.isEmpty()) {
                 Patient curr = patients.poll();
-                if(curr.lastName.equals(editedPatient.lastName) && curr.firstName.equals(editedPatient.firstName)) {
-                    temp.add(editedPatient);
+                if(curr.lastName.equals(editingPatient.lastName) && curr.firstName.equals(editingPatient.firstName)) {
+					editingPatient = new Patient(firstName, lastName, illness, priority, editingPatient.time);
+                    temp.add(editingPatient);
                 }
                 else {
                     temp.add(curr);
                 }
             }
-            System.out.println(temp);
-            patients = temp;
+            patients = temp;*/
             repaint();
         }
         addPatientButton.setVisible(false);
-        addPatientField.setVisible(false);
         scrollPaneNurse.setVisible(false);
         editPatientButton.setVisible(false);
+        searchPatientButton.setVisible(false);
+		editPatientFirstName.setVisible(true);
+		editPatientLastName.setVisible(true);
+		editPatientIllness.setVisible(true);
+		editPatientPriority.setVisible(true);
+
     }
 }

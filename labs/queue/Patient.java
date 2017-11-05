@@ -11,7 +11,7 @@ public class Patient implements Comparable<Patient> {
         this.time = time;
     }
     public int getPriority() {
-        return (1000*priority)+time;
+        return (1000*priority)-time;
     }
     public int compareTo(Patient p) {
         if(p.getPriority() > getPriority()) 
