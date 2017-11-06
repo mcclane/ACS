@@ -27,9 +27,10 @@ public class Screen extends JPanel implements ActionListener {
     private JTextField editPatientLastName;
     private JTextField editPatientIllness;
     private JTextField editPatientPriority;
-    
-    private Color colorOne;
-    private Color colorTwo;
+
+	//doctor stuff
+	private JTextField doctorNoteField;
+	private JButton dischargePatientButton;
     
     private int time = 6;
 	
@@ -106,6 +107,9 @@ public class Screen extends JPanel implements ActionListener {
         scrollPaneNurse.setBounds(800,400,300,500);
         this.add(scrollPaneNurse);
         scrollPaneNurse.setVisible(false);
+
+		//doctor stuff
+		
         
         patients = new PriorityQueue<Patient>();
         patients.add(new Patient("Jack", "Johnson", "Herpes", 0, 0));
@@ -113,9 +117,6 @@ public class Screen extends JPanel implements ActionListener {
         patients.add(new Patient("Chris", "Young", "Osteoporosis", 2, 2));
         patients.add(new Patient("Brian", "Chao", "Depression", 3, 3));
         patients.add(new Patient("David", "Sillman", "Large Mouth", 0, 4));
-        
-        colorOne = Color.black;
-        colorTwo = Color.white;
         
         view = 0;
         
@@ -132,7 +133,6 @@ public class Screen extends JPanel implements ActionListener {
         Font font = new Font("Arial", Font.PLAIN, 32);
         g.setFont(font);
         //set color
-        //drawBackground(g, colorOne, colorTwo);
         
         //nurse stuff
         
@@ -193,7 +193,7 @@ public class Screen extends JPanel implements ActionListener {
         nurseTextArea.setText(text);
     }
     public void drawDoctorView(Graphics g) {
-        
+    	    
     }
     public void drawBillerView(Graphics g) {
         
