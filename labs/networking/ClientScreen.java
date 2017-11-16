@@ -8,72 +8,82 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 import java.io.*;
 import java.net.*;
 
-public class ClientScreen extends JPanel implements ActionListener {
+public class ClientScreen extends JPanel implements ActionListener, MouseListener {
     
     ObjectOutputStream outObj;
-    ObjectInputStream inObj;
     Game game;
+    private int gridX = 50;
+    private int gridY = 50;
+    private int squareSize = 50;
+    private boolean sent = false;
     
 	public ClientScreen() throws IOException{
 		
 		this.setLayout(null);
-		
 		this.setFocusable(true);
+        addMouseListener(this);
         
         game = new Game();
-        
-        try {
-            String hostName = "localhost";
-            int portNumber = 444;
-            Socket serverSocket = new Socket(hostName, portNumber);
-             
-            inObj = new ObjectInputStream(serverSocket.getInputStream());
-            outObj = new ObjectOutputStream(serverSocket.getOutputStream());
-            game = (Game)inObj.readObject();            
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class does not exist" + e);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection");
-            System.exit(1);
-        }
 	}
-
-
 	public Dimension getPreferredSize() {
         return new Dimension(800,600);
 	}
-	
 	public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-
+        game.drawMe(g, gridX, gridY, squareSize);
 	}
-    public void getGame() throws IOException {
-        try {      
-            game = (Game) inObj.readObject();       
+	public void actionPerformed(ActionEvent e) {}
+    public void mousePressed(MouseEvent e) {
+        int row = (e.getY() - gridY)/squareSize;
+        int column = (e.getX() - gridX)/squareSize;
+        if(game.move(row, column, "O")) {
+            try {
+                outObj.writeObject(game);
+            } catch (IOException err) {
+                System.out.println(err);
+            }
+            repaint();
+        }
+    }
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+    public void poll() {
+        String hostName = "localhost";
+        int portNumber = 3000;
+         
+        try {
+             
+            Socket serverSocket = new Socket(hostName, portNumber);
+             
+            ObjectInputStream inObj = new ObjectInputStream(serverSocket.getInputStream());
+            outObj = new ObjectOutputStream(serverSocket.getOutputStream());
+             
+            //Receive connection message
+            //Waits for and receives an object
+            //readObject() requires a ClassNOtFoundException
+            String serverMessage = (String) inObj.readObject(); 
+            System.out.println(serverMessage);
+             
+            while(true) {
+                game = (Game) inObj.readObject();
+                repaint();
+            }
+ 
         } catch (ClassNotFoundException e) {
             System.err.println("Class does not exist" + e);
             System.exit(1);
         } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to get game");
+            System.out.println(e);
+            System.err.println("Couldn't get I/O for the connection to " + hostName);
             System.exit(1);
         }
     }
-    public void sendGame() throws IOException {
-         try {             
-            outObj.writeObject(game);
-            outObj.close();
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection");
-            System.exit(1);
-        }
-    }
-	public void actionPerformed(ActionEvent e) {
-		
-	}
 }
