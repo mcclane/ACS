@@ -36,6 +36,7 @@ public class ClientScreen extends JPanel implements ActionListener, MouseListene
 	}
 	public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawString("You are O", 50, 10);
         game.drawMe(g, gridX, gridY, squareSize);
 	}
 	public void actionPerformed(ActionEvent e) {}
