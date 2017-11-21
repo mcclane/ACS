@@ -8,6 +8,7 @@ public class Game implements Serializable {
     String turn = "X";
     int XScore = 0;
     int OScore = 0;
+    boolean done = false;
     public Game() {
         grid = new String[3][3];
         for(int r = 0;r < grid.length;r++) {
@@ -21,6 +22,7 @@ public class Game implements Serializable {
         g.setColor(Color.green);
         g.fillRect(x+squareSize*3, y, squareSize, squareSize);
         g.setColor(Color.black);
+        g.drawString("You can only reset if it is your turn!", 500, 50);
         g.drawString("Reset", x+squareSize*3, y+squareSize/2);
         g.drawString(status, x, y);
         g.drawString("X: "+XScore+" O Score: "+OScore, x+100, y);
@@ -32,10 +34,10 @@ public class Game implements Serializable {
         }
     }
     public boolean move(int r, int c, String letter) {
-        if(r == 0 && c == 3) {
+        if(r == 0 && c == 3 && turn.equals(letter)) {
             reset();
         }
-        if(letter.equals(turn) && r < grid.length && c < grid[0].length && grid[r][c].equals(" ")) {
+        if(!done && letter.equals(turn) && r < grid.length && c < grid[0].length && grid[r][c].equals(" ")) {
             grid[r][c] = letter;
             if(letter.equals("X")) {
                 turn = "O";
@@ -46,17 +48,17 @@ public class Game implements Serializable {
                 status = "X's turn";
             }
             if(checkTicTacToe("X")) {
-                turn = "asdf";
+                done = true;
                 XScore++;
-                status = "x wins";
+                status = "x wins, "+status;
             }
             else if(checkTicTacToe("O")) {
-                turn = "asdf";
+                done = true;
                 OScore++;
                 status = "o wins";
             }
             else if(checkTie()) {
-                turn = "asdf";
+                done = true;
                 status = "Tie";
             }
             System.out.println("X: "+checkTicTacToe("X"));
@@ -93,11 +95,12 @@ public class Game implements Serializable {
         return false;
     }
     public void reset() {
+        done = false;
         for(int i = 0;i < grid.length;i++) {
             for(int j = 0;j < grid[i].length;j++) {
                 grid[i][j] = " ";
             }
         }
-        status = "X's turn";
+        status = turn+"'s turn";
     }
 }

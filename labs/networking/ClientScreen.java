@@ -41,6 +41,7 @@ public class ClientScreen extends JPanel implements ActionListener, MouseListene
 	}
 	public void actionPerformed(ActionEvent e) {}
     public void mousePressed(MouseEvent e) {
+        repaint();
         int row = (e.getY() - gridY)/squareSize;
         int column = (e.getX() - gridX)/squareSize;
         if(game.move(row, column, "O")) {
