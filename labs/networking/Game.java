@@ -1,6 +1,9 @@
 import java.io.Serializable;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.net.URL;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class Game implements Serializable {
     String[][] grid;
@@ -42,6 +45,7 @@ public class Game implements Serializable {
             if(letter.equals("X")) {
                 turn = "O";
                 status = "O's turn";
+                playSound("sound/cannon.wav");
             }
             else {
                 turn = "X";
@@ -102,5 +106,15 @@ public class Game implements Serializable {
             }
         }
         status = turn+"'s turn";
+    }
+    public void playSound(String filename) {
+        try {
+            URL url = this.getClass().getClassLoader().getResource(filename);
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(url));
+            clip.start();
+        } catch (Exception exc) {
+            exc.printStackTrace(System.out);
+        }
     }
 }
