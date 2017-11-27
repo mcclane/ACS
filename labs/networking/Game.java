@@ -11,6 +11,7 @@ public class Game implements Serializable {
     String turn = "O";
     int XScore = 0;
     int OScore = 0;
+    int tieScore = 0;
     boolean done = false;
     boolean ai = false;
     public Game() {
@@ -29,7 +30,7 @@ public class Game implements Serializable {
         g.drawString("You can only reset if it is your turn!", 500, 50);
         g.drawString("Reset", x+squareSize*3, y+squareSize/2);
         g.drawString(status, x, y);
-        g.drawString("X: "+XScore+" O Score: "+OScore, x+100, y);
+        g.drawString("X: "+XScore+" O Score: "+OScore+" Ties: "+tieScore, x+100, y);
         for(int r = 0;r < grid.length;r++) {
             for(int c = 0;c <grid[r].length;c++) {
                 g.drawRect(c*squareSize+x,r*squareSize+y, squareSize, squareSize);
@@ -65,6 +66,7 @@ public class Game implements Serializable {
             }
             else if(checkTie()) {
                 done = true;
+                tieScore++;
                 status = "Tie, "+status;
                 playSound("tie.wav");
             }
