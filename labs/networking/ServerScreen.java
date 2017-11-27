@@ -39,6 +39,12 @@ public class ServerScreen extends JPanel implements ActionListener, MouseListene
         super.paintComponent(g);
         g.drawString("You are X", 50, 10);
         game.drawMe(g, gridX, gridY, squareSize);
+        if(game.status.contains("x wins")) {
+            game.playSound("win.wav");
+        }
+        else if(game.status.contains("o wins")) {
+            game.playSound("lose.wav");
+        }
 	}
 	public void actionPerformed(ActionEvent e) {}
     public void mousePressed(MouseEvent e) {
@@ -74,6 +80,14 @@ public class ServerScreen extends JPanel implements ActionListener, MouseListene
 
             while(true) {
                 game = (Game) inObj.readObject();
+                if(game.ai) {
+                    game.randomMove("X");
+                    try {
+                        outObj.writeObject(game);
+                    } catch (IOException err) {
+                        System.out.println(err);
+                    }
+                }
                 repaint();
             }
  

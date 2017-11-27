@@ -8,10 +8,11 @@ import javax.sound.sampled.Clip;
 public class Game implements Serializable {
     String[][] grid;
     String status;
-    String turn = "X";
+    String turn = "O";
     int XScore = 0;
     int OScore = 0;
     boolean done = false;
+    boolean ai = false;
     public Game() {
         grid = new String[3][3];
         for(int r = 0;r < grid.length;r++) {
@@ -45,11 +46,12 @@ public class Game implements Serializable {
             if(letter.equals("X")) {
                 turn = "O";
                 status = "O's turn";
-                playSound("sound/cannon.wav");
+                playSound("x.wav");
             }
             else {
                 turn = "X";
                 status = "X's turn";
+                playSound("o.wav");
             }
             if(checkTicTacToe("X")) {
                 done = true;
@@ -59,11 +61,12 @@ public class Game implements Serializable {
             else if(checkTicTacToe("O")) {
                 done = true;
                 OScore++;
-                status = "o wins";
+                status = "o wins, "+status;
             }
             else if(checkTie()) {
                 done = true;
-                status = "Tie";
+                status = "Tie, "+status;
+                playSound("tie.wav");
             }
             System.out.println("X: "+checkTicTacToe("X"));
             System.out.println("O: "+checkTicTacToe("O"));
@@ -100,6 +103,7 @@ public class Game implements Serializable {
     }
     public void reset() {
         done = false;
+        ai = false;
         for(int i = 0;i < grid.length;i++) {
             for(int j = 0;j < grid[i].length;j++) {
                 grid[i][j] = " ";
@@ -116,5 +120,15 @@ public class Game implements Serializable {
         } catch (Exception exc) {
             exc.printStackTrace(System.out);
         }
+    }
+    public boolean randomMove(String letter) {
+        for(int i = 0;i < grid.length;i++) {
+            for(int j = 0;j < grid[i].length;j++) {
+                if(grid[i][j].equals(" ")) {
+                    return move(i, j, letter);
+                }
+            }
+        }
+        return false;
     }
 }
