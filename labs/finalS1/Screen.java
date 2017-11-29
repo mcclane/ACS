@@ -28,20 +28,27 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
 public class Screen extends JPanel implements KeyListener, ActionListener, MouseListener {
-    Character c;
-    HashMap<String, Boolean> keys;
+    Character character;
+    HashMap<Location, Thing> grid;
     TreeSet<Item> items;
+    
+    boolean up, down, right, left;
     public Screen() {
         this.setLayout(null);
         setFocusable(true);
         addMouseListener(this);
         addKeyListener(this);
-        c = new Character(100, 100);
-        keys = new HashMap<String, Boolean>();
-        keys.put("up", false);
-        keys.put("down", false);
-        keys.put("left", false);
-        keys.put("right", false);
+        
+        grid = new HashMap<Location, Thing>();
+        
+        for(int x = 0;x < 20;x++) {
+            for(int y = 0;y < 14;y++) {
+                grid.put(new Location(x, y), new Nothing());
+            }
+        }
+        character = new Character(new Location(5, 5));
+        grid.put(new Location(10, 10), new Item("Orange"));
+        items = new TreeSet<Item>();
     }
     public Dimension getPreferredSize() {
         // Sets the size of the panel
@@ -51,39 +58,45 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		// draw background
         Font font = new Font("Arial", Font.PLAIN, 25);
         g.setFont(font);
-        g.setColor(Color.black);
+        g.setColor(Color.white);
         g.fillRect(0,0,1000,700);
         g.setColor(Color.white);
         g.fillRect(0, 700, 1000, 100);
         g.setColor(Color.black);
         g.drawString("Your things", 300, 720);
-        c.drawMe(g);
+        
+        for(Location l : grid.keySet()) {
+            grid.get(l).drawMe(g, l.x*50, l.y*50);
+        }
+        character.drawMe(g);
     }
     public void actionPerformed(ActionEvent e) {
         
     }
     public void animate() {
- 
+
         while (true) {
-            if(keys.get("left")) {
-                c.move(-1, 0);
+            //move the character
+            if(up) {
+                character.move(0, -1, grid);
             }
-            if(keys.get("right")) {
-                c.move(1, 0);
+            if(down) {
+                character.move(0, 1, grid);
             }
-            if(keys.get("up")) {
-                c.move(0, -1);
+            if(left) {
+                character.move(-1, 0, grid);
             }
-            if(keys.get("down")) {
-                c.move(0, 1);
+            if(right) {
+                character.move(1, 0, grid);
             }
+            //check for character collisions
+            
             //Wait 
             try {
-                Thread.sleep(10); //milliseconds
+                Thread.sleep(100); //milliseconds
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-            
             repaint();
         }
  
@@ -96,35 +109,42 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
     public void keyPressed(KeyEvent e) {
         int keyDown = e.getKeyCode();
         switch(keyDown) {
+            //left
             case 65:
-                keys.put("left", true);
+                left = true;
                 break;
+            //right
             case 68:
-                keys.put("right", true);
+                right = true;
                 break;
+            //up
             case 87:
-                keys.put("up", true);
+                up = true;
                 break;
+            //down
             case 83:
-                keys.put("down", true);
+                down = true;
                 break;
         }
-        System.out.println("key code: " + e.getKeyCode()); 
     }
     public void keyReleased(KeyEvent e) {
         int keyDown = e.getKeyCode();
         switch(keyDown) {
+            //left
             case 65:
-                keys.put("left", false);
+                left = false;
                 break;
+            //right
             case 68:
-                keys.put("right", false);
+                right = false;
                 break;
+            //up
             case 87:
-                keys.put("up", false);
+                up = false;
                 break;
+            //down
             case 83:
-                keys.put("down", false);
+                down = false;
                 break;
         }
     }
