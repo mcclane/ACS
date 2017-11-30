@@ -48,6 +48,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         }
         character = new Character(new Location(5, 5));
         grid.put(new Location(10, 10), new Item("Orange"));
+        grid.put(new Location(1, 7), new Item("Apple"));        
         items = new TreeSet<Item>();
     }
     public Dimension getPreferredSize() {
