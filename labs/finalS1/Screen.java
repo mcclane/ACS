@@ -41,7 +41,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         
         grid = new HashMap<Location, Thing>();
         
-        //read in the file
+        //read in the file to set up level
         try {
             Scanner scan = new Scanner(new File("level1.txt"));
             int x = 0;
