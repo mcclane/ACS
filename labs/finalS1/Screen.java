@@ -41,19 +41,52 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         
         grid = new HashMap<Location, Thing>();
         
-        for(int x = 0;x < 20;x++) {
-            for(int y = 0;y < 14;y++) {
-                grid.put(new Location(x, y), new Nothing());
+        //read in the file
+        try {
+            Scanner scan = new Scanner(new File("level1.txt"));
+            int x = 0;
+            int y = 0;
+            while (scan.hasNextLine()){
+                String line = scan.nextLine();
+                for(int i = 0;i < line.length();i++) {
+                    Location loc = new Location(x, y);
+                    switch(line.charAt(i)) {
+                        case 'n':
+                            grid.put(loc, new Nothing());
+                            System.out.println(loc);
+                            break;
+                        case 'o':
+                            grid.put(loc, new Item("Orange"));
+                            break;
+                        case 'a':
+                            grid.put(loc, new Item("Apple"));
+                            break;
+                        case 'w':
+                            grid.put(loc, new Wall());
+                            break;
+                    }
+                    x = (x+1)%line.length();
+                }
+                y++;
             }
         }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        /*for(int x = n;x < 28;x++) {
+            for(int y = n;y < 18;y++) {
+                grid.put(new Location(x, y), new Nothing());
+            }
+        }*/
         character = new Character(new Location(5, 5));
-        grid.put(new Location(10, 10), new Item("Orange"));
-        grid.put(new Location(1, 7), new Item("Apple"));        
+        /*grid.put(new Location(1n, 1n), new Item("Orange"));
+        grid.put(new Location(1, 7), new Item("Apple")); */       
         items = new TreeSet<Item>();
     }
     public Dimension getPreferredSize() {
         // Sets the size of the panel
-        return new Dimension(1000,800);
+        return new Dimension(1400,1000);
     }
     public void paintComponent(Graphics g) {
 		// draw background
@@ -62,9 +95,9 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         g.setColor(Color.white);
         g.fillRect(0,0,1000,700);
         g.setColor(Color.white);
-        g.fillRect(0, 700, 1000, 100);
+        g.fillRect(0, 900, 1400, 100);
         g.setColor(Color.black);
-        g.drawString("Your things", 300, 720);
+        g.drawString("Your things", 300, 920);
         
         for(Location l : grid.keySet()) {
             grid.get(l).drawMe(g, l.x*50, l.y*50);

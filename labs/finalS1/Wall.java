@@ -1,12 +1,10 @@
 import java.awt.Graphics;
 import java.awt.Color;
 
-public abstract class Thing {
-    int x, y;
-    int width = 50;
-    int height = 50;
+public class Wall extends Thing {
+    public Wall() {}
     public void drawMe(Graphics g, int x, int y) {
-        g.setColor(Color.black);
+        g.setColor(Color.blue);
         g.fillRect(x, y, width, height);
     }
 }

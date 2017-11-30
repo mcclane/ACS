@@ -19,7 +19,7 @@ public class Character {
         g.fillRect(l.x*width, l.y*height, width, height);
         g.setColor(Color.black);
         g.fillRect(l.x*width+width/4, l.y*height+height/4, width/2, height/2);
-        drawInventory(g, 50, 730);
+        drawInventory(g, 50, 930);
     }
     public void drawInventory(Graphics g, int x, int y) {
        for(Item i : inventory.keySet()) {
