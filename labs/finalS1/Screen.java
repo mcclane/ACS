@@ -27,19 +27,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
-public class Screen extends JPanel implements KeyListener, ActionListener, MouseListener {
+public class Screen extends JPanel implements KeyListener {
     Character character;
     HashMap<Location, Thing> grid;
-    TreeSet<Item> items;
+    World w;
     
     boolean up, down, right, left;
     public Screen() {
         this.setLayout(null);
         setFocusable(true);
-        addMouseListener(this);
         addKeyListener(this);
         
         grid = new HashMap<Location, Thing>();
+        w = new World();
         
         //read in the file to set up level
         try {
@@ -54,14 +54,17 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
                         case 'n':
                             grid.put(loc, new Nothing());
                             break;
-                        case 'o':
+                        case 'O':
                             grid.put(loc, new Item("Orange"));
                             break;
-                        case 'a':
+                        case 'A':
                             grid.put(loc, new Item("Apple"));
                             break;
                         case 'w':
                             grid.put(loc, new Wall());
+                            break;
+                        case 'o':
+                            grid.put(loc, new Obstacle());
                             break;
                     }
                     x = (x+1)%line.length();
@@ -72,7 +75,6 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
         /*for(int x = n;x < 28;x++) {
             for(int y = n;y < 18;y++) {
                 grid.put(new Location(x, y), new Nothing());
@@ -81,31 +83,31 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         character = new Character(new Location(5, 5));
         /*grid.put(new Location(1n, 1n), new Item("Orange"));
         grid.put(new Location(1, 7), new Item("Apple")); */       
-        items = new TreeSet<Item>();
     }
     public Dimension getPreferredSize() {
         // Sets the size of the panel
-        return new Dimension(1400,1000);
+        return new Dimension(1900,1000);
     }
     public void paintComponent(Graphics g) {
 		// draw background
         Font font = new Font("Arial", Font.PLAIN, 25);
         g.setFont(font);
         g.setColor(Color.white);
-        g.fillRect(0,0,1000,700);
-        g.setColor(Color.white);
-        g.fillRect(0, 900, 1400, 100);
-        g.setColor(Color.black);
-        g.drawString("Your things", 300, 920);
+        g.fillRect(0,0,1900,1000);
+        //g.setColor(Color.white);
+        //g.fillRect(0, 900, 1400, 100);
+        //g.setColor(Color.black);
+        //g.drawString("Your things", 300, 920);
         
-        for(Location l : grid.keySet()) {
+        /*for(Location l : grid.keySet()) {
             grid.get(l).drawMe(g, l.x*50, l.y*50);
         }
         character.drawMe(g);
+        */
+        w.drawMe(g);
+        character.drawMe(g, 12, 12);
     }
-    public void actionPerformed(ActionEvent e) {
-        
-    }
+    
     public void animate() {
         while (true) {
             //move the character
@@ -121,7 +123,18 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
             if(right) {
                 character.move(1, 0, grid);
             }
-            
+            if(up) {
+                w.move(0, -1);
+            }
+            if(down) {
+                w.move(0, 1);
+            }
+            if(left) {
+                w.move(-1, 0);
+            }
+            if(right) {
+                w.move(1, 0);
+            }
             //Wait 
             try {
                 Thread.sleep(100); //milliseconds
@@ -130,13 +143,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
             }
             repaint();
         }
- 
-    }
-    public void mousePressed(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void mouseClicked(MouseEvent e) {}
+    } 
     public void keyPressed(KeyEvent e) {
         int keyDown = e.getKeyCode();
         switch(keyDown) {

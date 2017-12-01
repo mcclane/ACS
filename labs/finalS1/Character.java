@@ -21,6 +21,13 @@ public class Character {
             health.push(1);
         }
     }
+    public void drawMe(Graphics g, int x, int y) {
+        g.setColor(Color.white);
+        g.fillRect(x*width, y*height, width, height);
+        g.setColor(Color.black);
+        g.fillRect(x*width+width/4, y*height+height/4, width/2, height/2);
+        drawInventory(g, 50, 930);
+    }
     public void drawMe(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(l.x*width, l.y*height, width, height);
@@ -30,9 +37,10 @@ public class Character {
     }
     public void drawInventory(Graphics g, int x, int y) {
        Iterator<Integer> it = health.iterator();
-       int tx = x;
+       int tx = x+500;
        g.setColor(Color.green);
        while(it.hasNext()) {
+           it.next();
            g.fillRect(tx, y-30, 20, 10);
            tx += 20;
        }
@@ -46,13 +54,11 @@ public class Character {
         if(context.containsKey(futureLocation)) {
             //we can move if there is a "Nothing"
             if(context.get(futureLocation) instanceof Nothing) {
-                System.out.println("we get to move to nothing!");
                 l.x += dx;
                 l.y += dy;
             }
             //if we find an item, pick it up and move to where it was
             else if(context.get(futureLocation) instanceof Item) {
-                System.out.println("you found an item");
                 addToInventory((Item)context.get(futureLocation));
                 //remove the item from the grid
                 context.put(futureLocation, new Nothing());
@@ -60,7 +66,7 @@ public class Character {
                 l.y += dy;
             }
             //if we hit an obstacle
-            if(context.get(futureLocation) instanceof Nothing) {
+            else if(context.get(futureLocation) instanceof Obstacle) {
                 System.out.println("obstacle");
                 health.pop();
                 l.x += dx;
