@@ -53,7 +53,6 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
                     switch(line.charAt(i)) {
                         case 'n':
                             grid.put(loc, new Nothing());
-                            System.out.println(loc);
                             break;
                         case 'o':
                             grid.put(loc, new Item("Orange"));
@@ -108,7 +107,6 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         
     }
     public void animate() {
-
         while (true) {
             //move the character
             if(up) {
@@ -123,7 +121,6 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
             if(right) {
                 character.move(1, 0, grid);
             }
-            //check for character collisions
             
             //Wait 
             try {
