@@ -75,14 +75,7 @@ public class Screen extends JPanel implements KeyListener {
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        /*for(int x = n;x < 28;x++) {
-            for(int y = n;y < 18;y++) {
-                grid.put(new Location(x, y), new Nothing());
-            }
-        }*/
-        character = new Character(new Location(5, 5));
-        /*grid.put(new Location(1n, 1n), new Item("Orange"));
-        grid.put(new Location(1, 7), new Item("Apple")); */       
+        character = new Character(new Location(18, 11)); 
     }
     public Dimension getPreferredSize() {
         // Sets the size of the panel
@@ -94,47 +87,27 @@ public class Screen extends JPanel implements KeyListener {
         g.setFont(font);
         g.setColor(Color.white);
         g.fillRect(0,0,1900,1000);
-        //g.setColor(Color.white);
-        //g.fillRect(0, 900, 1400, 100);
-        //g.setColor(Color.black);
-        //g.drawString("Your things", 300, 920);
-        
-        /*for(Location l : grid.keySet()) {
-            grid.get(l).drawMe(g, l.x*50, l.y*50);
-        }
-        character.drawMe(g);
-        */
+
         w.drawMe(g);
-        character.drawMe(g, 12, 12);
+        character.drawMe(g);
     }
     
     public void animate() {
         while (true) {
-            //move the character
+            //move the world
             if(up) {
-                character.move(0, -1, grid);
+                w.move(0, -1, character);
             }
             if(down) {
-                character.move(0, 1, grid);
+                w.move(0, 1, character);
             }
             if(left) {
-                character.move(-1, 0, grid);
+                w.move(-1, 0, character);
             }
             if(right) {
-                character.move(1, 0, grid);
+                w.move(1, 0, character);
             }
-            if(up) {
-                w.move(0, -1);
-            }
-            if(down) {
-                w.move(0, 1);
-            }
-            if(left) {
-                w.move(-1, 0);
-            }
-            if(right) {
-                w.move(1, 0);
-            }
+            character.toggleWalk();
             //Wait 
             try {
                 Thread.sleep(100); //milliseconds
@@ -150,18 +123,25 @@ public class Screen extends JPanel implements KeyListener {
             //left
             case 65:
                 left = true;
+                character.setOrientation("walkingHorizontal1");
                 break;
             //right
             case 68:
                 right = true;
+                character.setOrientation("walkingHorizontal1");
                 break;
             //up
             case 87:
                 up = true;
+                character.setOrientation("walkingVertical1");
                 break;
             //down
             case 83:
                 down = true;
+                character.setOrientation("walkingVertical1");
+                break;
+            case 73:
+                 character.toggleInventory(true);
                 break;
         }
     }
@@ -171,18 +151,29 @@ public class Screen extends JPanel implements KeyListener {
             //left
             case 65:
                 left = false;
+                if(!down && !up && !left && !right)
+                    character.setOrientation("standingLeft");
                 break;
             //right
             case 68:
                 right = false;
+                if(!down && !up && !left && !right)
+                    character.setOrientation("standingRight");
                 break;
             //up
             case 87:
                 up = false;
+                if(!down && !up && !left && !right)
+                    character.setOrientation("standingUp");
                 break;
             //down
             case 83:
                 down = false;
+                if(!down && !up && !left && !right)
+                    character.setOrientation("standingDown");
+                break;
+            case 73:
+                character.toggleInventory(false);
                 break;
         }
     }

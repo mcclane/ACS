@@ -23,6 +23,6 @@ public class Location implements Comparable<Location> {
         return x*1000+y;
     }
     public String toString() {
-        return x+", "+y;
+        return "("+x+", "+y+")";
     }
 }
