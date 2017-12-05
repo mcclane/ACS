@@ -26,19 +26,15 @@ public class Character {
         height = 50;
         images = new HashMap<String, BufferedImage>();
          try {
-            images.put("standingUp", ImageIO.read(new File("standingUp.jpg")));
-            images.put("standingDown", ImageIO.read(new File("standingDown.jpg")));
-            images.put("standingLeft", ImageIO.read(new File("standingLeft.jpg")));
-            images.put("standingRight", ImageIO.read(new File("standingRight.jpg")));
-            images.put("walkingHorizontal1", ImageIO.read(new File("walkingHorizontal1.jpg")));
-            images.put("walkingHorizontal2", ImageIO.read(new File("walkingHorizontal2.jpg")));
-            images.put("walkingVertical1", ImageIO.read(new File("walkingVertical1.jpg")));
-            images.put("walkingVertical2", ImageIO.read(new File("walkingVertical2.jpg")));
+            images.put("characterUp", ImageIO.read(new File("characterUp.png")));
+            images.put("characterDown", ImageIO.read(new File("characterDown.png")));
+            images.put("characterLeft", ImageIO.read(new File("characterLeft.png")));
+            images.put("characterRight", ImageIO.read(new File("characterRight.png")));
             //strawberryImg = ImageIO.read(new File(filename));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        display = images.get("standingUp");
+        display = images.get("characterDown");
         inventory = new TreeMap<Tile, Integer>();
         health = new Stack<Integer>();
         for(int i = 0;i < 20;i++) {
@@ -124,15 +120,5 @@ public class Character {
     }
     public void setOrientation(String state) {
         display = images.get(state);
-    }
-    public void toggleWalk() {
-        if(display == images.get("walkingVertical2"))
-            display = images.get("walkingVertical1");
-        else if(display == images.get("walkingVertical1"))
-            display = images.get("walkingVertical2");
-        else if(display == images.get("walkingHorizontal2"))
-            display = images.get("walkingHorizontal1");
-        else if(display == images.get("walkingHorizontal1"))
-            display = images.get("walkingHorizontal2");
     }
 }

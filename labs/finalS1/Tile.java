@@ -15,7 +15,7 @@ public class Tile implements Comparable<Tile>{
     static HashMap<String, BufferedImage> images = new HashMap<String, BufferedImage>();
     public Tile(String type, String filename) {
         this.type = type;
-         try {
+        try {
             images.put(type, ImageIO.read(new File(filename)));
             //strawberryImg = ImageIO.read(new File(filename));
         } catch (IOException e) {

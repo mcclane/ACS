@@ -21,11 +21,14 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import javax.swing.ImageIcon;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class World {
-    int horizontalOffset = 0;
-    int verticalOffset = 0;
+    int horizontalOffset = 45;
+    int verticalOffset = 45;
     int horizontalViewWindowSize = 37;
     int verticalViewWindowSize = 20;
 
@@ -36,6 +39,40 @@ public class World {
         
         //read in the file to set up level
         try {
+            BufferedImage mapImage = ImageIO.read(new File("level1.png"));
+            for(int r = 0;r < 150;r++) {
+                for(int c = 0;c < 150;c++) {
+                    Location loc = new Location(c, r);
+                    int clr = mapImage.getRGB(c, r);
+                    Color read = new Color((clr & 0x00ff0000) >> 16, (clr & 0x0000ff00) >> 8, clr & 0x000000ff);
+                    if(read.getRed() == 0 && read.getGreen() == 0 && read.getBlue() == 0) {
+                        //nothing
+                    }
+                    else if(read.getRed() == 255 && read.getGreen() == 255 && read.getBlue() == 255) {
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                    }
+                    else if(read.getRed() == 0 && read.getGreen() == 255 && read.getBlue() == 0) {
+                        grid.put(loc, new Tile("tree", "palmtreewithdirt.png"));
+                    }
+                    else if(read.getRed() == 102 && read.getGreen() == 51 && read.getBlue() == 0) {
+                        grid.put(loc, new Tile("wall", "rock.png"));
+                    }
+                    else if(read.getRed() == 0 && read.getGreen() == 0 && read.getBlue() == 255) {
+                        grid.put(loc, new Tile("water", "water.png"));
+                    }
+                    else if(read.getRed() == 255 && read.getGreen() == 0 && read.getBlue() == 0) {
+                        grid.put(loc, new Tile("mine", "mine.png"));
+                    }
+                    else if(read.getRed() == 50 && read.getGreen() == 100 && read.getBlue() == 150) {
+                        grid.put(loc, new Tile("item", "sail", "sail.png"));
+                    }
+                }
+            }
+            //strawberryImg = ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*try {
             Scanner scan = new Scanner(new File("level1.txt"));
             int y = 0;
             while (scan.hasNextLine()){
@@ -74,7 +111,7 @@ public class World {
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
     }
     public void drawMe(Graphics g) {
         int wx = 0;
@@ -99,18 +136,23 @@ public class World {
         Location possibleCharacterLocation = new Location(horizontalOffset+c.l.x+dx, verticalOffset+c.l.y+dy);
         if(grid.containsKey(possibleCharacterLocation)) {
             switch(grid.get(possibleCharacterLocation).type) {
-                case "carpet":
+                case "dirt":
                     horizontalOffset += dx;
                     verticalOffset += dy;
                     break;
-                case "obstacle":
+                case "hole":
+                    horizontalOffset += dx;
+                    verticalOffset += dy;
+                    break;
+                case "mine":
                     c.hurt();
+                    grid.put(possibleCharacterLocation, new Tile("hole", "hole.png"));
                     horizontalOffset += dx;
                     verticalOffset += dy;
                     break;
                 case "item":
                     c.addToInventory(grid.get(possibleCharacterLocation));
-                    grid.put(possibleCharacterLocation, new Tile("carpet", "carpet.jpg"));
+                    grid.put(possibleCharacterLocation, new Tile("dirt", "dirt.png"));
                     horizontalOffset += dx;
                     verticalOffset += dy;
             }

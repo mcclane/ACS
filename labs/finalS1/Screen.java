@@ -107,7 +107,6 @@ public class Screen extends JPanel implements KeyListener {
             if(right) {
                 w.move(1, 0, character);
             }
-            character.toggleWalk();
             //Wait 
             try {
                 Thread.sleep(100); //milliseconds
@@ -123,22 +122,22 @@ public class Screen extends JPanel implements KeyListener {
             //left
             case 65:
                 left = true;
-                character.setOrientation("walkingHorizontal1");
+                character.setOrientation("characterLeft");
                 break;
             //right
             case 68:
                 right = true;
-                character.setOrientation("walkingHorizontal1");
+                character.setOrientation("characterRight");
                 break;
             //up
             case 87:
                 up = true;
-                character.setOrientation("walkingVertical1");
+                character.setOrientation("characterUp");
                 break;
             //down
             case 83:
                 down = true;
-                character.setOrientation("walkingVertical1");
+                character.setOrientation("characterDown");
                 break;
             case 73:
                  character.toggleInventory(true);
@@ -151,31 +150,31 @@ public class Screen extends JPanel implements KeyListener {
             //left
             case 65:
                 left = false;
-                if(!down && !up && !left && !right)
-                    character.setOrientation("standingLeft");
                 break;
             //right
             case 68:
                 right = false;
-                if(!down && !up && !left && !right)
-                    character.setOrientation("standingRight");
                 break;
             //up
             case 87:
                 up = false;
-                if(!down && !up && !left && !right)
-                    character.setOrientation("standingUp");
                 break;
             //down
             case 83:
                 down = false;
-                if(!down && !up && !left && !right)
-                    character.setOrientation("standingDown");
                 break;
             case 73:
                 character.toggleInventory(false);
                 break;
         }
+        if(left)
+            character.setOrientation("characterLeft");
+        else if(right)
+            character.setOrientation("characterRight");
+        else if(up)
+            character.setOrientation("characterUp");
+        else if(down)
+            character.setOrientation("characterDown");
     }
     public void keyTyped(KeyEvent e) {}
 }
