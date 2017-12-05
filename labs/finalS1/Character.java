@@ -20,6 +20,7 @@ public class Character {
     boolean showInventory = false;
     HashMap<String, BufferedImage> images;
     BufferedImage display;
+    boolean dead = false;
     public Character(Location l) {
         this.l = l;
         width = 50;
@@ -43,10 +44,6 @@ public class Character {
     }
     public void drawMe(Graphics g) {
         g.setFont(font);
-        /*g.setColor(Color.white);
-        g.fillRect(l.x*width, l.y*height, width, height);
-        g.setColor(Color.black);
-        g.fillRect(l.x*width+width/4, l.y*height+height/4, width/2, height/2);*/
         g.drawImage(display, l.x*50, l.y*50, null);
         if(showInventory) 
             drawInventory(g, 1300, 100);
@@ -81,31 +78,6 @@ public class Character {
             x += 20;
         }
     }
-    /*public void move(int dx, int dy, HashMap<Location, Thing> context) {
-        Location futureLocation = new Location(l.x+dx, l.y+dy); 
-        if(context.containsKey(futureLocation)) {
-            //we can move if there is a "Nothing"
-            if(context.get(futureLocation) instanceof Nothing) {
-                l.x += dx;
-                l.y += dy;
-            }
-            //if we find an item, pick it up and move to where it was
-            else if(context.get(futureLocation) instanceof Item) {
-                addToInventory((Item)context.get(futureLocation));
-                //remove the item from the grid
-                context.put(futureLocation, new Nothing());
-                l.x += dx;
-                l.y += dy;
-            }
-            //if we hit an obstacle
-            else if(context.get(futureLocation) instanceof Obstacle) {
-                System.out.println("obstacle");
-                health.pop();
-                l.x += dx;
-                l.y += dy;
-            }
-        }
-    }*/
     public void addToInventory(Tile t) { 
         if(inventory.containsKey(t))
             inventory.put(t, inventory.get(t)+1);
@@ -113,7 +85,10 @@ public class Character {
             inventory.put(t, 1);  
     }
     public void hurt() {
-        health.pop();
+        if(!dead)
+            health.pop();
+        if(health.isEmpty())
+            dead = true;
     }
     public void toggleInventory(boolean newState) {
         showInventory = newState;

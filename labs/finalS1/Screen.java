@@ -39,7 +39,7 @@ public class Screen extends JPanel implements KeyListener {
         addKeyListener(this);
         
         grid = new HashMap<Location, Thing>();
-        w = new World();
+        w = new World("level1.png");
         
         //read in the file to set up level
         try {
@@ -107,6 +107,11 @@ public class Screen extends JPanel implements KeyListener {
             if(right) {
                 w.move(1, 0, character);
             }
+            if(character.dead) {
+                w = new World("level1.png");
+                character = new Character(new Location(18, 11)); 
+            }
+            w.moveEnemies(character);
             //Wait 
             try {
                 Thread.sleep(100); //milliseconds
