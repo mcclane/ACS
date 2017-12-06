@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class World {
     int horizontalOffset = 45;
@@ -111,46 +113,71 @@ public class World {
         int clx = c.l.x + horizontalOffset;
         int cly = c.l.y + verticalOffset;
         HashMap<Location, Enemy> newEnemies = new HashMap<Location, Enemy>();
-        for(Location l : enemies.keySet()) {
-            Enemy e = enemies.get(l);
-            int dx = clx - l.x;
-            int dy = cly - l.y;
-            if(dx < 0) {
-                Location newLocation = new Location(l.x-1, l.y);
-                if(isAllowed(newLocation)) {
-                    newEnemies.put(newLocation, e);
-                    continue;
-                }
-            }
-            else if(dx > 0) {
-                Location newLocation = new Location(l.x+1, l.y);
-                if(isAllowed(newLocation)) {
-                    newEnemies.put(newLocation, e);
-                    continue;
-                }
-            }
-            else if(dy < 0) {
-                Location newLocation = new Location(l.x, l.y-1);
-                if(isAllowed(newLocation)) {
-                    newEnemies.put(newLocation, e);
-                    continue;
-                }
-            }
-            else if(dy > 0) {
-                Location newLocation = new Location(l.x, l.y+1);
-                if(isAllowed(newLocation)) {
-                    newEnemies.put(newLocation, e);
-                    continue;
-                }
-            }
-            else {
-                
-
-            }
+        ArrayList<Location> adjacent;
+        Location actualCharacterLocation = new Location(c.l.x+horizontalOffset, c.l.y+verticalOffset);
+        for(Location el : enemies.keySet()) {
+            Enemy e = enemies.get(el);
+            newEnemies.put(getMove(getCounters(el, actualCharacterLocation, enemies), el), enemies.get(el));
         }
         enemies = newEnemies;
     }
+    public Location getMove(HashMap<Location, Integer> counters, Location l) {
+        ArrayList<Location> adjacent = new ArrayList<Location>();
+        adjacent.add(new Location(l.x-1, l.y));
+        adjacent.add(new Location(l.x+1, l.y));
+        adjacent.add(new Location(l.x, l.y+1));
+        adjacent.add(new Location(l.x, l.y-1));
+        for(int i = 0;i < adjacent.size();i++) {
+            if(!counters.containsKey(adjacent.get(i))) {
+                    adjacent.remove(i);
+                    i--;
+            }
+        }
+        Location smallestCounter = adjacent.get(0);
+        for(int i = 0;i < adjacent.size();i++) {
+            if(counters.get(adjacent.get(i)) < counters.get(smallestCounter))
+                smallestCounter = adjacent.get(i);
+        }
+        return smallestCounter;
+    }
+    public HashMap<Location, Integer> getCounters(Location S, Location O, HashMap<Location, Enemy> enemies) {
+        HashMap<Location, Integer> counters = new HashMap<Location, Integer>();
+        Queue<Location> queue = new LinkedList<Location>();
+        queue.add(O);
+        counters.put(new Location(O.x, O.y), 0);
+        int counter = 0;
+        ArrayList<Location> adjacent;
+        boolean done = false;
+        while(!done) {
+            O = queue.poll();
+            adjacent = new ArrayList<Location>();
+            adjacent.add(new Location(O.x-1, O.y));
+            adjacent.add(new Location(O.x+1, O.y));
+            adjacent.add(new Location(O.x, O.y+1));
+            adjacent.add(new Location(O.x, O.y-1));
+            for(int i = 0;i < adjacent.size();i++) {
+                if(!isAllowed(adjacent.get(i))) {
+                    adjacent.remove(i);
+                    i--;
+                }
+            }
+            for(int i = 0;i < adjacent.size();i++) {
+                if(counters.containsKey(adjacent.get(i)))
+                    continue;
+                else if(adjacent.get(i).x == S.x && adjacent.get(i).y == S.y)
+                    done = true;
+                else {
+                    counters.put(adjacent.get(i), counter);
+                    queue.add(adjacent.get(i));
+                }
+            }
+            counter++;
+        }
+        return counters;
+    }
     public boolean isAllowed(Location l) {
+        if(grid.get(l) == null)
+            return false;
         switch(grid.get(l).type) {
             case "dirt":
                 return true;
