@@ -29,7 +29,9 @@ import java.awt.event.KeyEvent;
 
 public class Screen extends JPanel implements KeyListener {
     Character character;
-    HashMap<Location, Thing> grid;
+    int counter = 0;
+    int levelCounter = 1;
+    //HashMap<Location, Thing> grid;
     World w;
     
     boolean up, down, right, left;
@@ -38,43 +40,9 @@ public class Screen extends JPanel implements KeyListener {
         setFocusable(true);
         addKeyListener(this);
         
-        grid = new HashMap<Location, Thing>();
-        w = new World("level1.png");
+        //grid = new HashMap<Location, Thing>();
+        w = new World("level"+levelCounter+".png");
         
-        //read in the file to set up level
-        try {
-            Scanner scan = new Scanner(new File("level1.txt"));
-            int x = 0;
-            int y = 0;
-            while (scan.hasNextLine()){
-                String line = scan.nextLine();
-                for(int i = 0;i < line.length();i++) {
-                    Location loc = new Location(x, y);
-                    switch(line.charAt(i)) {
-                        case 'n':
-                            grid.put(loc, new Nothing());
-                            break;
-                        case 'O':
-                            grid.put(loc, new Item("Orange"));
-                            break;
-                        case 'A':
-                            grid.put(loc, new Item("Apple"));
-                            break;
-                        case 'w':
-                            grid.put(loc, new Wall());
-                            break;
-                        case 'o':
-                            grid.put(loc, new Obstacle());
-                            break;
-                    }
-                    x = (x+1)%line.length();
-                }
-                y++;
-            }
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         character = new Character(new Location(18, 11)); 
     }
     public Dimension getPreferredSize() {
@@ -90,6 +58,8 @@ public class Screen extends JPanel implements KeyListener {
 
         w.drawMe(g);
         character.drawMe(g);
+        g.setColor(Color.green);
+        g.drawString("Level: "+levelCounter, 50, 50);
     }
     
     public void animate() {
@@ -111,16 +81,31 @@ public class Screen extends JPanel implements KeyListener {
                 w = new World("level1.png");
                 character = new Character(new Location(18, 11)); 
             }
-            w.moveEnemies(character);
+            if(counter%2 == 0)
+                w.moveEnemies(character);
+            if(counter%3 == 0) {
+                w.spawnEnemy();
+            }
+            if(w.checkDone(character))
+                levelUp();
+            w.checkEnemyCollisions(character);
             //Wait 
             try {
                 Thread.sleep(100); //milliseconds
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
+            counter++;
             repaint();
         }
     } 
+    public void levelUp() {
+        System.out.println("level up!");
+        levelCounter++;
+        w = new World("level"+levelCounter+".png");
+        w.spawnEnemy();
+        //character = new Character(new Location(18, 11));
+    }
     public void keyPressed(KeyEvent e) {
         int keyDown = e.getKeyCode();
         switch(keyDown) {

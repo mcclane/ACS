@@ -16,7 +16,7 @@ public class Enemy {
     BufferedImage display;
     public Enemy() {
         try {
-            display = ImageIO.read(new File("characterUp.png"));
+            display = ImageIO.read(new File("enemy.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

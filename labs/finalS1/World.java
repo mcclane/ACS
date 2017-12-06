@@ -34,14 +34,24 @@ public class World {
     int verticalOffset = 45;
     int horizontalViewWindowSize = 37;
     int verticalViewWindowSize = 20;
+    Location characterSpawnPoint;
+    Location enemySpawnPoint;
 
     HashMap<Location, Tile> grid;
     HashMap<Location, Enemy> enemies;
+    HashMap<Location, Tile> items;
 
     public World(String filename) {
         enemies = new HashMap<Location, Enemy>();
-        enemies.put(new Location(70, 70), new Enemy());
+        /*enemies.put(new Location(70, 70), new Enemy());
+        enemies.put(new Location(75, 70), new Enemy());
+        enemies.put(new Location(80, 70), new Enemy());
+        enemies.put(new Location(60, 70), new Enemy());
+        enemies.put(new Location(50, 70), new Enemy());
+        enemies.put(new Location(85, 70), new Enemy());*/
+
         grid = new HashMap<Location, Tile>();
+        items = new HashMap<Location, Tile>();
         
         //read in the file to set up level
         try {
@@ -70,22 +80,35 @@ public class World {
                         grid.put(loc, new Tile("mine", "mine.png"));
                     }
                     else if(read.getRed() == 50 && read.getGreen() == 100 && read.getBlue() == 150) {
-                        grid.put(loc, new Tile("item", "Sail", "sail.png"));
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                        items.put(loc, new Tile("item", "Sail", "sail.png"));
                     }
                     else if(read.getRed() == 255 && read.getGreen() == 255 && read.getBlue() == 0) {
                         grid.put(loc, new Tile("sand", "sand.png"));
                     }
                     else if(read.getRed() == 200 && read.getGreen() == 50 && read.getBlue() == 200) {
-                        grid.put(loc, new Tile("item", "Mast", "mast.png"));
+                        grid.put(loc, new Tile("dirt", "dirt.png"));                        
+                        items.put(loc, new Tile("item", "Mast", "mast.png"));
                     }
                     else if(read.getRed() == 100 && read.getGreen() == 150 && read.getBlue() == 155) {
-                        grid.put(loc, new Tile("item", "Rudder", "rudder.png"));
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                        items.put(loc, new Tile("item", "Rudder", "rudder.png"));
+                    }
+                    else if(read.getRed() == 140 && read.getGreen() == 140 && read.getBlue() == 100) {
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                        characterSpawnPoint = loc;
+                    }
+                    else if(read.getRed() == 176 && read.getGreen() == 66 && read.getBlue() == 164) {
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                        enemySpawnPoint = loc;
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        horizontalOffset = characterSpawnPoint.x - 18;
+        verticalOffset = characterSpawnPoint.y - 11;
     }
     public void drawMe(Graphics g) {
         int wx = 0;
@@ -97,6 +120,9 @@ public class World {
                 if(grid.containsKey(temp)) {
                     grid.get(temp).drawMe(g, wx*50, wy*50);
                 }
+                if(items.containsKey(temp)) {
+                    items.get(temp).drawMe(g, wx*50, wy*50);
+                }
                 if(enemies.containsKey(temp)) {
                     enemies.get(temp).drawMe(g, wx*50, wy*50);
                 }
@@ -104,6 +130,10 @@ public class World {
             }
             wx = (wx+1);
         }
+    }
+    public void spawnEnemy() {
+        if(enemies.size() < 20)
+            enemies.put(enemySpawnPoint, new Enemy());
     }
     public void move(int dx, int dy) {
         horizontalOffset += dx;
@@ -117,22 +147,38 @@ public class World {
         Location actualCharacterLocation = new Location(c.l.x+horizontalOffset, c.l.y+verticalOffset);
         for(Location el : enemies.keySet()) {
             Enemy e = enemies.get(el);
-            newEnemies.put(getMove(getCounters(el, actualCharacterLocation, enemies), el), enemies.get(el));
+            newEnemies.put(getMove(getCounters(el, actualCharacterLocation, enemies), el, actualCharacterLocation), enemies.get(el));
         }
         enemies = newEnemies;
     }
-    public Location getMove(HashMap<Location, Integer> counters, Location l) {
+    public void checkEnemyCollisions(Character c) {
+        HashMap<Location, Enemy> newEnemies = new HashMap<Location, Enemy>();
+        for(Location el : enemies.keySet()) {
+            if(el.x == c.l.x+horizontalOffset && el.y == c.l.y+verticalOffset) {
+                c.hurt();
+            }
+            if(!grid.get(el).type.equals("mine"))
+                newEnemies.put(el, enemies.get(el));
+            else
+                grid.put(el, new Tile("hole", "hole.png"));
+
+        }
+        enemies = newEnemies;
+    }
+    public Location getMove(HashMap<Location, Integer> counters, Location l, Location cl) {
         ArrayList<Location> adjacent = new ArrayList<Location>();
         adjacent.add(new Location(l.x-1, l.y));
         adjacent.add(new Location(l.x+1, l.y));
         adjacent.add(new Location(l.x, l.y+1));
         adjacent.add(new Location(l.x, l.y-1));
         for(int i = 0;i < adjacent.size();i++) {
-            if(!counters.containsKey(adjacent.get(i))) {
+            if(!counters.containsKey(adjacent.get(i)) || enemies.containsKey(adjacent.get(i))) {
                     adjacent.remove(i);
                     i--;
             }
         }
+        if(adjacent.isEmpty())
+            return l;
         Location smallestCounter = adjacent.get(0);
         for(int i = 0;i < adjacent.size();i++) {
             if(counters.get(adjacent.get(i)) < counters.get(smallestCounter))
@@ -141,7 +187,12 @@ public class World {
         return smallestCounter;
     }
     public HashMap<Location, Integer> getCounters(Location S, Location O, HashMap<Location, Enemy> enemies) {
+
         HashMap<Location, Integer> counters = new HashMap<Location, Integer>();
+        if(S.x == O.x && S.y == O.y) {
+            counters.put(O, 0);
+            return counters;
+        }
         Queue<Location> queue = new LinkedList<Location>();
         queue.add(O);
         counters.put(new Location(O.x, O.y), 0);
@@ -208,19 +259,27 @@ public class World {
                     horizontalOffset += dx;
                     verticalOffset += dy;
                     break;
+                case "item":
+                    horizontalOffset += dx;
+                    verticalOffset += dy;
+                    break;
                 case "mine":
                     c.hurt();
                     grid.put(possibleCharacterLocation, new Tile("hole", "hole.png"));
                     horizontalOffset += dx;
                     verticalOffset += dy;
                     break;
-                case "item":
-                    c.addToInventory(grid.get(possibleCharacterLocation));
-                    grid.put(possibleCharacterLocation, new Tile("dirt", "dirt.png"));
-                    horizontalOffset += dx;
-                    verticalOffset += dy;
-                    break;
             }
         }
+        if(items.containsKey(possibleCharacterLocation)) {
+            c.addToInventory(items.get(possibleCharacterLocation));
+            items.remove(possibleCharacterLocation);
+        }
+    }
+    public boolean checkDone(Character c) {
+        Location actualCharacterLocation = new Location(c.l.x+horizontalOffset, c.l.y+verticalOffset);
+        if(items.isEmpty() && grid.get(actualCharacterLocation).type.equals("sand"))
+            return true;
+        return false;
     }
 }
