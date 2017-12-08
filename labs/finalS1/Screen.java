@@ -99,8 +99,8 @@ public class Screen extends JPanel implements KeyListener {
                 w = new World("level1.png");
                 character = new Character(new Location(18, 11)); 
             }
-            if(counter%(4-levelCounter) == 0)
-                w.moveEnemies(character);
+            //if(counter%(4-levelCounter) == 0)
+             //   w.moveEnemies(character);
             if(counter%(7-levelCounter) == 0) {
                 w.spawnEnemy(levelCounter*20);
             }
