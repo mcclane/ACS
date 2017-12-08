@@ -21,6 +21,8 @@ public class Character {
     HashMap<String, BufferedImage> images;
     BufferedImage display;
     boolean dead = false;
+    boolean hurting = false;
+    int hurtingCounter = 0;
     public Character(Location l) {
         this.l = l;
         width = 50;
@@ -45,6 +47,11 @@ public class Character {
     public void drawMe(Graphics g) {
         g.setFont(font);
         g.drawImage(display, l.x*50, l.y*50, null);
+        if(hurting && hurtingCounter < 3) {
+            g.setColor(new Color(255, 0, 0, 127));
+            g.fillOval(l.x*50-10, l.y*50-10, 75, 75);
+            hurtingCounter++;
+        }
         if(showInventory) 
             drawInventory(g, 1300, 100);
         drawHealth(g, 1300, 40);
@@ -85,10 +92,20 @@ public class Character {
             inventory.put(t, 1);  
     }
     public void hurt() {
-        if(!dead)
+        if(!dead) {
             health.pop();
+            hurting = true;
+            hurtingCounter = 0;
+        }
         if(health.isEmpty())
             dead = true;
+    }
+    public void heal() {
+        if(!dead) {
+            if(health.size() < 20) {
+                health.push(1);
+            }
+        }
     }
     public void toggleInventory(boolean newState) {
         showInventory = newState;

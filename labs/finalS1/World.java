@@ -40,6 +40,7 @@ public class World {
     HashMap<Location, Tile> grid;
     HashMap<Location, Enemy> enemies;
     HashMap<Location, Tile> items;
+    HashMap<Location, Tile> foods;
 
     public World(String filename) {
         enemies = new HashMap<Location, Enemy>();
@@ -52,6 +53,7 @@ public class World {
 
         grid = new HashMap<Location, Tile>();
         items = new HashMap<Location, Tile>();
+        foods = new HashMap<Location, Tile>();
         
         //read in the file to set up level
         try {
@@ -107,6 +109,15 @@ public class World {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Location foodLocation;
+        for(int i = 0;i < 100;i++) {
+            foodLocation = new Location((int)(Math.random()*75+50), (int)(Math.random()*75+50));
+            if(grid.containsKey(foodLocation) && !items.containsKey(foodLocation)) {
+                if(grid.get(foodLocation).type.equals("dirt")) {
+                    foods.put(foodLocation, new Tile("food", "food", "pineapple.png"));
+                }
+            }
+        }
         horizontalOffset = characterSpawnPoint.x - 18;
         verticalOffset = characterSpawnPoint.y - 11;
     }
@@ -125,6 +136,9 @@ public class World {
                 }
                 if(enemies.containsKey(temp)) {
                     enemies.get(temp).drawMe(g, wx*50, wy*50);
+                }
+                if(foods.containsKey(temp)) {
+                    foods.get(temp).drawMe(g, wx*50, wy*50);
                 }
                 wy = (wy+1)%verticalViewWindowSize;
             }
@@ -278,6 +292,10 @@ public class World {
         if(items.containsKey(possibleCharacterLocation)) {
             c.addToInventory(items.get(possibleCharacterLocation));
             items.remove(possibleCharacterLocation);
+        }
+        if(foods.containsKey(possibleCharacterLocation)) {
+            c.heal();
+            foods.remove(possibleCharacterLocation);
         }
     }
     public boolean checkDone(Character c) {
