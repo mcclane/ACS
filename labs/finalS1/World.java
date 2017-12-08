@@ -159,11 +159,16 @@ public class World {
         HashMap<Location, Enemy> newEnemies = new HashMap<Location, Enemy>();
         ArrayList<Location> adjacent;
         Location actualCharacterLocation = new Location(c.l.x+horizontalOffset, c.l.y+verticalOffset);
-        Location newLocation;
+        HashMap<Location, Integer> counters = getCountersForAllEnemies(actualCharacterLocation, enemies);
+        for(Location el : enemies.keySet()) {
+            newEnemies.put(getMove(counters, el, actualCharacterLocation, newEnemies), enemies.get(el));
+        }
+        //System.out.println(getCountersForAllEnemies(actualCharacterLocation, enemies));
+        /*Location newLocation;
         for(Location el : enemies.keySet()) {
             Enemy e = enemies.get(el);
             newEnemies.put(getMove(getCounters(el, actualCharacterLocation, newEnemies), el, actualCharacterLocation, newEnemies), enemies.get(el));
-        }
+        }*/
         enemies = newEnemies;
     }
     public void checkEnemyCollisions(Character c) {
@@ -200,6 +205,56 @@ public class World {
                 smallestCounter = adjacent.get(i);
         }
         return smallestCounter;
+    }
+    public HashMap<Location, Integer> getCountersForAllEnemies(Location O, HashMap<Location, Enemy> enemies) {
+        HashSet<Location> tempEnemies = new HashSet<Location>();
+        for(Location l : enemies.keySet()) {
+            tempEnemies.add(l);
+        }
+        HashMap<Location, Integer> counters = new HashMap<Location, Integer>();
+        Queue<Location> queue = new LinkedList<Location>();
+        queue.add(O);
+        counters.put(new Location(O.x, O.y), 0);
+        int counter = 0;
+        ArrayList<Location> adjacent;
+        boolean done = false;
+        while(!done) {
+            System.out.println(O);
+            O = queue.poll();
+            if(O == null) {
+                break;
+            }
+            adjacent = new ArrayList<Location>();
+            adjacent.add(new Location(O.x-1, O.y));
+            adjacent.add(new Location(O.x+1, O.y));
+            adjacent.add(new Location(O.x, O.y+1));
+            adjacent.add(new Location(O.x, O.y-1));
+            for(int i = 0;i < adjacent.size();i++) {
+                if(!isAllowed(adjacent.get(i))) {
+                    System.out.println("removed");
+                    adjacent.remove(i);
+                    i--;
+                }
+            }
+            for(int i = 0;i < adjacent.size();i++) {
+                if(counters.containsKey(adjacent.get(i)))
+                    continue;
+                else if(tempEnemies.contains(adjacent.get(i))) {
+                    tempEnemies.remove(adjacent.get(i));
+                    if(tempEnemies.isEmpty()) {
+                        done = true;
+                    }
+                }
+                //else if(adjacent.get(i).x == S.x && adjacent.get(i).y == S.y)
+                //    done = true;
+                else {
+                    counters.put(adjacent.get(i), counter);
+                    queue.add(adjacent.get(i));
+                }
+            }
+            counter++;
+        }
+        return counters;
     }
     public HashMap<Location, Integer> getCounters(Location S, Location O, HashMap<Location, Enemy> enemies) {
 
