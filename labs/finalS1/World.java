@@ -131,8 +131,8 @@ public class World {
             wx = (wx+1);
         }
     }
-    public void spawnEnemy() {
-        if(enemies.size() < 20)
+    public void spawnEnemy(int n) {
+        if(enemies.size() < n)
             enemies.put(enemySpawnPoint, new Enemy());
     }
     public void move(int dx, int dy) {
@@ -145,9 +145,10 @@ public class World {
         HashMap<Location, Enemy> newEnemies = new HashMap<Location, Enemy>();
         ArrayList<Location> adjacent;
         Location actualCharacterLocation = new Location(c.l.x+horizontalOffset, c.l.y+verticalOffset);
+        Location newLocation;
         for(Location el : enemies.keySet()) {
             Enemy e = enemies.get(el);
-            newEnemies.put(getMove(getCounters(el, actualCharacterLocation, enemies), el, actualCharacterLocation), enemies.get(el));
+            newEnemies.put(getMove(getCounters(el, actualCharacterLocation, newEnemies), el, actualCharacterLocation, newEnemies), enemies.get(el));
         }
         enemies = newEnemies;
     }
@@ -165,14 +166,14 @@ public class World {
         }
         enemies = newEnemies;
     }
-    public Location getMove(HashMap<Location, Integer> counters, Location l, Location cl) {
+    public Location getMove(HashMap<Location, Integer> counters, Location l, Location cl, HashMap<Location, Enemy> newEnemies) {
         ArrayList<Location> adjacent = new ArrayList<Location>();
         adjacent.add(new Location(l.x-1, l.y));
         adjacent.add(new Location(l.x+1, l.y));
         adjacent.add(new Location(l.x, l.y+1));
         adjacent.add(new Location(l.x, l.y-1));
         for(int i = 0;i < adjacent.size();i++) {
-            if(!counters.containsKey(adjacent.get(i)) || enemies.containsKey(adjacent.get(i))) {
+            if(!counters.containsKey(adjacent.get(i)) || enemies.containsKey(adjacent.get(i)) || newEnemies.containsKey(adjacent.get(i))) {
                     adjacent.remove(i);
                     i--;
             }
@@ -201,13 +202,16 @@ public class World {
         boolean done = false;
         while(!done) {
             O = queue.poll();
+            if(O == null) {
+                break;
+            }
             adjacent = new ArrayList<Location>();
             adjacent.add(new Location(O.x-1, O.y));
             adjacent.add(new Location(O.x+1, O.y));
             adjacent.add(new Location(O.x, O.y+1));
             adjacent.add(new Location(O.x, O.y-1));
             for(int i = 0;i < adjacent.size();i++) {
-                if(!isAllowed(adjacent.get(i))) {
+                if(!isAllowed(adjacent.get(i)) || enemies.containsKey(adjacent.get(i))) {
                     adjacent.remove(i);
                     i--;
                 }
