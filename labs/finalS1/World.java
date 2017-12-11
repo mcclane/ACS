@@ -96,6 +96,14 @@ public class World {
                         grid.put(loc, new Tile("dirt", "dirt.png"));
                         items.put(loc, new Tile("item", "Rudder", "rudder.png"));
                     }
+                    else if(read.getRed() == 255 && read.getGreen() == 209 && read.getBlue() == 23) {
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                        items.put(loc, new Tile("item", "Rope", "rope.png"));
+                    }
+                    else if(read.getRed() == 172 && read.getGreen() == 132 && read.getBlue() == 132) {
+                        grid.put(loc, new Tile("dirt", "dirt.png"));
+                        items.put(loc, new Tile("item", "Steering Wheel", "wheel.png"));
+                    }
                     else if(read.getRed() == 140 && read.getGreen() == 140 && read.getBlue() == 100) {
                         grid.put(loc, new Tile("dirt", "dirt.png"));
                         characterSpawnPoint = loc;
@@ -219,7 +227,6 @@ public class World {
         ArrayList<Location> adjacent;
         boolean done = false;
         while(!done) {
-            System.out.println(O);
             O = queue.poll();
             if(O == null) {
                 break;
@@ -231,7 +238,6 @@ public class World {
             adjacent.add(new Location(O.x, O.y-1));
             for(int i = 0;i < adjacent.size();i++) {
                 if(!isAllowed(adjacent.get(i))) {
-                    System.out.println("removed");
                     adjacent.remove(i);
                     i--;
                 }
@@ -241,6 +247,7 @@ public class World {
                     continue;
                 else if(tempEnemies.contains(adjacent.get(i))) {
                     tempEnemies.remove(adjacent.get(i));
+                    queue.add(adjacent.get(i));
                     if(tempEnemies.isEmpty()) {
                         done = true;
                     }
@@ -256,6 +263,7 @@ public class World {
         }
         return counters;
     }
+    /*
     public HashMap<Location, Integer> getCounters(Location S, Location O, HashMap<Location, Enemy> enemies) {
 
         HashMap<Location, Integer> counters = new HashMap<Location, Integer>();
@@ -299,6 +307,7 @@ public class World {
         }
         return counters;
     }
+    */
     public boolean isAllowed(Location l) {
         if(grid.get(l) == null)
             return false;

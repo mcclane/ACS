@@ -57,23 +57,32 @@ public class Screen extends JPanel implements KeyListener {
         g.setColor(Color.white);
         g.fillRect(0,0,1900,1000);
 
-        w.drawMe(g);
-        character.drawMe(g);
+        
         if(levelStartScreen) {
             if(levelCounter == 1) {
                 g.setColor(Color.black);
                 g.fillRect(0, 0, 1900, 1000);
                 g.setColor(Color.white);
-                g.drawString("You are stranded on an island. Collect three parts for your boat and come back to the sandy dock", 500, 500);
+                g.drawString("You are stranded on an island. Collect all the parts for your boat and come back to the sandy dock", 500, 500);
                 g.drawString("Press any key to continue", 500, 700);
             }
             else if(levelCounter == 2) {
                 g.setColor(Color.black);
                 g.fillRect(0, 0, 1900, 1000);
                 g.setColor(Color.white);
-                g.drawString("You are stranded on another island. Collect three parts for your boat and come back to the sandy dock", 400, 500);
+                g.drawString("You are stranded on another island. Collect all the parts for your boat and come back to the sandy dock", 400, 500);
                 g.drawString("Press any key to continue", 500, 700);
             }
+            if(levelCounter == 3) {
+                g.setColor(Color.black);
+                g.fillRect(0, 0, 1900, 1000);
+                g.setColor(Color.white);
+                g.drawString("You won. Press any key to restart", 400, 500);
+            }
+        }
+        else {
+            w.drawMe(g);
+            character.drawMe(g);
         }
         g.setColor(Color.green);
         g.drawString("Level: "+levelCounter, 50, 50);
@@ -118,15 +127,23 @@ public class Screen extends JPanel implements KeyListener {
         }
     } 
     public void levelUp() {
-        System.out.println("level up!");
-        levelCounter++;
-        w = new World("level"+levelCounter+".png");
-        w.spawnEnemy(levelCounter*20);
+        if(levelCounter < 3) {
+            levelCounter++;
+            if(levelCounter == 1)
+                character = new Character(new Location(18, 11));
+            if(levelCounter <= 2) {
+                w = new World("level"+levelCounter+".png");
+                w.spawnEnemy(levelCounter*20);
+            }
+        }
         levelStartScreen = true;
         //character = new Character(new Location(18, 11));
     }
     public void keyPressed(KeyEvent e) {
-        levelStartScreen = false;
+        if(levelCounter == 3) {
+            levelCounter = 0;
+            levelUp();
+        }
         int keyDown = e.getKeyCode();
         switch(keyDown) {
             //left
@@ -152,7 +169,16 @@ public class Screen extends JPanel implements KeyListener {
             case 73:
                  character.toggleInventory(true);
                 break;
+            case 80:
+                if(!levelStartScreen) {
+                    for(Location l : w.items.keySet()) {
+                        character.addToInventory(w.items.get(l));
+                    }
+                    levelUp();
+                }
+                break;
         }
+        levelStartScreen = false;
     }
     public void keyReleased(KeyEvent e) {
         int keyDown = e.getKeyCode();
