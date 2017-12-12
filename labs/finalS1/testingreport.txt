@@ -1,0 +1,8 @@
+Tester 1: Austin Pan
+I think that the game is visually very boring. I think that you should make better artwork and have higher quality, transparent background, images. I also think that the game is a little too easy to beat. The monkeys move very slowly and are not very hard to get away from. I liked how the monkeys were able to follow intelligently. I also liked how the mines exploded when you walked over them.
+My response:
+Im response to Austin, I have redesigned much of my artwork to include more artistic images. I added basic shading and outlining to my game images to make them look better and more distinct. I also added a transparent background to the images so that they would show up nicely over multiple types of backgrounds. Finally, I made the monkeys move much faster to make the game more challenging.
+Tester 2: Stella Rufeisen
+The game is fun to play but it is a little too hard, especially for someone who does not play video games. I think the monkeys move too fast and should be made slower. The objective of the game was also unclear and I think you should add instructions before the game starts. This would make it easier for people to understand the game. I liked how the sea was made up of little waves. 
+My reponse:
+I will make the monkeys a little bit slower than Austin's suggestion, because Austin likes the monkeys faster than most people. I also added title screens in between the levels to explain the storyline of the game and how to play it. I think that this will make it much easier for people to understand the objective of the game.
