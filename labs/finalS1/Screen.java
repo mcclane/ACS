@@ -34,6 +34,7 @@ public class Screen extends JPanel implements KeyListener {
     //HashMap<Location, Thing> grid;
     World w;
     boolean levelStartScreen = true;
+    boolean restarting = false;
     
     boolean up, down, right, left;
     public Screen() {
@@ -59,24 +60,19 @@ public class Screen extends JPanel implements KeyListener {
 
         
         if(levelStartScreen) {
+            g.setColor(Color.black);
+            g.fillRect(0, 0, 1900, 1000);
+            g.setColor(Color.white);
             if(levelCounter == 1) {
-                g.setColor(Color.black);
-                g.fillRect(0, 0, 1900, 1000);
-                g.setColor(Color.white);
                 g.drawString("You are stranded on an island. Collect all the parts for your boat and come back to the sandy dock", 500, 500);
+                g.drawString("Press i to show your inventory", 500, 550);
                 g.drawString("Press any key to continue", 500, 700);
             }
             else if(levelCounter == 2) {
-                g.setColor(Color.black);
-                g.fillRect(0, 0, 1900, 1000);
-                g.setColor(Color.white);
                 g.drawString("You are stranded on another island. Collect all the parts for your boat and come back to the sandy dock", 400, 500);
                 g.drawString("Press any key to continue", 500, 700);
             }
-            if(levelCounter == 3) {
-                g.setColor(Color.black);
-                g.fillRect(0, 0, 1900, 1000);
-                g.setColor(Color.white);
+            else if(levelCounter >= 3) {
                 g.drawString("You won. Press any key to restart", 400, 500);
             }
         }
@@ -105,16 +101,17 @@ public class Screen extends JPanel implements KeyListener {
                 w.move(1, 0, character);
             }
             if(character.dead) {
-                w = new World("level1.png");
-                character = new Character(new Location(18, 11)); 
+                restart();
             }
-            if(counter%(4-levelCounter) == 0)
+            if(!levelStartScreen && levelCounter < 4 && counter%(4 - levelCounter) == 0) {
                 w.moveEnemies(character);
-            if(counter%(7-levelCounter) == 0) {
                 w.spawnEnemy(levelCounter*20);
             }
-            if(w.checkDone(character))
+            if(w.checkDone(character) && !restarting) {
+                System.out.println("leveling up because character is done");
+                System.out.println("level start screen: "+levelStartScreen);
                 levelUp();
+            }
             w.checkEnemyCollisions(character);
             //Wait 
             try {
@@ -125,26 +122,36 @@ public class Screen extends JPanel implements KeyListener {
             counter++;
             repaint();
         }
-    } 
+    }
+    public void restart() {
+        System.out.println("restarting");
+        levelCounter = 1;
+        w = new World("level"+levelCounter+".png");
+        w.spawnEnemy(levelCounter*20);
+        character = new Character(new Location(18, 11));
+        levelStartScreen = true;
+        restarting = false;
+    }
     public void levelUp() {
+        System.out.println("leveling up");
+        levelCounter++;
+        for(Location l : w.items.keySet()) {
+            character.addToInventory(w.items.get(l));
+        }
         if(levelCounter < 3) {
-            levelCounter++;
-            if(levelCounter == 1)
-                character = new Character(new Location(18, 11));
-            if(levelCounter <= 2) {
-                w = new World("level"+levelCounter+".png");
-                w.spawnEnemy(levelCounter*20);
-            }
+            w = new World("level"+levelCounter+".png");
+            w.spawnEnemy(levelCounter*20);
         }
         levelStartScreen = true;
         //character = new Character(new Location(18, 11));
     }
     public void keyPressed(KeyEvent e) {
-        if(levelCounter == 3) {
-            levelCounter = 0;
-            levelUp();
-        }
         int keyDown = e.getKeyCode();
+        levelStartScreen = false;
+        if(levelCounter >= 3) {
+            restarting = true;
+            restart();
+        }
         switch(keyDown) {
             //left
             case 65:
@@ -171,14 +178,10 @@ public class Screen extends JPanel implements KeyListener {
                 break;
             case 80:
                 if(!levelStartScreen) {
-                    for(Location l : w.items.keySet()) {
-                        character.addToInventory(w.items.get(l));
-                    }
                     levelUp();
                 }
                 break;
         }
-        levelStartScreen = false;
     }
     public void keyReleased(KeyEvent e) {
         int keyDown = e.getKeyCode();

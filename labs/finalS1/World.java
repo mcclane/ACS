@@ -28,6 +28,9 @@ import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.net.URL;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class World {
     int horizontalOffset = 45;
@@ -171,12 +174,6 @@ public class World {
         for(Location el : enemies.keySet()) {
             newEnemies.put(getMove(counters, el, actualCharacterLocation, newEnemies), enemies.get(el));
         }
-        //System.out.println(getCountersForAllEnemies(actualCharacterLocation, enemies));
-        /*Location newLocation;
-        for(Location el : enemies.keySet()) {
-            Enemy e = enemies.get(el);
-            newEnemies.put(getMove(getCounters(el, actualCharacterLocation, newEnemies), el, actualCharacterLocation, newEnemies), enemies.get(el));
-        }*/
         enemies = newEnemies;
     }
     public void checkEnemyCollisions(Character c) {
@@ -184,6 +181,7 @@ public class World {
         for(Location el : enemies.keySet()) {
             if(el.x == c.l.x+horizontalOffset && el.y == c.l.y+verticalOffset) {
                 c.hurt();
+                playSound("o.wav");
             }
             if(!grid.get(el).type.equals("mine"))
                 newEnemies.put(el, enemies.get(el));
@@ -263,51 +261,6 @@ public class World {
         }
         return counters;
     }
-    /*
-    public HashMap<Location, Integer> getCounters(Location S, Location O, HashMap<Location, Enemy> enemies) {
-
-        HashMap<Location, Integer> counters = new HashMap<Location, Integer>();
-        if(S.x == O.x && S.y == O.y) {
-            counters.put(O, 0);
-            return counters;
-        }
-        Queue<Location> queue = new LinkedList<Location>();
-        queue.add(O);
-        counters.put(new Location(O.x, O.y), 0);
-        int counter = 0;
-        ArrayList<Location> adjacent;
-        boolean done = false;
-        while(!done) {
-            O = queue.poll();
-            if(O == null) {
-                break;
-            }
-            adjacent = new ArrayList<Location>();
-            adjacent.add(new Location(O.x-1, O.y));
-            adjacent.add(new Location(O.x+1, O.y));
-            adjacent.add(new Location(O.x, O.y+1));
-            adjacent.add(new Location(O.x, O.y-1));
-            for(int i = 0;i < adjacent.size();i++) {
-                if(!isAllowed(adjacent.get(i)) || enemies.containsKey(adjacent.get(i))) {
-                    adjacent.remove(i);
-                    i--;
-                }
-            }
-            for(int i = 0;i < adjacent.size();i++) {
-                if(counters.containsKey(adjacent.get(i)))
-                    continue;
-                else if(adjacent.get(i).x == S.x && adjacent.get(i).y == S.y)
-                    done = true;
-                else {
-                    counters.put(adjacent.get(i), counter);
-                    queue.add(adjacent.get(i));
-                }
-            }
-            counter++;
-        }
-        return counters;
-    }
-    */
     public boolean isAllowed(Location l) {
         if(grid.get(l) == null)
             return false;
@@ -347,6 +300,7 @@ public class World {
                     break;
                 case "mine":
                     c.hurt();
+                    playSound("x.wav");
                     grid.put(possibleCharacterLocation, new Tile("hole", "hole.png"));
                     horizontalOffset += dx;
                     verticalOffset += dy;
@@ -356,6 +310,7 @@ public class World {
         if(items.containsKey(possibleCharacterLocation)) {
             c.addToInventory(items.get(possibleCharacterLocation));
             items.remove(possibleCharacterLocation);
+            playSound("win.wav");
         }
         if(foods.containsKey(possibleCharacterLocation)) {
             c.heal();
@@ -364,8 +319,16 @@ public class World {
     }
     public boolean checkDone(Character c) {
         Location actualCharacterLocation = new Location(c.l.x+horizontalOffset, c.l.y+verticalOffset);
-        if(items.isEmpty() && grid.get(actualCharacterLocation).type.equals("sand"))
-            return true;
-        return false;
+        return items.isEmpty() && grid.get(actualCharacterLocation).type.equals("sand");
+    }
+    public void playSound(String filename) {
+        try {
+            URL url = this.getClass().getClassLoader().getResource(filename);
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(url));
+            clip.start();
+        } catch (Exception exc) {
+            exc.printStackTrace(System.out);
+        }
     }
 }
