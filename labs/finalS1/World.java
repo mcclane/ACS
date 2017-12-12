@@ -313,6 +313,7 @@ public class World {
             playSound("win.wav");
         }
         if(foods.containsKey(possibleCharacterLocation)) {
+            playSound("win.wav");
             c.heal();
             foods.remove(possibleCharacterLocation);
         }

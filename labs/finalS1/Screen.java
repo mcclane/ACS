@@ -108,8 +108,6 @@ public class Screen extends JPanel implements KeyListener {
                 w.spawnEnemy(levelCounter*20);
             }
             if(w.checkDone(character) && !restarting) {
-                System.out.println("leveling up because character is done");
-                System.out.println("level start screen: "+levelStartScreen);
                 levelUp();
             }
             w.checkEnemyCollisions(character);
@@ -124,7 +122,6 @@ public class Screen extends JPanel implements KeyListener {
         }
     }
     public void restart() {
-        System.out.println("restarting");
         levelCounter = 1;
         w = new World("level"+levelCounter+".png");
         w.spawnEnemy(levelCounter*20);
@@ -133,7 +130,6 @@ public class Screen extends JPanel implements KeyListener {
         restarting = false;
     }
     public void levelUp() {
-        System.out.println("leveling up");
         levelCounter++;
         for(Location l : w.items.keySet()) {
             character.addToInventory(w.items.get(l));
