@@ -84,7 +84,7 @@ public class ClientScreen extends JPanel implements ActionListener {
 	public void poll() throws IOException{
 		
 		String hostName = "localhost"; 
-        int portNumber = 444;
+        int portNumber = 3000;
 		Socket serverSocket = new Socket(hostName, portNumber);
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));

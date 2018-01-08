@@ -12,6 +12,9 @@ import java.awt.MouseInfo;
 import java.util.PriorityQueue;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.TreeSet;
 
 public class Screen extends JPanel implements ActionListener {
     private JButton v1, v2, v3, v4;
@@ -30,13 +33,24 @@ public class Screen extends JPanel implements ActionListener {
 
 	//doctor stuff
 	private JTextField doctorNoteField;
-	private JButton dischargePatientButton;
+    private JButton dischargePatientButton;
+
+    //billing stuff
+    private JTextField billingAmountField;
+    private JButton enterBillButton;
+
+    //admin stuff
+    private JTextArea adminTextArea;
+    private JScrollPane adminScrollPane;
     
     private int time = 6;
 	
 	private Patient editingPatient;
     
     PriorityQueue<Patient> patients;
+    Queue<Patient> billing;
+    TreeSet<Patient> records;
+
     public Screen() {
         this.setLayout(null);
 
@@ -58,7 +72,7 @@ public class Screen extends JPanel implements ActionListener {
         this.add(v4);
         
         //nurse stuff
-        addPatientButton = new JButton("Update Patient");
+        addPatientButton = new JButton("Add Patient");
         addPatientButton.setBounds(50, 700, 200, 30);
         addPatientButton.addActionListener(this);
         this.add(addPatientButton);
@@ -101,22 +115,60 @@ public class Screen extends JPanel implements ActionListener {
         editPatientPriority.setVisible(false);
         
         nurseTextArea = new JTextArea(200, 250);
+        nurseTextArea.setEditable(false);
         scrollPaneNurse = new JScrollPane(nurseTextArea); 
         scrollPaneNurse.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPaneNurse.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneNurse.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPaneNurse.setBounds(800,400,300,500);
         this.add(scrollPaneNurse);
         scrollPaneNurse.setVisible(false);
 
 		//doctor stuff
-		
-        
+		dischargePatientButton = new JButton("Discharge Patient");
+        dischargePatientButton.setBounds(500, 700, 200, 30);
+        dischargePatientButton.addActionListener(this);
+        this.add(dischargePatientButton);
+        dischargePatientButton.setVisible(false);
+
+        doctorNoteField = new JTextField(100);
+        doctorNoteField.setBounds(50, 700, 450, 30);
+        doctorNoteField.addActionListener(this);
+        this.add(doctorNoteField);
+        doctorNoteField.setVisible(false);
+
+        //billing stuff
+        billingAmountField = new JTextField(100);
+        billingAmountField.setBounds(50, 700, 450, 30);
+        this.add(billingAmountField);
+        billingAmountField.setVisible(false);
+
+        enterBillButton = new JButton("Enter");
+        enterBillButton.setBounds(500, 700, 200, 30);
+        enterBillButton.addActionListener(this);
+        this.add(enterBillButton);
+        enterBillButton.setVisible(false);
+
+        //admin stuff
+        adminTextArea = new JTextArea(200, 250);
+        adminTextArea.setEditable(false);
+        adminScrollPane = new JScrollPane(adminTextArea);
+        adminScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        adminScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        adminScrollPane.setBounds(50,400,1100,500);
+        this.add(adminScrollPane);
+        adminScrollPane.setVisible(false);
+
+        //queue stuff
         patients = new PriorityQueue<Patient>();
         patients.add(new Patient("Jack", "Johnson", "Herpes", 0, 0));
         patients.add(new Patient("Austin", "Pan", "Living", 1, 1));
         patients.add(new Patient("Chris", "Young", "Osteoporosis", 2, 2));
         patients.add(new Patient("Brian", "Chao", "Depression", 3, 3));
         patients.add(new Patient("David", "Sillman", "Large Mouth", 0, 4));
+
+        billing = new LinkedList<Patient>();
+
+        records = new TreeSet<Patient>();
         
         view = 0;
         
@@ -132,11 +184,7 @@ public class Screen extends JPanel implements ActionListener {
         //set font
         Font font = new Font("Arial", Font.PLAIN, 32);
         g.setFont(font);
-        //set color
-        
-        //nurse stuff
-        
-        
+        g.setColor(Color.red);
         switch(view) {
             case 1:
                 drawNurseView(g);
@@ -151,25 +199,11 @@ public class Screen extends JPanel implements ActionListener {
                 drawAdminView(g);
                 break;
             default:
-                g.setColor(Color.red);
                 g.drawString("Please make a selection", 600, 500);
-        }
-    }
-    public void drawBackground(Graphics g, Color first, Color second) {
-        Color color = first;
-        for(int i = 0;i < 1150;i+=50) {
-            for(int j = 0;j < 950;j+=50) {
-                if(color == first)
-                    color = second;
-                else
-                    color = first;
-                g.setColor(color);
-                g.fillRect(i, j, 50, 50);
-            }
+                break;
         }
     }
     public void drawNurseView(Graphics g) {
-        g.setColor(Color.red);
         g.drawString("Nurse View", 500, 400);
 		g.drawString("First Name", 30, 770);
 		g.drawString("Last Name", 30, 800);
@@ -193,13 +227,33 @@ public class Screen extends JPanel implements ActionListener {
         nurseTextArea.setText(text);
     }
     public void drawDoctorView(Graphics g) {
-    	    
+        g.drawString("Patient: "+patients.peek().toString(), 100, 500);
+        g.drawString("Enter in a doctor's note to discharge Patient", 50, 600);
+
+        dischargePatientButton.setVisible(true);
+        doctorNoteField.setVisible(true);
     }
     public void drawBillerView(Graphics g) {
-        
+        if(!billing.isEmpty()) {
+            g.setColor(Color.red);
+            g.drawString("Discharged Patient: "+billing.peek().toString(), 100, 500);
+            g.drawString("Doctors Note: "+billing.peek().note, 100, 550);
+            g.drawString("Enter billing amount", 50, 600);
+            billingAmountField.setVisible(true);
+            enterBillButton.setVisible(true);
+        }
+        else {
+            g.drawString("No people to bill", 100, 500);
+        }
     }
     public void drawAdminView(Graphics g) {
-        
+        adminScrollPane.setVisible(true);
+        String text = "";
+        Iterator<Patient> it = records.iterator();
+        while(it.hasNext()) {
+            text += it.next().toString()+"\n";
+        }
+        adminTextArea.setText(text);
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == v1) {
@@ -249,29 +303,42 @@ public class Screen extends JPanel implements ActionListener {
 			if(patients.remove(editingPatient)) {
 				patients.add(new Patient(firstName, lastName, illness, priority, editingPatient.time));
 			}
-					
-            /*PriorityQueue<Patient> temp = new PriorityQueue<Patient>();
-            while(!patients.isEmpty()) {
-                Patient curr = patients.poll();
-                if(curr.lastName.equals(editingPatient.lastName) && curr.firstName.equals(editingPatient.firstName)) {
-					editingPatient = new Patient(firstName, lastName, illness, priority, editingPatient.time);
-                    temp.add(editingPatient);
-                }
-                else {
-                    temp.add(curr);
-                }
-            }
-            patients = temp;*/
             repaint();
         }
+        else if(e.getSource() == dischargePatientButton) {
+            if(doctorNoteField.getText() != "") {
+                Patient inLimbo = patients.poll();
+                inLimbo.note = doctorNoteField.getText();
+                billing.add(inLimbo);
+                doctorNoteField.setText("");
+                repaint();
+            }
+        }
+        else if(e.getSource() == enterBillButton) {
+            if(billingAmountField.getText() != "") {
+                Patient inFirstCircle = billing.poll();
+                inFirstCircle.price = Double.parseDouble(billingAmountField.getText().trim());
+                records.add(inFirstCircle);
+                repaint();
+            }
+        }
+        //nurse stuff
         addPatientButton.setVisible(false);
         scrollPaneNurse.setVisible(false);
         editPatientButton.setVisible(false);
         searchPatientButton.setVisible(false);
-		editPatientFirstName.setVisible(true);
-		editPatientLastName.setVisible(true);
-		editPatientIllness.setVisible(true);
-		editPatientPriority.setVisible(true);
+		editPatientFirstName.setVisible(false);
+		editPatientLastName.setVisible(false);
+		editPatientIllness.setVisible(false);
+		editPatientPriority.setVisible(false);
+        //doctor stuff
+        doctorNoteField.setVisible(false);
+        dischargePatientButton.setVisible(false);
+        //billing stuff
+        enterBillButton.setVisible(false);
+        billingAmountField.setVisible(false);
+        //admin stuff
+        adminScrollPane.setVisible(false);
 
     }
 }

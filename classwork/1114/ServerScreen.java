@@ -85,7 +85,7 @@ public class ServerScreen extends JPanel implements ActionListener {
 	}
 
 	public void poll() throws IOException {
-		int portNumber = 444;
+		int portNumber = 3000;
 		
 		ServerSocket serverSocket = new ServerSocket(portNumber);
 		Socket clientSocket = serverSocket.accept();
