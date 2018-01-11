@@ -15,7 +15,6 @@ class Node<T> {
         next = n;
     }
 }
-
 class SLList<E> {
     private Node<E> head;
     private Node<E> tail;
@@ -28,11 +27,14 @@ class SLList<E> {
         if(head == null) {
             head = newNode;
         }
-        if(tail == null) {
-            tail = head;
+        //if(tail == null) {
+        //    tail = head;
+        //}
+        else {
+            add(2147483647, data);
         }
-        tail.setNext(newNode);
-        tail = newNode;
+        //tail.setNext(newNode);
+        //tail = newNode;
     }
     public void add(int index, E data) {
         int counter = 0;
