@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 class Node<E> {
     private Node<E> previous;
     private Node<E> next;
@@ -42,6 +44,12 @@ class DLList<E> {
         }
         return current.next();
     }
+    public E get(int i) {
+        return getNode(i).get();
+    }
+    public int size() {
+        return size;
+    }
     public void add(int i, E data) {
         if(i > 0 && i >= size) {
             return;
@@ -57,6 +65,7 @@ class DLList<E> {
             add(data);
         }
         else {
+            size++;
             current.next().setPrev(tba);
             tba.setNext(current.next());
             tba.setPrev(current);
@@ -101,5 +110,15 @@ public class classwork {
         dl.add(0, "0");
         dl.add(2, "2");
         System.out.println(dl);
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter in an animal");
+        String animal = sc.next();
+        System.out.println("Enter in an index");
+        int i = sc.nextInt();
+        dl.add(i, animal);
+        System.out.println(dl);
+        System.out.println("Enter in an index");
+        i = sc.nextInt();
+        System.out.println(dl.get(i));
     }
 }
