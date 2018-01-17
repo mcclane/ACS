@@ -57,6 +57,7 @@ class SLList<T> {
         if(head.getData().equals(data)) {
             head = head.getNext();
             size--;
+            return;
         }
         Node<T> previous = head;
         Node<T> current = head.getNext();

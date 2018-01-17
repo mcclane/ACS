@@ -34,7 +34,7 @@ public class Screen extends JPanel implements ActionListener {
         add.addActionListener(this);
         this.add(add);
 
-        delete = new JButton("Add Item");
+        delete = new JButton("Delete Item");
         delete.setBounds(100, 230, 200, 30);
         delete.addActionListener(this);
         this.add(delete);
