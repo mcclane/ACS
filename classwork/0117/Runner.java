@@ -1,37 +1,21 @@
 import java.util.Scanner;
 
-class Song {
-  private String artist;
-  private String name;
-  private int time;
-  public Song(String a,String b, int time)
-  {
-    artist=a;
-    name=b;
-    this.time = time;
-  }
-  public boolean equals(Object o)
-  {
-    Song temp=(Song)o;
-    if(this.toString().equals(temp.toString()))
-    {
-      return(true);
+class Task implements Comparable<Task> {
+    String name;
+    int rank;
+    public Task(int rank, String name) {
+        this.name = name;
+        this.rank = rank;
     }
-    return(false);
-  }
-  public String toString()
-  {
-    return(artist+": "+name);
-  }
-  public String artist() {
-      return artist;
-  }
-  public String name() {
-      return name;
-  }
-  public int time() {
-      return time;
-  }
+    public boolean equals(Task t) {
+        return t.name.equals(name) && t.rank == rank;
+    }
+    public int compareTo(Task t) {
+        return toString().compareTo(t.toString());
+    }
+    public String toString() {
+        return rank+" "+name+"\n";
+    }
 }
 class Node<E> {
     private Node<E> previous;
@@ -154,7 +138,7 @@ class DLList<E> {
         Node<E> current = dummy.next();
         int time = 1;
         while(current != dummy) {
-            out += time+". "+current.get()+"\n ";
+            out += current.get();
             current = current.next();
         }
         return out;
@@ -182,6 +166,84 @@ class DLList<E> {
 }
 public class Runner {
     public static void main(String[] args) {
+        DLList<Task> tasks = new DLList<Task>();
+        tasks.add(new Task(1, "Drink Water"));
+        tasks.add(new Task(2, "Find Shelter"));
+        tasks.add(new Task(3, "Eat food"));
+        tasks.add(new Task(4, "Make Friends"));
+        tasks.add(new Task(4, "Self Actualization"));
+        System.out.println(tasks);
+        Scanner sc = new Scanner(System.in);
+        int input;
+        int rank;
+        String name;
+        while(true) {
+            System.out.println("1. Display\t\t2. Add a task\t\t3. Remove Task\t\t4. Update Task"); 
+            input = sc.nextInt();
+            if(input == 1) {
+                System.out.println(tasks);
+            }
+            else if(input == 2) {
+                System.out.println("Enter rank");
+                rank = sc.nextInt();
+                System.out.println("Enter name");
+                sc.nextLine();
+                name = sc.nextLine();
+                Task t = new Task(rank, name);
+                boolean added = false;
+                for(int i = 0;i < tasks.size();i++) {
+                    if(tasks.get(i).equals(t)) {
+                        added = true;
+                        break;
+                    }
+                    else if(tasks.get(i).compareTo(t) > 0) {
+                        tasks.add(i, t);
+                        added = true;
+                        break;
+                    }
+                }
+                if(!added) {
+                    tasks.add(t);
+                }
+            }
+            else if(input == 3) {
+                System.out.println("Enter rank");
+                rank = sc.nextInt();
+                System.out.println("Enter name");
+                sc.nextLine();
+                name = sc.nextLine();
+                Task t = new Task(rank, name);
+                for(int i = 0;i < tasks.size();i++) {
+                    if(tasks.get(i).equals(t)) {
+                        tasks.remove(i);
+                        break;
+                    }
+                }
+            }
+            else if(input == 4) {
+                System.out.println("Enter rank");
+                rank = sc.nextInt();
+                System.out.println("Enter name");
+                sc.nextLine();
+                System.out.println("Enter a new rank");
+                int newRank = sc.nextInt();
+                System.out.println("Enter a new name");
+                sc.nextLine();
+                String newName = sc.nextLine();
+                name = sc.nextLine();
+                Task t = new Task(rank, name);
+                for(int i = 0;i < tasks.size();i++) {
+                    if(tasks.get(i).equals(t)) {
+                        tasks.remove(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+/*public class Runner {
+    public static void main(String[] args) {
         DLList<String> dl = new DLList<String>();
         dl.add("Bear");
         dl.add("Bat");
@@ -196,7 +258,7 @@ public class Runner {
         dl.reverse();
         dl.print();
     }
-}
+}*/
 /*public class Runner {
 
     static int time = 0;
