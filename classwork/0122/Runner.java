@@ -70,7 +70,7 @@ class DLList<E extends Comparable<E>> {
     public int size() {
         return size;
     }
-    public void add(int i, E data) {
+/*    public void add(int i, E data) {
         if(i > 0 && i >= size) {
             return;
         }
@@ -99,8 +99,63 @@ class DLList<E extends Comparable<E>> {
         tail.setPrev(tba);
         tba.setNext(tail);
         size++;
+    }*/
+    public void add(E a)
+	{
+	  Node<E> newNode=new Node<E>(a);
+	  if(size==0)
+	  {
+  		Node<E> before=tail.prev();
+  		before.setNext(newNode);
+  		tail.setPrev(newNode);
+  		newNode.setNext(tail);
+  		newNode.setPrev(before);
+	  }
+	  else
+	  {
+  	  Node<E> curr=head.next();
+  	  while(curr!=tail)
+  	  {
+  	    if(curr.get().equals(a)==true)
+  	    {
+  	      return;
+  	    }
+  	    if(curr.get().compareTo(a)>0)
+  	    {
+  	      break;
+  	    }
+  	    curr=curr.next();
+  	  }
+  	  Node<E> before=curr.prev();
+  		before.setNext(newNode);
+  		curr.setPrev(newNode);
+  		newNode.setNext(curr);
+  		newNode.setPrev(before);
+	  }
+	  
+		/*Node<E> newNode=new Node<E>(a);
+		Node<E> before=tail.prev();
+		before.setNext(newNode);
+		tail.setPrev(newNode);
+		newNode.setNext(tail);
+		newNode.setPrev(before);*/
+		size++;
+	}
+/*public int indexOf(E a)
+  {
+    Node<E> curr=head.next();
+    int index=0;
+    while(index<size)
+    {
+      if(this.get(index).equals(a))
+      {
+        return(index);
+      }
+      index++;
     }
-    public void remove(int i) {
+    return(index);
+  }
+    */public void remove(int i) {
         if(i >= size) {
             return;
         }
@@ -108,16 +163,23 @@ class DLList<E extends Comparable<E>> {
         tbr.prev().setNext(tbr.next());
         tbr.next().setPrev(tbr.prev());
         size--;
-    }
+    }/*
+public void remove(E a)
+  {
+    this.remove(indexOf(a));
+    size--;
+  }*/
+    
     public void remove(E data) {
         Node<E> tbr = new Node<E>(data);
         System.out.println(tbr.get());
-        for(Node<E> current = head.next();current != tail;current = current.next()) {
+        for(Node<E> current = head.next(); current != tail; current = current.next()) {
             if(current.get().equals(tbr.get())) {
-                System.out.println(current.get());
+                System.out.println("REemoveing "+current.get());
                 Node<E> temp = current.prev();
                 current.prev().setNext(current.next());
                 current.next().setPrev(temp);
+                size--;
                 break;
             }
         }
@@ -125,7 +187,7 @@ class DLList<E extends Comparable<E>> {
     public void set(int i, E data) {
         System.out.println(getNode(i).prev());
         remove(i);
-        add(i, data);
+        add(data);
     }
     public String toString() {
         if(size == 0) {
@@ -177,7 +239,8 @@ public class Runner {
                 sc.nextLine();
                 name = sc.nextLine();
                 Task t = new Task(rank, name);
-                boolean added = false;
+                tasks.add(t);
+                /*boolean added = false;
                 for(int i = 0;i < tasks.size();i++) {
                     if(tasks.get(i).equals(t)) {
                         added = true;
@@ -191,14 +254,14 @@ public class Runner {
                 }
                 if(!added) {
                     tasks.add(t);
-                }
+                }*/
             }
             else if(input == 3) {
                 System.out.println("Enter rank");
                 rank = sc.nextInt();
                 System.out.println("Enter name");
                 sc.nextLine();
-                name = sc.nextLine().replace("\\n", "");
+                name = sc.nextLine();
                 Task t = new Task(rank, name);
                 tasks.remove(t);
             }
@@ -216,7 +279,8 @@ public class Runner {
                 Task tr = new Task(rank, name);
                 Task t = new Task(newRank, newName);
                 tasks.remove(tr);
-                boolean added = false;
+                tasks.add(t);
+/*                boolean added = false;
                 for(int i = 0;i < tasks.size();i++) {
                     if(tasks.get(i).equals(t)) {
                         added = true;
@@ -231,6 +295,7 @@ public class Runner {
                 if(!added) {
                     tasks.add(t);
                 }
+                */
             }
         }
     }
