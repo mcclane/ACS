@@ -6,7 +6,7 @@ public class Card {
 	public static final String HEART = "hearts", CLUB = "clubs", DIAMOND = "diamonds", SPADE = "spades";
 	String name, suit;
 	int value;
-    boolean flipped = false;
+    private boolean flipped = false;
 
 	public Card(String name, String suit) {
 		this.name = name;
@@ -20,6 +20,9 @@ public class Card {
 	public void flip() {
         flipped = !flipped;
 	}
+    public boolean flipped() {
+        return flipped;
+    }
 	
 	public void render(Graphics g,int x,int y) {
 		if (flipped) {

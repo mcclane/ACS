@@ -24,6 +24,8 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     int cardHeight = 1056/5;
     int cardWidth = 691/5;
     
+    Color felt = new Color(28, 130, 30);
+    
     public Screen() {
         setLayout(null);
         player = new DLList<Card>();
@@ -35,26 +37,25 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
 				deck.add(new Card(ImageLoader.names[i], ImageLoader.suits[j]));
 			}
 		}
+        deck.shuffle();
 
         draw = new JButton("Draw");
         draw.setBounds(200,440,200,60);
         draw.addActionListener(this);
         this.add(draw);
+        addMouseListener(this);
     }
     public Dimension getPreferredSize() {
         return new Dimension(1000,800); //size
     }
     public void paintComponent(Graphics g) {
-        g.setColor(Color.green);
+        g.setColor(felt);
         g.fillRect(0,0,1000,800);
         Font font = new Font("Arial",Font.PLAIN,20);
         g.setFont(font);
         g.setColor(Color.black);
-        int xOffset = 0;
-        int yOffset = 0;
         for(int i = 0;i < player.size();i++) {
-            player.get(i).render(g, playerCardOffsetX+xOffset, playerCardOffsetY+yOffset);
-            xOffset += cardWidth; 
+            player.get(i).render(g, playerCardOffsetX+i*cardWidth, playerCardOffsetY);
         }
     }
     public void playSound(String sound) {
@@ -72,11 +73,22 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == draw) {
-            while(player.size() > 0) {
-                deck.add(player.remove(0));
+            if(player.size() == 0) {
+                for(int i = 0;i < 5;i++) {
+                    player.add(deck.remove((int)(Math.random()*deck.size())));
+                }
             }
-            for(int i = 0;i < 5;i++) {
-                player.add(deck.remove((int)(Math.random()*deck.size())));
+            else {
+                for(int i = 0;i < player.size();i++) {
+                    if(player.get(i).flipped()) {
+                        player.get(i).flip();
+                        deck.add(player.remove(i));
+                        if(i == 4)
+                            player.add(deck.remove(0));
+                        else
+                            player.add(i, deck.remove(0));
+                    }
+                }
             }
         }
         repaint();
@@ -84,6 +96,13 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+        if(y > playerCardOffsetY && y < playerCardOffsetY + cardHeight) {
+            int index = (x-playerCardOffsetX)/cardWidth;
+            if(index < player.size()) {
+                player.get(index).flip();
+                repaint();
+            }
+        }
     }
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}

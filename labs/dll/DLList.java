@@ -109,6 +109,11 @@ class DLList<E> {
             current = current.next();
         }
     }
+    public void set(int i, E data) {
+        if(remove(i) != null) {
+            add(i, data);
+        }
+    }
     public String toString() {
         if(size == 0) {
             return "[]";
@@ -141,5 +146,14 @@ class DLList<E> {
         Node<E> prev = dummy.prev();
         dummy.setPrev(dummy.next());
         dummy.setNext(prev);
+    }
+    public void shuffle() {
+        for(int i = 0;i < size;i++) {
+            E temp1 = getNode(i).get();
+            int randIndex = (int)(Math.random()*size);
+            E temp2 = getNode(randIndex).get();
+            set(i, temp2);
+            set(randIndex, temp1);
+        }
     }
 }
