@@ -13,18 +13,26 @@ import java.util.ArrayList;
 import java.net.URL;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Collections;
 
 public class Screen extends JPanel implements ActionListener, MouseListener {
 
     JButton draw;
     DLList<Card> deck, player;
+    int points = 50;
+    int state = 0;
 
     int playerCardOffsetX = 100;
     int playerCardOffsetY = 100;
     int cardHeight = 1056/5;
     int cardWidth = 691/5;
-    
+
     Color felt = new Color(28, 130, 30);
+
+    HashMap<String, String> consecutiveFaces = new HashMap<String, String>();
     
     public Screen() {
         setLayout(null);
@@ -32,9 +40,9 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         deck = new DLList<Card>();
 
         ImageLoader.load();
-        for (int i = 0; i<ImageLoader.names.length; i++) {
-			for (int j = 0; j<ImageLoader.suits.length; j++) {
-				deck.add(new Card(ImageLoader.names[i], ImageLoader.suits[j]));
+        for (int i = 0; i<ImageLoader.imagenames.length; i++) {
+			for (int j = 0; j<ImageLoader.imagesuits.length; j++) {
+				deck.add(new Card(ImageLoader.imagenames[i], ImageLoader.imagesuits[j]));
 			}
 		}
         deck.shuffle();
@@ -43,7 +51,15 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         draw.setBounds(200,440,200,60);
         draw.addActionListener(this);
         this.add(draw);
+
         addMouseListener(this);
+
+        consecutiveFaces.put("10", "J");
+        consecutiveFaces.put("J", "Q");
+        consecutiveFaces.put("Q", "K");
+        consecutiveFaces.put("K", "A");
+        consecutiveFaces.put("A", "2");
+
     }
     public Dimension getPreferredSize() {
         return new Dimension(1000,800); //size
@@ -57,6 +73,8 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         for(int i = 0;i < player.size();i++) {
             player.get(i).render(g, playerCardOffsetX+i*cardWidth, playerCardOffsetY);
         }
+        g.setColor(Color.white);
+        g.drawString("Points: "+points, 300, 700);
     }
     public void playSound(String sound) {
        try
@@ -71,12 +89,94 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
              exc.printStackTrace(System.out);
          } 
     }
+    public int calculatePoints() {
+
+        boolean flush = true;
+        boolean consecutive = true;
+        boolean royal = false;
+        ArrayList<Integer> pairs = new ArrayList<Integer>();
+        boolean three = false;
+        boolean four = false;
+
+        HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        ArrayList<Integer> values = new ArrayList<Integer>();
+        for(int i = 0;i < 5;i++) {
+            int val = player.get(i).getValue();
+            values.add(val);
+            if(counts.containsKey(val))
+                counts.put(val, counts.get(val)+1);
+            else
+                counts.put(val, 1);
+        }
+        Collections.sort(values);
+
+        //check for royal
+        if(values.get(0) == 10 && values.get(4) == 13) {
+            royal = true;
+        }
+        // check for flush        
+        String suit = player.get(0).suit();
+        for(int i = 0;i < 5;i++) {
+            if(!player.get(i).suit().equals(suit)) {
+                flush = false;
+            }
+        }
+        // check for consecutive cards
+        System.out.println(values);
+        for(int i = 0;i < values.size()-1;i++) {
+            if(values.get(i)+1 != values.get(i+1)) {
+                consecutive = false;
+                break;
+            }
+        }
+        // check for pairs, three of a kind, four of a kind, full house
+        for(int k : counts.keySet()) {
+            if(counts.get(k) == 2) {
+                pairs.add(k);
+            }
+            else if(counts.get(k) == 3) {
+                three = true;
+            }
+            else if(counts.get(k) == 4) {
+                four = true;
+            }
+        }
+        
+        System.out.println("Consecutive: "+consecutive);
+        System.out.println("Flush: "+flush);
+        System.out.println("Royal: "+royal);
+        System.out.println("Pairs: "+pairs);
+        System.out.println("Three: "+three);
+        System.out.println("Four: "+four);
+
+        // Royal Flush (Combination of 10,J,Q,K,A all with the same suit) - 250 points.
+        // Straight Flush (Consecutive 5 cards in order all with the same suit) - 50 points.
+        // Four of Kind (4 cards with the same name) - 25 points.
+        // Full House (3 of the kind and a 2 of a kind) -  9 points.
+        // Flush (All 5 cards with the same suit) - 6 points.
+        // Straight (Consecutive 5 cards in consecutive order) - 4 Points.
+        // A straight will start from A, 2, 3, 4, 5  and goes to 10, J, Q, K A
+        // (Hint: To help determine straights, you may want to sort the cards by value)
+        // 3 of a Kind - 3 points.
+        // 2 Pairs - 2 points.
+        // Pair of Jacks or Higher - 1 Point.  This is the break even as the game cost 1 point and player wins 1 point.
+
+        return 1;
+    }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == draw) {
-            if(player.size() == 0) {
-                for(int i = 0;i < 5;i++) {
-                    player.add(deck.remove((int)(Math.random()*deck.size())));
+            if(state == 0) {
+                while(player.size() > 0) {
+                    Card c = player.remove(0);
+                    c.faceUp();
+                    deck.add(c);
                 }
+                for(int i = 0;i < 5;i++) {
+                    player.add(deck.remove(0));
+                }
+                points--;
+                state++;
+                draw.setText("Draw");
             }
             else {
                 for(int i = 0;i < player.size();i++) {
@@ -89,6 +189,9 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
                             player.add(i, deck.remove(0));
                     }
                 }
+                points += calculatePoints();
+                state = 0;
+                draw.setText("Try again");
             }
         }
         repaint();
