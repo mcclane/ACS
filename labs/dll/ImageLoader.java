@@ -16,7 +16,7 @@ public class ImageLoader {
 		try {
 			for (int i = 0; i<imagenames.length; i++) {
 				for (int j = 0; j<imagesuits.length; j++) {
-					images.put(names[i] + " of " + suits[j], resize(ImageIO.read(new File("PNG/" + imagenames[i] + imagesuits[j] + ".png")), 1056/5, 691/5));
+					images.put(imagenames[i] + "" + imagesuits[j], resize(ImageIO.read(new File("PNG/" + imagenames[i] + imagesuits[j] + ".png")), 1056/5, 691/5));
 				}
 			}
 			images.put("back", resize(ImageIO.read(new File("PNG/blue_back.png")), 1056/5, 691/5));
