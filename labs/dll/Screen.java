@@ -23,6 +23,7 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
     JButton draw;
     DLList<Card> deck, player;
     int points = 50;
+    int pointsWon = 0;
     int state = 0;
 
     int playerCardOffsetX = 100;
@@ -75,11 +76,13 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         }
         g.setColor(Color.white);
         g.drawString("Points: "+points, 300, 700);
+        g.drawString("Points won last round: "+pointsWon, 450, 700);
+        g.drawString("Flip the cards you want to get rid of", 100, 50);
     }
     public void playSound(String sound) {
        try
          {
-            URL url = this.getClass().getClassLoader().getResource(sound+".wav");
+            URL url = this.getClass().getClassLoader().getResource(sound);
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(url));
             clip.start();
@@ -122,9 +125,8 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
             }
         }
         // check for consecutive cards
-        System.out.println(values);
         for(int i = 0;i < values.size()-1;i++) {
-            if(values.get(i)+1 != values.get(i+1)) {
+            if((values.get(i)+1)%13 != (values.get(i+1))%13) {
                 consecutive = false;
                 break;
             }
@@ -142,13 +144,43 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
             }
         }
         
+        /*
         System.out.println("Consecutive: "+consecutive);
         System.out.println("Flush: "+flush);
         System.out.println("Royal: "+royal);
         System.out.println("Pairs: "+pairs);
         System.out.println("Three: "+three);
         System.out.println("Four: "+four);
+        */
 
+        if(flush && consecutive && royal) {
+            return 250;
+        }
+        if(flush && consecutive) {
+            return 50;
+        }
+        if(four) {
+            return 25;
+        }
+        if(pairs.size() == 1 && three) {
+            return 9;
+        }
+        if(flush) {
+            return 6;
+        }
+        if(consecutive) {
+            return 4;
+        }
+        if(three) {
+            return 3;
+        }
+        if(pairs.size() == 2) {
+            return 2;
+        }
+        if(pairs.size() == 1 && pairs.get(0) > 10) {
+            return 1;
+        }
+        return 0;
         // Royal Flush (Combination of 10,J,Q,K,A all with the same suit) - 250 points.
         // Straight Flush (Consecutive 5 cards in order all with the same suit) - 50 points.
         // Four of Kind (4 cards with the same name) - 25 points.
@@ -160,39 +192,48 @@ public class Screen extends JPanel implements ActionListener, MouseListener {
         // 3 of a Kind - 3 points.
         // 2 Pairs - 2 points.
         // Pair of Jacks or Higher - 1 Point.  This is the break even as the game cost 1 point and player wins 1 point.
-
-        return 1;
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == draw) {
-            if(state == 0) {
-                while(player.size() > 0) {
-                    Card c = player.remove(0);
-                    c.faceUp();
-                    deck.add(c);
-                }
-                for(int i = 0;i < 5;i++) {
-                    player.add(deck.remove(0));
-                }
-                points--;
-                state++;
-                draw.setText("Draw");
-            }
-            else {
-                for(int i = 0;i < player.size();i++) {
-                    if(player.get(i).flipped()) {
-                        player.get(i).flip();
-                        deck.add(player.remove(i));
-                        if(i == 4)
-                            player.add(deck.remove(0));
-                        else
-                            player.add(i, deck.remove(0));
+            if(points > 0) {
+                if(state == 0) {
+                    while(player.size() > 0) {
+                        Card c = player.remove(0);
+                        c.faceUp();
+                        deck.add(c);
                     }
+                    for(int i = 0;i < 5;i++) {
+                        player.add(deck.remove(0));
+                    }
+                    points--;
+                    state++;
+                    draw.setText("Draw");
                 }
-                points += calculatePoints();
-                state = 0;
-                draw.setText("Try again");
+                else {
+                    for(int i = 0;i < player.size();i++) {
+                        if(player.get(i).flipped()) {
+                            player.get(i).flip();
+                            deck.add(player.remove(i));
+                            if(i == 4)
+                                player.add(deck.remove(0));
+                            else
+                                player.add(i, deck.remove(0));
+                        }
+                    }
+                    pointsWon = calculatePoints();
+                    if(pointsWon > 0) {
+                        playSound("win.wav");
+                    }
+                    else {
+                        playSound("lose.wav");
+                    }
+                    points += pointsWon;
+                    state = 0;
+                    draw.setText("Try again");
+                }
             }
+            if((int)(Math.random()*10) == 5)
+                deck.shuffle();
         }
         repaint();
     }
