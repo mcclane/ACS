@@ -35,20 +35,31 @@ public class Screen extends JPanel {
         for(int r = 0;r < 5;r++) {
             for(int c = 0;c < 20;c++) {
                 grid.add(new Dirt(r, c, 0));
+                grid.add(new Tree(r, c, 1));
             }
         }
-        for(int r = 5;r < 20;r++) {
+        for(int r = 5;r < 15;r++) {
             for(int c = 0;c < 5;c++) {
+                grid.add(new Grass(r, c, 0));
+            }
+        }
+        for(int r = 5;r < 15;r++) {
+            for(int c = 15;c < 20;c++) {
+                grid.add(new Dirt(r, c, 0));
+            }
+        }
+        for(int r = 15;r < 20;r++) {
+            for(int c = 0;c < 20;c++) {
                 grid.add(new Grass(r, c, 0));
             }
         }
     }
     public Dimension getPreferredSize() {
-        return new Dimension(1000,800); //size
+        return new Dimension(1000,1000); //size
     }
     public void paintComponent(Graphics g) {
         g.setColor(Color.white);
-        g.fillRect(0,0,1000,800);
+        g.fillRect(0,0,1000,1000);
         Font font = new Font("Arial",Font.PLAIN,20);
         g.setFont(font);
         g.setColor(Color.black);

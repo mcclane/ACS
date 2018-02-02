@@ -1,7 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Color;
 
-public abstract class Article {
+public abstract class Article implements Comparable<Article> {
     int row, column, order;
     String name = "";
     int height = 50;
@@ -19,5 +19,8 @@ public abstract class Article {
     }
     public int hashCode() {
         return row*20+column;
+    }
+    public int compareTo(Article a) {
+        return a.order - order;
     }
 }
