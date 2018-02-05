@@ -81,7 +81,7 @@ class DLList<E extends Comparable<E>> {
     public void addInOrder(E data) {
         int counter = 0;
         for(Node<E> current = head.next();current != tail;current = current.next()) {
-            if(current.get().compareTo(data) > 0) {
+            if(current.get().compareTo(data) < 0) {
                 add(counter, data);
                 return;
             }

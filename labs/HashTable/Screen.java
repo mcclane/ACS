@@ -41,6 +41,7 @@ public class Screen extends JPanel {
         for(int r = 5;r < 15;r++) {
             for(int c = 0;c < 5;c++) {
                 grid.add(new Grass(r, c, 0));
+                grid.add(new Bush(r, c, 1));
             }
         }
         for(int r = 5;r < 15;r++) {
