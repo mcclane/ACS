@@ -23,4 +23,7 @@ public abstract class Article implements Comparable<Article> {
     public int compareTo(Article a) {
         return a.order - order;
     }
+    public String name() {
+        return name;
+    }
 }

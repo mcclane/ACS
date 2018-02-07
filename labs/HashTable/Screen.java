@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 import java.util.ArrayList;
 import java.net.URL;
@@ -18,9 +20,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Collections;
 
-public class Screen extends JPanel {
+public class Screen extends JPanel implements KeyListener{
     
     private HashTable<Article> grid;
+
+    int pR = 4;
+    int pC = 10;
     
     public Screen() {
         setLayout(null);
@@ -35,18 +40,19 @@ public class Screen extends JPanel {
         for(int r = 0;r < 5;r++) {
             for(int c = 0;c < 20;c++) {
                 grid.add(new Dirt(r, c, 0));
-                grid.add(new Tree(r, c, 1));
+                //grid.add(new Tree(r, c, 1));
             }
         }
         for(int r = 5;r < 15;r++) {
             for(int c = 0;c < 5;c++) {
                 grid.add(new Grass(r, c, 0));
-                grid.add(new Bush(r, c, 1));
+                //grid.add(new Bush(r, c, 1));
             }
         }
         for(int r = 5;r < 15;r++) {
             for(int c = 15;c < 20;c++) {
                 grid.add(new Dirt(r, c, 0));
+                //grid.add(new Rock(r, c, 1));
             }
         }
         for(int r = 15;r < 20;r++) {
@@ -54,6 +60,25 @@ public class Screen extends JPanel {
                 grid.add(new Grass(r, c, 0));
             }
         }
+        //add in the random stuff
+        int countOfArticlesAdded = 0;
+        while(countOfArticlesAdded <= 75) {
+            int row = (int)(Math.random()*20);
+            int column = (int)(Math.random()*20);
+            int index = row*20+column;
+            if((grid.get(index).size() == 1 && !grid.get(index).get(0).name().equals("water")) && pC != column && pR != row) {
+                int selection = (int)(Math.random()*3);
+                if(selection == 0)
+                    grid.add(new Tree(row, column, 1));
+                else if(selection == 1)
+                    grid.add(new Bush(row, column, 1));
+                else if(selection == 2) 
+                    grid.add(new Rock(row, column, 1));
+                countOfArticlesAdded++;
+            }
+        }
+        addKeyListener(this);
+        setFocusable(true);
     }
     public Dimension getPreferredSize() {
         return new Dimension(1000,1000); //size
@@ -72,6 +97,8 @@ public class Screen extends JPanel {
                 }
             }
         }
+        g.setColor(Color.red);
+        g.fillRect(pC*50, pR*50, 50, 50) ;
         
     }
     public void playSound(String sound) {
@@ -87,4 +114,35 @@ public class Screen extends JPanel {
              exc.printStackTrace(System.out);
          } 
     }
+    public void keyPressed(KeyEvent e) {
+        int keyDown = e.getKeyCode();
+        //System.out.println(keyDown);
+        int nC = pC;
+        int nR = pR;
+        switch(keyDown) {
+            // right
+            case 39:
+                nC++;
+                break;
+            // left
+            case 37:
+                nC--;
+                break;
+            // down
+            case 40:
+                nR++;
+                break;
+            // up
+            case 38:
+                nR--;
+                break;
+        }
+        if(grid.get(nR*20+nC) != null && grid.get(nR*20+nC).size() == 1 && !grid.get(nR*20+nC).get(0).name().equals("water") && nC < 20 && nC >= 0 && nR < 20 && nC >= 0) {
+            pC = nC;
+            pR = nR;
+            repaint();
+        }
+    }
+    public void keyReleased(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {}
 }

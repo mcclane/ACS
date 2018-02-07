@@ -3,7 +3,9 @@ import java.awt.Color;
 
 public class Rock extends Article {
     static Color color = new Color(136, 173, 143);
-    static int xpoints[] = {0, -10, -20, 10, 0, , 30};
+    static int xpoints[] = {0, -10, -20, -10, 0, 10, 20, 30, 20, 10, 0};
+    static int ypoints[] = {-40, -10, -10, 0, 10, 20, 30, 20, 10, 0, -30};
+
     public Rock(int row, int column, int order) {
         super(row, column, order);
         name = "rock";
@@ -15,7 +17,7 @@ public class Rock extends Article {
         }
         return xnpoints;
     }
-    public int translateY(int y) {
+    public int[] translateY(int y) {
         int[] ynpoints = new int[ypoints.length];
         for(int i = 0;i < ypoints.length;i++) {
             ynpoints[i] = y+ypoints[i];
@@ -24,6 +26,6 @@ public class Rock extends Article {
     }
     public void drawMe(Graphics g) {
         g.setColor(color);
-        g.fillOval(column*width+width/2, row*height+height/2, height/2, width/2);
+        g.fillPolygon(translateX(column*width+width/2), translateY(row*height+height/2), xpoints.length);
     }
 }

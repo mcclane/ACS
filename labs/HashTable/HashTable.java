@@ -107,6 +107,8 @@ public class HashTable<E extends Comparable<E>> {
         table[index].addInOrder(data);
     }
     public DLList<E> get(int i) {
+        if(i >= table.length || i < 0)
+            return null;
         return table[i];
     }
 }
