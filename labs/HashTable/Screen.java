@@ -89,7 +89,6 @@ public class Screen extends JPanel implements KeyListener{
         Font font = new Font("Arial",Font.PLAIN,20);
         g.setFont(font);
         g.setColor(Color.black);
-                
         for(int i = 0;i < 400;i++) {
             if(grid.get(i) != null) {
                 for(int j = 0;j < grid.get(i).size();j++) {
@@ -98,7 +97,10 @@ public class Screen extends JPanel implements KeyListener{
             }
         }
         g.setColor(Color.red);
-        g.fillRect(pC*50, pR*50, 50, 50) ;
+        g.fillRect(pC*50, pR*50, 50, 50);
+        g.setColor(Color.green);
+        g.fillRect(pC*50+5, pR*50+5, 25, 25);
+        g.fillRect(pC*50+15, pR*50+15, 25, 25);
         
     }
     public void playSound(String sound) {
