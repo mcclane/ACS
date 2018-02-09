@@ -1,23 +1,22 @@
 public class MyHashMap<K,V>
   
 {
-  private DLList<V>[] table;
+  private Entry<V>[] table;
   private DLList<K> keys;
   
   @SuppressWarnings("unchecked")
   public MyHashMap()
   {
-    table = new DLList[9999];
+    table = new Entry[9999];
     keys = new DLList<K>();
   }
   
   public void put(K key,V value)
   {
     if(table[key.hashCode()] == null) {
-        table[key.hashCode()] = new DLList<V>();
         keys.add(key);
     }
-    table[key.hashCode()].add(value);
+    table[key.hashCode()] = new Entry<V>(value);
   }
   
   public DLList<K> keySet()
@@ -37,7 +36,8 @@ public class MyHashMap<K,V>
   
   public void remove(K key,V value)
   {
-    table[key.hashCode()].remove(value);
+    table[key.hashCode()] = null;
+    keys.remove(key);
     //keys.remove(key);
   }
   
@@ -46,9 +46,21 @@ public class MyHashMap<K,V>
     table[key.hashCode()] = null;
     keys.remove(key);
   }
-  public DLList<V> get(K key) {
-    return table[key.hashCode()];
+  public V get(K key) {
+    if(key.hashCode() > 0 && key.hashCode() < table.length && table[key.hashCode()] != null) {
+        return table[key.hashCode()].get();
+    }
+    return null;
   }
+}
+class Entry<V> {
+    private V data;
+    public Entry(V data) {
+        this.data = data;
+    }
+    public V get() {
+        return data;
+    }
 }
 class Node<E> {
     private E data;

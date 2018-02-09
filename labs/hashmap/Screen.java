@@ -22,7 +22,8 @@ public class Screen extends JPanel implements ActionListener {
     
     private JTextField enterCountryAbbreviation;
     private JButton submitCountryAbbreviation;
-    private JButton backToList;
+    private JButton navList;
+    private JButton navOverview;
         
     private JTextArea countriesTextArea;
     private String countriesTextAreaDisplayText = "";
@@ -32,13 +33,15 @@ public class Screen extends JPanel implements ActionListener {
     private DLList<MyImage> currentImages;
     private Country currentCountry;
 
-    MyHashMap<Country, MyImage> countries;
-    
+    MyHashMap<Country, DLList<MyImage>> countries;
+    MyHashMap<String, String> names;
+
     public Screen() {
         this.setLayout(null);
         setFocusable(true);
 
-        countries = new MyHashMap<Country, MyImage>();
+        countries = new MyHashMap<Country, DLList<MyImage>>();
+        names = new MyHashMap<String, String>();
         String[] splitted;
 
         //read in the file
@@ -49,6 +52,7 @@ public class Screen extends JPanel implements ActionListener {
                 splitted = scan.nextLine().split(",");
                 countriesTextAreaDisplayText += splitted[1]+" - "+splitted[0]+"\n";
                 countries.put(new Country(splitted[0], splitted[1]), null);
+                names.put(splitted[0], splitted[1]);
                 i++;
             }
         } catch(FileNotFoundException e) {
@@ -61,11 +65,15 @@ public class Screen extends JPanel implements ActionListener {
         submitCountryAbbreviation.addActionListener(this); //add the listener
         this.add(submitCountryAbbreviation); //add to JPanel
 
-        backToList = new JButton("Back to Countries List");
-        backToList.setBounds(0, 0, 300, 30); //sets the location and size
-        backToList.addActionListener(this); //add the listener
-        this.add(backToList); //add to JPanel
-        backToList.setVisible(false);
+        navList = new JButton("Countries List");
+        navList.setBounds(0, 0, 300, 30); //sets the location and size
+        navList.addActionListener(this); //add the listener
+        this.add(navList); //add to JPanel
+        
+        navOverview = new JButton("Overview Tab");
+        navOverview.setBounds(300, 0, 300, 30); //sets the location and size
+        navOverview.addActionListener(this); //add the listener
+        this.add(navOverview); //add to JPanel
         
         // textFields
         enterCountryAbbreviation = new JTextField(2);
@@ -106,33 +114,40 @@ public class Screen extends JPanel implements ActionListener {
             submitCountryAbbreviation.setVisible(true);
             enterCountryAbbreviation.setVisible(true);
             countriesTextArea.setVisible(true);
+            
             g.drawString("Enter country abbreviation", 400, 50);
         }
         else if(tab == 1) {
-            countriesScrollPane.setVisible(false);
-            submitCountryAbbreviation.setVisible(false);
-            enterCountryAbbreviation.setVisible(false);
-            countriesTextArea.setVisible(false);
-
-            backToList.setVisible(true);
+            clearView();
             g.drawString(currentCountry.toString(), 400, 50);
+            
         }
+        else if(tab == 2) {
+            clearView();
+            g.drawString("Overview Tab", 400, 200);
+        }
+    }
+    public void clearView() {
+        countriesScrollPane.setVisible(false);
+        submitCountryAbbreviation.setVisible(false);
+        enterCountryAbbreviation.setVisible(false);
+        countriesTextArea.setVisible(false);
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == submitCountryAbbreviation) {
-            currentImages = countries.get(new Country(enterCountryAbbreviation.getText(), null));
-            for(int i = 0;i < countries.keySet().size();i++) {
-                if(countries.keySet().get(i).hashCode() == new Country(enterCountryAbbreviation.getText(), null).hashCode()) {
-                    currentCountry = countries.keySet().get(i);
-                    tab = 1;
-                    System.out.println(currentCountry);
-                    
-                    break;
-                }
+            String abbrev = enterCountryAbbreviation.getText();
+            String name = names.get(abbrev);
+            if(name != null) {
+                currentCountry = new Country(abbrev, name);
+                currentImages = countries.get(currentCountry);
+                tab = 1;
             }
         }
-        else if(e.getSource() == backToList) {
+        else if(e.getSource() == navList) {
             tab = 0;
+        }
+        else if(e.getSource() == navOverview) {
+            tab = 2;
         }
         repaint();
     }
