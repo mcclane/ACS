@@ -13,10 +13,9 @@ public class MyImage {
 	private String description, date;
     private URL url;
     
-    public static HashMap<URL, Image> images;
+    public static HashMap<URL, Image> images = new HashMap<URL, Image>();
 
 	public MyImage(String url, String description, String date) {
-        images = new HashMap<URL, Image>();
         try {
             this.url = new URL(url);
             if(!images.containsKey(this.url)) {

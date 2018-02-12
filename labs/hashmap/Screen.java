@@ -54,17 +54,18 @@ public class Screen extends JPanel implements ActionListener {
                 nc = new Country(splitted[0], splitted[1]);
                 countriesTextAreaDisplayText += splitted[1]+" - "+splitted[0]+"\n";
                 countries.put(nc, null);
-                if(nc.abbreviation().equals("ac")) {
-                    DLList<MyImage> temp = new DLList<MyImage>();
-                    temp.add(new MyImage("https://upload.wikimedia.org/wikipedia/commons/2/25/Ascension_island_be.png", "fuck", "the teenth"));
-                    countries.put(nc, temp);
-                }
                 names.put(splitted[0], splitted[1]);
                 i++;
             }
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
+        DLList<MyImage> temp = new DLList<MyImage>();
+        temp.add(new MyImage("https://upload.wikimedia.org/wikipedia/commons/2/25/Ascension_island_be.png", "A nice mountain", "6/4/17"));        
+        temp.add(new MyImage("https://i1.wp.com/www.ascension-island.gov.ac/wp-content/uploads/2012/12/P1030821.jpg", "A nice town", "7/4/2013"));
+        temp.add(new MyImage("https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Ascension_Island_Comfortless_Cove.jpg/220px-Ascension_Island_Comfortless_Cove.jpg", "A Nice Beach", "8/4/2013"));
+        countries.put(new Country("ac", "Ascension Island"), temp);
+        
         // buttons
         submitCountryAbbreviation = new JButton("Submit");
         submitCountryAbbreviation.setBounds(400, 200, 200, 30); //sets the location and size
@@ -128,10 +129,9 @@ public class Screen extends JPanel implements ActionListener {
             g.drawString(currentCountry.toString(), 400, 50);
             if(countries.get(currentCountry) != null) {
                 for(int i = 0;i < countries.get(currentCountry).size();i++) {
-                    countries.get(currentCountry).get(i).drawMe(g, 100, 100);
+                    countries.get(currentCountry).get(i).drawMe(g, i*200, 100);
                 }
             }
-            
         }
         else if(tab == 2) {
             clearView();
