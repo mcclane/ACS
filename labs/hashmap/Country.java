@@ -12,5 +12,7 @@ public class Country {
 	public String toString() {
 		return abbreviation+" "+name;
 	}
-
+    public String abbreviation() {
+        return abbreviation;
+    }
 }

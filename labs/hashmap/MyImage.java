@@ -16,6 +16,7 @@ public class MyImage {
     public static HashMap<URL, Image> images;
 
 	public MyImage(String url, String description, String date) {
+        images = new HashMap<URL, Image>();
         try {
             this.url = new URL(url);
             if(!images.containsKey(this.url)) {
@@ -32,6 +33,6 @@ public class MyImage {
 		this.date = date;
 	}
     public void drawMe(Graphics g, int x, int y) {
-        g.drawImage(images.get(this.url), x, y, null);
+        g.drawImage(images.get(this.url), x, y, 200, 200, null);
     }
 }

@@ -43,6 +43,7 @@ public class Screen extends JPanel implements ActionListener {
         countries = new MyHashMap<Country, DLList<MyImage>>();
         names = new MyHashMap<String, String>();
         String[] splitted;
+        Country nc;
 
         //read in the file
         try {
@@ -50,15 +51,20 @@ public class Screen extends JPanel implements ActionListener {
             int i = 1;
             while(scan.hasNext()) {
                 splitted = scan.nextLine().split(",");
+                nc = new Country(splitted[0], splitted[1]);
                 countriesTextAreaDisplayText += splitted[1]+" - "+splitted[0]+"\n";
-                countries.put(new Country(splitted[0], splitted[1]), null);
+                countries.put(nc, null);
+                if(nc.abbreviation().equals("ac")) {
+                    DLList<MyImage> temp = new DLList<MyImage>();
+                    temp.add(new MyImage("https://upload.wikimedia.org/wikipedia/commons/2/25/Ascension_island_be.png", "fuck", "the teenth"));
+                    countries.put(nc, temp);
+                }
                 names.put(splitted[0], splitted[1]);
                 i++;
             }
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
-        
         // buttons
         submitCountryAbbreviation = new JButton("Submit");
         submitCountryAbbreviation.setBounds(400, 200, 200, 30); //sets the location and size
@@ -120,6 +126,11 @@ public class Screen extends JPanel implements ActionListener {
         else if(tab == 1) {
             clearView();
             g.drawString(currentCountry.toString(), 400, 50);
+            if(countries.get(currentCountry) != null) {
+                for(int i = 0;i < countries.get(currentCountry).size();i++) {
+                    countries.get(currentCountry).get(i).drawMe(g, 100, 100);
+                }
+            }
             
         }
         else if(tab == 2) {
