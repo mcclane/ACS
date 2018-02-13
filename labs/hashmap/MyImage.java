@@ -32,6 +32,6 @@ public class MyImage {
 		this.date = date;
 	}
     public void drawMe(Graphics g, int x, int y) {
-        g.drawImage(images.get(this.url), x, y, 200, 200, null);
+        g.drawImage(images.get(this.url), x, y, 600, 600, null);
     }
 }

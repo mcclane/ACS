@@ -27,6 +27,16 @@ public class DLList<E> {
         }
         return null;
     }
+    public Node<E> getNode(int i) {
+        int counter = 0;
+        for(Node<E> current = head.next();current != tail;current = current.next()) {
+            if(counter == i) {
+                return current;
+            }
+            counter++;
+        }
+        return null;
+    }
     public boolean contains(E data) {
         for(Node<E> current = head.next();current != tail;current = current.next()) {
             if(current.get().equals(data)) {
@@ -44,6 +54,12 @@ public class DLList<E> {
                 return;
         }
      }
+  }
+  public void remove(int i) {
+      Node<E> tbr = getNode(i);
+      tbr.prev().setNext(tbr.next());
+      tbr.next().setPrev(tbr.prev());
+      size--;
   }
     public void add(int i, E data) {
         int counter = 0;

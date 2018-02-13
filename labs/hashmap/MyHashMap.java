@@ -1,6 +1,4 @@
-public class MyHashMap<K,V>
-  
-{
+public class MyHashMap<K,V> {
   private Entry<V>[] table;
   private DLList<K> keys;
   

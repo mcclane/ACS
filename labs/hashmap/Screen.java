@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 public class Screen extends JPanel implements ActionListener {
     
@@ -24,6 +25,9 @@ public class Screen extends JPanel implements ActionListener {
     private JButton submitCountryAbbreviation;
     private JButton navList;
     private JButton navOverview;
+    private JButton nextPicture;
+    private JButton prevPicture;
+    private JButton deletePicture;
         
     private JTextArea countriesTextArea;
     private String countriesTextAreaDisplayText = "";
@@ -31,8 +35,11 @@ public class Screen extends JPanel implements ActionListener {
 
     private int tab = 0;
     private DLList<MyImage> currentImages;
+    private int currentImageIndex = 0;
     private Country currentCountry;
-
+    
+    private ArrayList<JButton> countryButtons;
+    
     MyHashMap<Country, DLList<MyImage>> countries;
     MyHashMap<String, String> names;
 
@@ -41,9 +48,11 @@ public class Screen extends JPanel implements ActionListener {
         setFocusable(true);
 
         countries = new MyHashMap<Country, DLList<MyImage>>();
+        countryButtons = new ArrayList<JButton>();
         names = new MyHashMap<String, String>();
         String[] splitted;
         Country nc;
+        JButton tempButton;
 
         //read in the file
         try {
@@ -81,6 +90,22 @@ public class Screen extends JPanel implements ActionListener {
         navOverview.setBounds(300, 0, 300, 30); //sets the location and size
         navOverview.addActionListener(this); //add the listener
         this.add(navOverview); //add to JPanel
+        
+        nextPicture = new JButton("Next Picture");
+        nextPicture.setBounds(800, 400, 200, 30); //sets the location and size
+        nextPicture.addActionListener(this); //add the listener
+        this.add(nextPicture); //add to JPanel
+        prevPicture = new JButton("Previous Picture");
+        prevPicture.setBounds(0, 400, 200, 30); //sets the location and size
+        prevPicture.addActionListener(this); //add the listener
+        this.add(prevPicture); //add to JPanel
+        deletePicture = new JButton("Delete");
+        deletePicture.setBounds(400, 700, 200, 30); //sets the location and size
+        deletePicture.addActionListener(this); //add the listener
+        this.add(deletePicture); //add to JPanel
+        nextPicture.setVisible(false);
+        prevPicture.setVisible(false);
+        deletePicture.setVisible(false);
         
         // textFields
         enterCountryAbbreviation = new JTextField(2);
@@ -126,16 +151,18 @@ public class Screen extends JPanel implements ActionListener {
         }
         else if(tab == 1) {
             clearView();
+            nextPicture.setVisible(true);
+            prevPicture.setVisible(true);
+            deletePicture.setVisible(true);
             g.drawString(currentCountry.toString(), 400, 50);
-            if(countries.get(currentCountry) != null) {
-                for(int i = 0;i < countries.get(currentCountry).size();i++) {
-                    countries.get(currentCountry).get(i).drawMe(g, i*200, 100);
-                }
+            if(countries.get(currentCountry) != null && countries.get(currentCountry).get(currentImageIndex) != null) {
+                countries.get(currentCountry).get(currentImageIndex).drawMe(g, 200, 100);
             }
         }
         else if(tab == 2) {
             clearView();
             g.drawString("Overview Tab", 400, 200);
+            
         }
     }
     public void clearView() {
@@ -143,6 +170,9 @@ public class Screen extends JPanel implements ActionListener {
         submitCountryAbbreviation.setVisible(false);
         enterCountryAbbreviation.setVisible(false);
         countriesTextArea.setVisible(false);
+        nextPicture.setVisible(false);
+        prevPicture.setVisible(false);
+        deletePicture.setVisible(false);
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == submitCountryAbbreviation) {
@@ -159,6 +189,16 @@ public class Screen extends JPanel implements ActionListener {
         }
         else if(e.getSource() == navOverview) {
             tab = 2;
+        }
+        else if(e.getSource() == nextPicture && currentImageIndex < countries.get(currentCountry).size()-1) {
+            currentImageIndex++;
+        }
+        else if(e.getSource() == prevPicture && currentImageIndex > 0) {
+            currentImageIndex--;
+        }
+        else if(e.getSource() == deletePicture && countries.get(currentCountry).size() > 0) {
+            countries.get(currentCountry).remove(currentImageIndex);
+            currentImageIndex = 0;
         }
         repaint();
     }
