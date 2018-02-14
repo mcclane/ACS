@@ -18,6 +18,7 @@ import java.awt.Image;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Screen extends JPanel implements ActionListener {
     
@@ -28,6 +29,11 @@ public class Screen extends JPanel implements ActionListener {
     private JButton nextPicture;
     private JButton prevPicture;
     private JButton deletePicture;
+    private JButton addPicture;
+
+    private JTextField addPictureURL;
+    private JTextField addPictureDescription;
+    private JTextField addPictureDate;
         
     private JTextArea countriesTextArea;
     private String countriesTextAreaDisplayText = "";
@@ -38,7 +44,9 @@ public class Screen extends JPanel implements ActionListener {
     private int currentImageIndex = 0;
     private Country currentCountry;
     
-    private ArrayList<JButton> countryButtons;
+    private HashMap<JButton, Country> countryButtons;
+    private int overviewX = 10;
+    private int overviewY = 50;
     
     MyHashMap<Country, DLList<MyImage>> countries;
     MyHashMap<String, String> names;
@@ -48,11 +56,10 @@ public class Screen extends JPanel implements ActionListener {
         setFocusable(true);
 
         countries = new MyHashMap<Country, DLList<MyImage>>();
-        countryButtons = new ArrayList<JButton>();
+        countryButtons = new HashMap<JButton, Country>();
         names = new MyHashMap<String, String>();
         String[] splitted;
         Country nc;
-        JButton tempButton;
 
         //read in the file
         try {
@@ -77,7 +84,7 @@ public class Screen extends JPanel implements ActionListener {
         
         // buttons
         submitCountryAbbreviation = new JButton("Submit");
-        submitCountryAbbreviation.setBounds(400, 200, 200, 30); //sets the location and size
+        submitCountryAbbreviation.setBounds(400, 130, 200, 30); //sets the location and size
         submitCountryAbbreviation.addActionListener(this); //add the listener
         this.add(submitCountryAbbreviation); //add to JPanel
 
@@ -92,25 +99,36 @@ public class Screen extends JPanel implements ActionListener {
         this.add(navOverview); //add to JPanel
         
         nextPicture = new JButton("Next Picture");
-        nextPicture.setBounds(800, 400, 200, 30); //sets the location and size
+        nextPicture.setBounds(700, 300, 200, 30); //sets the location and size
         nextPicture.addActionListener(this); //add the listener
         this.add(nextPicture); //add to JPanel
         prevPicture = new JButton("Previous Picture");
-        prevPicture.setBounds(0, 400, 200, 30); //sets the location and size
+        prevPicture.setBounds(100, 300, 200, 30); //sets the location and size
         prevPicture.addActionListener(this); //add the listener
         this.add(prevPicture); //add to JPanel
         deletePicture = new JButton("Delete");
-        deletePicture.setBounds(400, 700, 200, 30); //sets the location and size
+        deletePicture.setBounds(400, 500, 200, 30); //sets the location and size
         deletePicture.addActionListener(this); //add the listener
         this.add(deletePicture); //add to JPanel
-        nextPicture.setVisible(false);
-        prevPicture.setVisible(false);
-        deletePicture.setVisible(false);
+        addPicture = new JButton("Add");
+        addPicture.setBounds(100, 750, 200, 30); //sets the location and size
+        addPicture.addActionListener(this); //add the listener
+        this.add(addPicture); //add to JPanel
         
         // textFields
         enterCountryAbbreviation = new JTextField(2);
         enterCountryAbbreviation.setBounds(400, 100, 200, 30);
         this.add(enterCountryAbbreviation);
+        addPictureURL = new JTextField();
+        addPictureURL.setBounds(100, 650, 200, 30);
+        this.add(addPictureURL);
+        addPictureDescription = new JTextField();
+        addPictureDescription.setBounds(100, 680, 200, 30);
+        this.add(addPictureDescription);
+        addPictureDate = new JTextField();
+        addPictureDate.setBounds(100, 710, 200, 30);
+        this.add(addPictureDate);
+
         
         // TextAreas
         countriesTextArea = new JTextArea(200,250); //sets the location and size
@@ -123,6 +141,13 @@ public class Screen extends JPanel implements ActionListener {
         countriesScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         countriesScrollPane.setBounds(50,50,320,700);
         this.add(countriesScrollPane);
+
+        for(int i = 0;i < countries.keySet().size();i++) {
+            if(countries.get(countries.keySet().get(i)) != null) {
+                addOverviewCountryButton(countries.keySet().get(i));
+            }
+        }
+        clearView();
 
     }
     public Dimension getPreferredSize() {
@@ -137,10 +162,6 @@ public class Screen extends JPanel implements ActionListener {
         Font font = new Font("Arial", Font.PLAIN, 16);
         g.setFont(font);
         g.setColor(Color.black);
-
-        //countriesScrollPane.setVisible(false);
-        //submitCountryAbbreviation.setVisible(false);
-        //enterCountryAbbreviation.setVisible(false);
         if(tab == 0) {
             countriesScrollPane.setVisible(true);
             submitCountryAbbreviation.setVisible(true);
@@ -150,29 +171,61 @@ public class Screen extends JPanel implements ActionListener {
             g.drawString("Enter country abbreviation", 400, 50);
         }
         else if(tab == 1) {
-            clearView();
             nextPicture.setVisible(true);
             prevPicture.setVisible(true);
             deletePicture.setVisible(true);
+            addPicture.setVisible(true);
+            addPictureURL.setVisible(true);
+            addPictureDescription.setVisible(true);
+            addPictureDate.setVisible(true);
             g.drawString(currentCountry.toString(), 400, 50);
             if(countries.get(currentCountry) != null && countries.get(currentCountry).get(currentImageIndex) != null) {
-                countries.get(currentCountry).get(currentImageIndex).drawMe(g, 200, 100);
+                countries.get(currentCountry).get(currentImageIndex).drawMe(g, 300, 100);
             }
         }
         else if(tab == 2) {
-            clearView();
             g.drawString("Overview Tab", 400, 200);
-            
+            for(JButton jb : countryButtons.keySet()) {
+                jb.setVisible(true);
+            }
+        }
+    }
+    public void addOverviewCountryButton(Country c) {
+        JButton tempButton = new JButton(c.toString());
+        tempButton.setBounds(overviewX, overviewY, 200, 30);
+        tempButton.addActionListener(this);
+        this.add(tempButton);
+        tempButton.setVisible(false);
+        countryButtons.put(tempButton, c);
+        overviewY += 30;
+        if(overviewY >= 770) {
+            overviewY = 50;
+            overviewX += 200;
         }
     }
     public void clearView() {
+
+        // tab 0
         countriesScrollPane.setVisible(false);
         submitCountryAbbreviation.setVisible(false);
         enterCountryAbbreviation.setVisible(false);
         countriesTextArea.setVisible(false);
+
+        // tab 1
         nextPicture.setVisible(false);
         prevPicture.setVisible(false);
         deletePicture.setVisible(false);
+
+        addPicture.setVisible(false);
+        addPictureURL.setVisible(false);
+        addPictureDescription.setVisible(false);
+        addPictureDate.setVisible(false);
+
+        // tab 2
+        for(JButton jb : countryButtons.keySet()) {
+            jb.setVisible(false);
+        }
+
     }
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == submitCountryAbbreviation) {
@@ -182,12 +235,15 @@ public class Screen extends JPanel implements ActionListener {
                 currentCountry = new Country(abbrev, name);
                 currentImages = countries.get(currentCountry);
                 tab = 1;
+                clearView();
             }
         }
         else if(e.getSource() == navList) {
             tab = 0;
+            clearView();
         }
         else if(e.getSource() == navOverview) {
+            clearView();
             tab = 2;
         }
         else if(e.getSource() == nextPicture && currentImageIndex < countries.get(currentCountry).size()-1) {
@@ -199,6 +255,23 @@ public class Screen extends JPanel implements ActionListener {
         else if(e.getSource() == deletePicture && countries.get(currentCountry).size() > 0) {
             countries.get(currentCountry).remove(currentImageIndex);
             currentImageIndex = 0;
+        }
+        else if(e.getSource() == addPicture) {
+            if(countries.get(currentCountry) == null) {
+                countries.put(currentCountry, new DLList<MyImage>());
+                addOverviewCountryButton(currentCountry);
+            }
+            countries.get(currentCountry).add(new MyImage(addPictureURL.getText(), addPictureDescription.getText(), addPictureDate.getText()));
+        }
+        else {
+            for(JButton jb : countryButtons.keySet()) {
+                if(e.getSource() == jb) {
+                    currentCountry = countryButtons.get(jb);
+                    currentImages = countries.get(currentCountry);
+                    tab = 1;
+                    clearView();
+                }
+            }
         }
         repaint();
     }
