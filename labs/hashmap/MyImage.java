@@ -33,5 +33,7 @@ public class MyImage {
 	}
     public void drawMe(Graphics g, int x, int y) {
         g.drawImage(images.get(this.url), x, y, 400, 400, null);
+        g.drawString("Description: " + description, x, y+410);
+        g.drawString("Date:" + date, x, y+430);
     }
 }

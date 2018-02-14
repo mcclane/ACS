@@ -107,7 +107,7 @@ public class Screen extends JPanel implements ActionListener {
         prevPicture.addActionListener(this); //add the listener
         this.add(prevPicture); //add to JPanel
         deletePicture = new JButton("Delete");
-        deletePicture.setBounds(400, 500, 200, 30); //sets the location and size
+        deletePicture.setBounds(400, 600, 200, 30); //sets the location and size
         deletePicture.addActionListener(this); //add the listener
         this.add(deletePicture); //add to JPanel
         addPicture = new JButton("Add");
@@ -184,7 +184,7 @@ public class Screen extends JPanel implements ActionListener {
             }
         }
         else if(tab == 2) {
-            g.drawString("Overview Tab", 400, 200);
+            g.drawString("Overview", 400, 50);
             for(JButton jb : countryButtons.keySet()) {
                 jb.setVisible(true);
             }
