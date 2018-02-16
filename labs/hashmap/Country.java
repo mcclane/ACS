@@ -1,4 +1,9 @@
-public class Country {
+import java.io.Serializable;
+
+public class Country implements Serializable {
+  
+    private static final long serialVersionUID = 2L;
+
 
 	private String abbreviation, name;
 
@@ -10,9 +15,12 @@ public class Country {
 		return (abbreviation.charAt(0)-65)*11+(abbreviation.charAt(1)-65);
 	}
 	public String toString() {
-		return abbreviation+" "+name;
+		return name+" - "+abbreviation;
 	}
     public String abbreviation() {
         return abbreviation;
+    }
+    public String name() {
+        return name;
     }
 }

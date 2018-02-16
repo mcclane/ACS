@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@SuppressWarnings("unchecked")
 public class Screen extends JPanel implements ActionListener {
     
     private JTextField enterCountryAbbreviation;
@@ -55,6 +56,25 @@ public class Screen extends JPanel implements ActionListener {
         this.setLayout(null);
         setFocusable(true);
 
+        
+        
+        countries = Loader.load();
+        if(countries == null) {
+            System.out.println("can't read in state");
+            System.exit(0);
+        }
+        countryButtons = new HashMap<JButton, Country>();
+        names = new MyHashMap<String, String>();
+
+        for(int i = 0;i < countries.keySet().size();i++) {
+            names.put(countries.keySet().get(i).abbreviation(), countries.keySet().get(i).name());
+            countriesTextAreaDisplayText += countries.keySet().get(i).toString()+"\n";
+            if(countries.get(countries.keySet().get(i)) != null) {
+                addOverviewCountryButton(countries.keySet().get(i));
+            }
+        }
+
+        /*
         countries = new MyHashMap<Country, DLList<MyImage>>();
         countryButtons = new HashMap<JButton, Country>();
         names = new MyHashMap<String, String>();
@@ -81,7 +101,13 @@ public class Screen extends JPanel implements ActionListener {
         temp.add(new MyImage("https://i1.wp.com/www.ascension-island.gov.ac/wp-content/uploads/2012/12/P1030821.jpg", "A nice town", "7/4/2013"));
         temp.add(new MyImage("https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Ascension_Island_Comfortless_Cove.jpg/220px-Ascension_Island_Comfortless_Cove.jpg", "A Nice Beach", "8/4/2013"));
         countries.put(new Country("ac", "Ascension Island"), temp);
-        
+
+        for(int i = 0;i < countries.keySet().size();i++) {
+            if(countries.get(countries.keySet().get(i)) != null) {
+                addOverviewCountryButton(countries.keySet().get(i));
+            }
+        }
+        */
         // buttons
         submitCountryAbbreviation = new JButton("Submit");
         submitCountryAbbreviation.setBounds(400, 130, 200, 30); //sets the location and size
@@ -142,12 +168,10 @@ public class Screen extends JPanel implements ActionListener {
         countriesScrollPane.setBounds(50,50,320,700);
         this.add(countriesScrollPane);
 
-        for(int i = 0;i < countries.keySet().size();i++) {
-            if(countries.get(countries.keySet().get(i)) != null) {
-                addOverviewCountryButton(countries.keySet().get(i));
-            }
-        }
+        
         clearView();
+
+        //Loader.save(countries);
 
     }
     public Dimension getPreferredSize() {
@@ -178,6 +202,9 @@ public class Screen extends JPanel implements ActionListener {
             addPictureURL.setVisible(true);
             addPictureDescription.setVisible(true);
             addPictureDate.setVisible(true);
+            g.drawString("URL", 5, 670);
+            g.drawString("Description", 5, 700);
+            g.drawString("Date", 5, 730);
             g.drawString(currentCountry.toString(), 400, 50);
             if(countries.get(currentCountry) != null && countries.get(currentCountry).get(currentImageIndex) != null) {
                 countries.get(currentCountry).get(currentImageIndex).drawMe(g, 300, 100);
@@ -192,7 +219,7 @@ public class Screen extends JPanel implements ActionListener {
     }
     public void addOverviewCountryButton(Country c) {
         JButton tempButton = new JButton(c.toString());
-        tempButton.setBounds(overviewX, overviewY, 200, 30);
+        tempButton.setBounds(overviewX, overviewY, 300, 30);
         tempButton.addActionListener(this);
         this.add(tempButton);
         tempButton.setVisible(false);
@@ -200,7 +227,7 @@ public class Screen extends JPanel implements ActionListener {
         overviewY += 30;
         if(overviewY >= 770) {
             overviewY = 50;
-            overviewX += 200;
+            overviewX += 300;
         }
     }
     public void clearView() {
@@ -246,15 +273,16 @@ public class Screen extends JPanel implements ActionListener {
             clearView();
             tab = 2;
         }
-        else if(e.getSource() == nextPicture && currentImageIndex < countries.get(currentCountry).size()-1) {
+        else if(e.getSource() == nextPicture && countries.get(currentCountry) != null && currentImageIndex < countries.get(currentCountry).size()-1) {
             currentImageIndex++;
         }
         else if(e.getSource() == prevPicture && currentImageIndex > 0) {
             currentImageIndex--;
         }
-        else if(e.getSource() == deletePicture && countries.get(currentCountry).size() > 0) {
+        else if(e.getSource() == deletePicture && countries.get(currentCountry) != null && countries.get(currentCountry).size() > 0) {
             countries.get(currentCountry).remove(currentImageIndex);
             currentImageIndex = 0;
+            Loader.save(countries);
         }
         else if(e.getSource() == addPicture) {
             if(countries.get(currentCountry) == null) {
@@ -262,6 +290,7 @@ public class Screen extends JPanel implements ActionListener {
                 addOverviewCountryButton(currentCountry);
             }
             countries.get(currentCountry).add(new MyImage(addPictureURL.getText(), addPictureDescription.getText(), addPictureDate.getText()));
+            Loader.save(countries);
         }
         else {
             for(JButton jb : countryButtons.keySet()) {

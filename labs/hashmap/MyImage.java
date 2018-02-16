@@ -7,24 +7,20 @@ import java.awt.Image;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.io.Serializable;
 
-public class MyImage {
+public class MyImage implements Serializable {
+  
+    private static final long serialVersionUID = 6L;
+
 
 	private String description, date;
     private URL url;
     
-    public static HashMap<URL, Image> images = new HashMap<URL, Image>();
-
 	public MyImage(String url, String description, String date) {
         try {
             this.url = new URL(url);
-            if(!images.containsKey(this.url)) {
-                try {
-                    images.put(this.url, ImageIO.read(this.url));
-                } catch(IOException e) {
-                    System.out.println(e);
-                }
-            }
+            ImageLoader.add(this.url);
         } catch(MalformedURLException e) {
             System.out.println(e);
         }
@@ -32,8 +28,8 @@ public class MyImage {
 		this.date = date;
 	}
     public void drawMe(Graphics g, int x, int y) {
-        g.drawImage(images.get(this.url), x, y, 400, 400, null);
-        g.drawString("Description: " + description, x, y+410);
-        g.drawString("Date:" + date, x, y+430);
+        ImageLoader.drawImage(url, g, x, y);
+        g.drawString("Description: " + description, x, y+415);
+        g.drawString("Date:" + date, x, y+435);
     }
 }
