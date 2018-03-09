@@ -39,6 +39,7 @@ class Node<E> {
 }
 public class BinaryTree<E extends Comparable<E>> {
     private Node<E> root;
+    public int passes = 0;
     public BinaryTree() {
         root = null;
     }
@@ -77,7 +78,7 @@ public class BinaryTree<E extends Comparable<E>> {
     public String InOrderString(Node<E> current) {
         if(current != null) {
             String out = InOrderString(current.getLeft());
-            out += " "+current.get().toString();
+            out += "\n"+current.get().toString();
             out += InOrderString(current.getRight());
             return out;
         }
@@ -210,5 +211,28 @@ public class BinaryTree<E extends Comparable<E>> {
         else {
             return getAndRemoveLowest(current.getLeft());
         }
+    }
+    public E search(E data) {
+        passes = 0;
+        Node<E> res = search(data, root);
+        if(res == null) {
+            return null;
+        }
+        return res.get();
+    }
+    public Node<E> search(E data, Node<E> current) {
+        if(current != null) {
+            passes++;
+            if(data.compareTo(current.get()) == 0) {
+                return current;
+            }
+            if(data.compareTo(current.get()) < 0) {
+                return search(data, current.getLeft());
+            }
+            else {
+                return search(data, current.getRight());
+            }
+        }
+        return null;
     }
 }

@@ -11,4 +11,10 @@ public class Account implements Comparable<Account> {
             return fname.compareTo(a.fname);
         return lname.compareTo(a.lname);
     }
+    public String toString() {
+        return lname+", "+fname;
+    }
+    public String infoString() {
+        return lname+", "+fname+" Balance: "+balance;
+    }
 }

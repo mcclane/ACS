@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Screen extends JPanel implements ActionListener {
 
@@ -19,6 +22,8 @@ public class Screen extends JPanel implements ActionListener {
     
     private JTextField name;
     private JButton enter;
+    
+    private Account display = null;
 
     public Screen() {
         this.setLayout(null);
@@ -26,9 +31,21 @@ public class Screen extends JPanel implements ActionListener {
         
         accounts = new BinaryTree<Account>();
         
+        //read in the file
+        try {
+            Scanner scan = new Scanner(new File("names.txt"));
+            int i = 1;
+            while(scan.hasNext()) {
+                String[] splitted = scan.nextLine().split(",");
+                accounts.add(new Account(splitted[1], splitted[0], Math.random()*100000));
+            }
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
         accountsTextArea = new JTextArea(200, 250);
         accountsTextArea.setEditable(false);
-        accountsTextArea.setText("Hello World");
+        accountsTextArea.setText(accounts.toString().trim());
         accountScrollPane = new JScrollPane(accountsTextArea);
         accountScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         accountScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -37,6 +54,7 @@ public class Screen extends JPanel implements ActionListener {
         
         name = new JTextField(100);
         name.setBounds(400, 50, 200, 30);
+        name.setText("Enter first and last name");
         this.add(name);
         
         enter = new JButton("Submit");
@@ -59,12 +77,19 @@ public class Screen extends JPanel implements ActionListener {
         
         g.setColor(Color.black);
         g.drawString("Enter first and last name", 400, 25);
+        
+        if(display != null) {
+            g.drawString("Passes: "+accounts.passes, 400, 150);
+            g.drawString(display.infoString(), 400, 200);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-       if(e.getSource() == enter) {
-           
-       }
+        if(e.getSource() == enter) {
+            String[] splitted = name.getText().split(" ");
+            display = accounts.search(new Account(splitted[0], splitted[1], 123456));
+        }
+        repaint();
     }
 }
