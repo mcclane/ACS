@@ -1,4 +1,9 @@
-class Node<E> {
+import java.io.Serializable;
+
+class Node<E> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private E data;
     private Node<E> parent;
     private Node<E> left;
@@ -37,7 +42,10 @@ class Node<E> {
         this.right = right;
     }
 }
-public class BinaryTree<E extends Comparable<E>> {
+public class BinaryTree<E extends Comparable<E>> implements Serializable {
+
+    private static final long serialVersionUID = 2L;
+
     private Node<E> root;
     public int passes = 0;
     public BinaryTree() {

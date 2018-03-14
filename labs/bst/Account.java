@@ -1,4 +1,9 @@
-public class Account implements Comparable<Account> {
+import java.io.Serializable;
+
+public class Account implements Comparable<Account>, Serializable {
+
+    private static final long serialVersionUID = 3L;
+
     public String fname, lname;
     public double balance;
     public Account(String fname, String lname, double balance) {
