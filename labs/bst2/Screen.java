@@ -61,7 +61,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
  
-/* ScrollDemo2.java requires no other files. */
 public class Screen extends JPanel {
     
     BinaryTree<Item> bt;
@@ -72,36 +71,27 @@ public class Screen extends JPanel {
         super(new BorderLayout());
  
         area = new Dimension(0,0);
-        
+
         bt = new BinaryTree<Item>();
-        bt.add(new Item("Hello", 123.0));
-        bt.add(new Item("World", 123.0));
-        bt.add(new Item("McClane", 123.0));
-        bt.add(new Item("Austin", 123.0));
-        bt.add(new Item("Banana", 123.0));
-        bt.add(new Item("Oorange", 123.0));
-        bt.add(new Item("adsfads", 123.0));
-        bt.add(new Item("adsfadfa", 123.0));
-        bt.add(new Item("adsfafdaads", 123.0));
-        bt.add(new Item("avcadafcdxz", 123.0));
-        bt.add(new Item("aw3rfadzc", 123.0));
-        bt.add(new Item("q2eawfdszvfch", 123.0));
-        bt.add(new Item("aryagd", 123.0));
-        bt.add(new Item("aehjg", 123.0));
+        for(int i = 0;i < 1002;i++) {
+            bt.add(new Item(""+i, 123.0));
+        }
         bt.balance();
+        
         //JPanel instructionPanel = new JPanel(new GridLayout(0,1));
         //instructionPanel.setFocusable(true);
  
         //Set up the drawing area.
         drawingPane = new DrawingPane();
         drawingPane.setBackground(Color.white);
+        area.width = (int)(Math.pow(2, bt.getHeight()+1))*20;
+        drawingPane.setPreferredSize(area);
+
  
         //Put the drawing area in a scroll pane.
         JScrollPane scroller = new JScrollPane(drawingPane);
         scroller.setPreferredSize(new Dimension(1600,900));
-        area.width = (int)Math.pow(2, bt.getHeight())*100;
-        drawingPane.setPreferredSize(area);
- 
+         
         //Lay out this demo.
         //add(instructionPanel, BorderLayout.PAGE_START);
         add(scroller, BorderLayout.CENTER);
@@ -112,6 +102,7 @@ public class Screen extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             bt.drawMe(g, area.width);
+
         }
     }
  

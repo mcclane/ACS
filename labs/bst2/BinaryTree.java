@@ -56,13 +56,15 @@ class BinaryTree<E extends Comparable<E>> {
             g.setColor(Color.black);
             Item i = (Item)(current.get());
             i.drawMe(g, x, y);
+            int nextLevel = getLevel(current.get())+1;
+            int offset = width/(int)(Math.pow(2, nextLevel));
             if(current.getLeft() != null) {
-                g.drawLine(x, y, x-(width/(getLevel(current.get())*4)), y+30);
-                drawMe(g, width, x-(width/(getLevel(current.get())*4)), y+30, current.getLeft());
+                g.drawLine(x, y, x-offset, y+30);
+                drawMe(g, width, x-offset, y+30, current.getLeft());
             }
             if(current.getRight() != null) {
-                g.drawLine(x, y, x+(width/(getLevel(current.get())*4)), y+30);
-                drawMe(g, width, x+(width/(getLevel(current.get())*4)), y+30, current.getRight());
+                g.drawLine(x, y, x+offset, y+30);
+                drawMe(g, width, x+offset, y+30, current.getRight());
             }
         }
     }

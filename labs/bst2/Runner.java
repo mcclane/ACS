@@ -6,7 +6,7 @@ public class Runner {
     public static void main(String args[]) {
 
         //Create and set up the window.
-        JFrame frame = new JFrame("ScrollDemo2");
+        JFrame frame = new JFrame("asdfasdfasdfasdfasdfad");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Create and set up the content pane.
