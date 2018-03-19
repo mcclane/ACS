@@ -20,14 +20,14 @@ public class Screen extends JPanel implements ActionListener{
     private JTextField addPrice;
  
     public Screen() {
-        super(new BorderLayout());
+        //super(new BorderLayout());
         area = new Dimension(0,0);
 
         bt = new BinaryTree<Item>();
-        for(int i = 0;i < 63;i++) {
+        for(int i = 0;i < 7;i++) {
             bt.add(new Item(""+i, 123.0));
         }
-        //bt.balance();
+        bt.balance();
         
         //JPanel instructionPanel = new JPanel(new GridLayout(0,1));
         //instructionPanel.setFocusable(true);
@@ -106,6 +106,12 @@ public class Screen extends JPanel implements ActionListener{
         }
         else if(e.getSource() == manualBalance) {
             checkBalancedAndThenBalance();
+        }
+        else if(e.getSource() == add) {
+            bt.add(new Item(addName.getText(), Double.parseDouble(addPrice.getText())));
+            if(autoBalance) {
+                checkBalancedAndThenBalance();
+            }
         }
         repaint();
     }
