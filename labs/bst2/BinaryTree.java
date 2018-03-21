@@ -103,7 +103,7 @@ class BinaryTree<E extends Comparable<E>> {
     public String InOrderString(Node<E> current) {
         if(current != null) {
             String out = InOrderString(current.getLeft());
-            out += " "+current.get().toString();
+            out += "\n"+current.get().toString();
             out += InOrderString(current.getRight());
             return out;
         }
@@ -315,6 +315,9 @@ class BinaryTree<E extends Comparable<E>> {
         }
         return new ArrayList<E>();
     }
+    public int size() {
+        return InOrderData(root).size();
+    }
     public ArrayList<E> InOrderData() {
         return InOrderData(root);
     }
@@ -335,5 +338,22 @@ class BinaryTree<E extends Comparable<E>> {
         add(data.get(middle));
         balance(data.subList(0, middle));
         balance(data.subList(middle, data.size()));
+    }
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+    public boolean isBalanced(Node<E> current) {
+        if(current == null)
+            return true;
+        if(Math.abs(getHeight(current.getRight()) - getHeight(current.getLeft())) > 1) {
+            return false;
+        }
+        else {
+            if(!isBalanced(current.getLeft()))
+                return false;
+            if(!isBalanced(current.getLeft()))
+                return false;
+        }
+        return true;
     }
 }

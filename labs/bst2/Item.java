@@ -13,9 +13,20 @@ public class Item implements Comparable<Item> {
         g.drawString(name, x, y);
     } 
     public int compareTo(Item i) {
-        if(name.compareTo(i.name) == 0) {
+        return name.compareTo(i.name);
+/*        if(name.compareTo(i.name) == 0) {
             return (int)(price - i.price);
         }
         return name.compareTo(i.name);
+*/
+    }
+    public boolean equals(Object o) {
+        Item i = (Item)(o);
+        if(i.name.equals(name))
+            return true;
+        return false;
+    }
+    public String toString() {
+        return name+" - $"+price;
     }
 }
