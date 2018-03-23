@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class classwork {
     public static void main(String[] args) {
         BinaryTree<Integer> bt = new BinaryTree<Integer>();
@@ -8,6 +10,7 @@ public class classwork {
         bt.add(85);
         bt.add(98);
         bt.add(120);
+        System.out.println(bt.InOrderData());
         System.out.println("In-order = "+bt.InOrderString());
         System.out.println("Pre-order = "+bt.toStringPreOrder());
         System.out.println("Height: "+bt.getHeight());
@@ -320,5 +323,16 @@ class BinaryTree<E extends Comparable<E>> {
             
         }
     }
-    
+    public ArrayList<E> InOrderData(Node<E> current) {
+        if(current != null) {
+            ArrayList<E> out = InOrderData(current.getLeft());
+            out.append(current.get());
+            out.append(InOrderData(current.getRight()));
+            return out;
+        }
+        return new ArrayList<E>();
+    }
+    public ArrayList<E> InOrderData() {
+        return InOrderData(root);
+    }
 }
