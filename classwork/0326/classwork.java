@@ -1,74 +1,119 @@
-public class classwork  {
-    public static void main(String[] args) {
-        Node<Integer> root = new Node<Integer>(1);
-        Node<Integer> two = new Node<Integer>(2);
-        Node<Integer> three = new Node<Integer>(3);
-        root.setLeft(two);
-        root.setRight(three);
-        two.setLeft(new Node<Integer>(4));
-        two.setRight(new Node<Integer>(5));
-        three.setLeft(new Node<Integer>(6));
-        three.setRight(new Node<Integer>(7));
-        
-        printInOrder(root);
-        System.out.println();
-        printPreOrder(root);
-        System.out.println();
-        printPostOrder(root);
-        System.out.println();
-        printReverseOrder(root);
+import java.util.LinkedList;
+import java.util.Scanner;
+
+class Task implements Comparable<Task> {
+    public String name;
+    public int priority;
+    public Task(String name, int priority) {
+        this.name = name;
+        this.priority = priority;
     }
-    public static void printInOrder(Node<Integer> current) {
-        if(current != null) {
-            printInOrder(current.getLeft());
-            System.out.print(current.get()+" ");
-            printInOrder(current.getRight());
-        }
+    public String toString() {
+        return name+"\t"+priority;
     }
-    public static void printPreOrder(Node<Integer> current) {
-        if(current != null) {
-            System.out.print(current.get()+" ");
-            printPreOrder(current.getLeft());
-            printPreOrder(current.getRight());
-        }
-    }
-    public static void printPostOrder(Node<Integer> current) {
-        if(current != null) {
-            printPostOrder(current.getLeft());
-            printPostOrder(current.getRight());
-            System.out.print(current.get()+" ");
-        }
-    }
-    public static void printReverseOrder(Node<Integer> current) {
-        if(current != null) {
-            printReverseOrder(current.getRight());
-            System.out.print(current.get()+" ");
-            printReverseOrder(current.getLeft());
-        }
+    public int compareTo(Task t) {
+        return priority - t.priority;
     }
 }
 
-class Node<E> {
-    private E data;
-    private Node<E> left, right;
-    public Node(E data) {
-        this.data = data;
-        left = null;
-        right = null;
+class MaxHeap<E extends Comparable<E>> {
+    private int size;
+    private E[] list;
+    @SuppressWarnings("unchecked")
+    public MaxHeap() {
+        size = 0;
+        list = (E[])new Comparable[1000];
     }
-    public E get() {
-        return data;
+    public void add(E data) {
+        list[size] = data;
+        size++;
+        swapUp();
     }
-    public Node<E> getLeft() {
-        return left;
+    public void swapUp() {
+        int bot = size-1;
+        while( bot>0 ){
+            int parent = (bot-1)/2;
+            if (list[parent].compareTo(list[bot]) < 0) {
+                E temp = list[parent];
+                list[parent] = list[bot];
+                list[bot] = temp;
+                bot = parent;
+            }
+           else {
+                break; 
+           }
+        }
+
     }
-    public Node<E> getRight() {
-        return right;
+    public void swapDown(int parent) {
+        int left = parent*2+1;
+        int right = parent*2+2;
+        if(left < size) {
+            if(right < size) {
+                //both children exist
+                if(list[left].compareTo(list[right]) > 0) {
+                    if(list[left].compareTo(list[parent]) > 0) {
+                        E temp = list[left];
+                        list[left] = list[parent];
+                        list[parent] = temp;
+                        swapDown(left);
+                    }
+                }
+                else if(list[right].compareTo(list[left]) > 0){
+                    if(list[right].compareTo(list[parent]) > 0) {
+                        E temp = list[right];
+                        list[right] = list[parent];
+                        list[parent] = temp;
+                        swapDown(right);
+                    }
+                }
+            }
+            //left child exists, always left child
+            if(list[left].compareTo(list[parent]) > 0) {
+                E temp = list[left];
+                list[left] = list[parent];
+                list[parent] = temp;
+                //swapDown(left);
+            }
+            
+        }
     }
-    public void setRight(Node<E> right) {
-        this.right = right;
+    public E poll() {
+        E root = list[0];
+        for(int i = 1;i < size;i++) {
+            list[i-1] = list[i];
+        }
+        size--;
+        swapDown(0);
+        return root;
     }
-    public void setLeft(Node<E> left) {
-        this.left = left;
+    public String toString() {
+        String out = "";
+        for(int i = 1;i < size;i *= 2) {
+            for(int j = i-1;j < (i*2)-1;j++) {
+                if(j >= size)
+                    break;
+                out += list[j]+"\t";
+            }
+            out += "\n";
+        }
+        return out;
+    }
+    public int size() {
+        return size;
+    }
+}
+
+public class classwork {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        MaxHeap<Integer> m = new MaxHeap<Integer>();
+        for(int i = 0;i < 8;i++) {
+            m.add((int)(Math.random()*100+1));
+        }
+        System.out.println(m);
+        while(m.size() > 0) {
+            System.out.println(m.poll());
+        }
     }
 }
