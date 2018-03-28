@@ -12,8 +12,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.MouseInfo;
 import java.util.HashMap;
+import java.awt.image.BufferedImage;
 
 public class Screen extends JPanel implements ActionListener {
+    
+    public static HashMap<String, BufferedImage> images = new HashMap<String, BufferedImage>();
     
     MinHeap<Order> open;
     MinHeap<Order> completed;
@@ -30,6 +33,12 @@ public class Screen extends JPanel implements ActionListener {
     JButton viewChef;
     
     JButton order;
+    JButton cook;
+    JButton deliver;
+    
+    MenuItem[] items;
+    
+    int time = 0;
     
     public Screen() {
         this.setLayout(null);
@@ -37,14 +46,22 @@ public class Screen extends JPanel implements ActionListener {
         completed = new MinHeap<Order>();
         
         menu = new HashMap<JButton, MenuItem>();
-        String[] items = new String[]{"Hello 2.3", "World 5.0"};
+        
+        items = new MenuItem[8];
+        items[0] = new MenuItem("Corn White Bread", 2.30, "CornWhiteBread.jpg");
+        items[1] = new MenuItem("Pickle Toast", 4.30, "PickleToast.png");
+        items[2] = new MenuItem("Balonee Sandwitch", 5.00, "BaloneeSandwitch.jpg");
+        items[3] = new MenuItem("Rare Chicken Strips", 3.98, "RareChickenStrips.jpg");
+        items[4] = new MenuItem("Sawsage and Beens", 4.12, "SawsaugeAndBeens.png");
+        items[5] = new MenuItem("Pepto Bismol Hot Dog", 9.99, "PeptoBismolHotDog.jpg");
+        items[6] = new MenuItem("Frozen Mack and Chease", 14.99, "FrozenMackAndChease.png");
+        items[7] = new MenuItem("Grilled Chease Sandwitch", 18.99, "GrilledCheaseSandwitch.png");
         for(int i = 0;i < items.length;i++) {
-            String[] splitted = items[i].split(" ");
-            JButton temp = new JButton(splitted[0]+" - $"+splitted[1]);
-            temp.setBounds(0, i*30+100, 200, 30);
+            JButton temp = new JButton(items[i].toString());
+            temp.setBounds(200, i*100+100, 300, 30);
             temp.addActionListener(this);
             this.add(temp);
-            menu.put(temp, new MenuItem(splitted[0], Double.parseDouble(splitted[1])));
+            menu.put(temp, items[i]);
         }
         
         // view tab buttons
@@ -64,6 +81,16 @@ public class Screen extends JPanel implements ActionListener {
         order.addActionListener(this);
         this.add(order);
         
+        cook = new JButton("Cook");
+        cook.setBounds(500, 800, 200, 30);
+        cook.addActionListener(this);
+        this.add(cook);
+        currentOrder = null;
+        
+        deliver = new JButton("Deliver");
+        deliver.setBounds(700, 800, 200, 30);
+        deliver.addActionListener(this);
+        this.add(deliver);
         currentOrder = null;
     }
     public Dimension getPreferredSize() {
@@ -79,29 +106,34 @@ public class Screen extends JPanel implements ActionListener {
         // server view
         if(view == 0) {
             order.setVisible(true);
+            cook.setVisible(false);
+            deliver.setVisible(true);
+            for(int i = 0;i < items.length;i++) {
+                items[i].drawMyImage(g, 0, i*100+100, 200, 100);
+            }
             for(JButton jb : menu.keySet()) {
                 jb.setVisible(true);
             }
             g.drawString("Menu", 10, 50);
             g.drawString("Current Order", 500, 50);
             if(currentOrder != null) {
-               System.out.println(currentOrder);
-               for(int i = 0;i < currentOrder.items.size();i++) {
-                g.drawString(currentOrder.items.get(i).toString(), 500, i*50+100);
-               }
-            }      
+               currentOrder.drawMe(g, 500, 100);
+            }
+            g.drawString("Completed Orders to Deliver:", 800, 50);
+            if(completed.peek() != null) {
+               completed.peek().drawMe(g, 800, 100);
+            }
         }
         // chef view
         else if(view == 1) {
+            cook.setVisible(true);
             order.setVisible(false);
+            deliver.setVisible(false);
             for(JButton jb : menu.keySet()) {
                 jb.setVisible(false);
             }
             if(open.size() > 0) {
-                Order o = open.poll();
-                for(int i = 0;i < o.items.size();i++) {
-                    g.drawString(o.items.get(i).toString(), 200, i*50+100);
-                }
+                open.peek().drawMe(g, 500, 100);
             }
         }
     }
@@ -118,13 +150,22 @@ public class Screen extends JPanel implements ActionListener {
                 currentOrder = null;
             }
         }
-        // adding things to order from menu
-        for(JButton jb : menu.keySet()) {
-            if(e.getSource() == jb) {
-                if(currentOrder == null) {
-                    currentOrder = new Order((int)(Math.random()*1000));
+        else if(e.getSource() == cook) {
+            completed.add(open.poll());
+        }
+        else if(e.getSource() == deliver) {
+            completed.poll();
+        }
+        else {
+            // adding things to order from menu
+            for(JButton jb : menu.keySet()) {
+                if(e.getSource() == jb) {
+                    if(currentOrder == null) {
+                        currentOrder = new Order(time);
+                        time++;
+                    }
+                    currentOrder.add(menu.get(jb).copy());
                 }
-                currentOrder.add(menu.get(jb).copy());
             }
         }
         repaint();

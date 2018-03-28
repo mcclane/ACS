@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.awt.Graphics;
 
 public class Order implements Comparable<Order> {
     public int priority;
@@ -22,5 +23,11 @@ public class Order implements Comparable<Order> {
     }
     public String toString() {
         return items.toString();
+    }
+    public void drawMe(Graphics g, int x, int y) {
+        for(int i = 0;i < items.size();i++) {
+            items.get(i).drawMe(g, x, i*110+y);
+        }
+        g.drawString("Total Price: $"+price(), x, items.size()*110+y);
     }
 }

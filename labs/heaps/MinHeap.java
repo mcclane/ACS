@@ -66,7 +66,10 @@ class MinHeap<E extends Comparable<E>> {
         }
     }
     public E peek() {
-        return list.get(0);
+        if(list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
     }
     public E poll() {
         E root = list.poll();
