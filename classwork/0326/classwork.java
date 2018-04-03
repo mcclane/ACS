@@ -83,6 +83,7 @@ class MaxHeap<E extends Comparable<E>> {
         for(int i = 1;i < size;i++) {
             list[i-1] = list[i];
         }
+        list[size] = null;
         size--;
         swapDown(0);
         return root;
