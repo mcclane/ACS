@@ -2,6 +2,8 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 public class Missile implements Runnable {
+    static int height = 5;
+    static int width = 5;
     double x = 375;
     double y = 400;
     double dx, dy;
@@ -13,9 +15,9 @@ public class Missile implements Runnable {
         this.x = x;
         this.y = y;
     }
-    public void drawMe(Graphics g) {
+    public void render(Graphics g) {
         g.setColor(Color.red);
-        g.drawRect((int)x, (int)y, 10, 20);
+        g.drawRect((int)x, (int)y, width, height);
     }
     public void run() {
         while(true) {

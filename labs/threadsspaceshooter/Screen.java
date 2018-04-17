@@ -11,42 +11,51 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 
 public class Screen extends JPanel implements KeyListener, MouseListener, MouseMotionListener {
-    Player player;
+    static Player player;
     int x = 395;
     int y = 400;
-    
-    ArrayList<Missile> missiles;
+    static ArrayList<Enemy> enemies;
+    Background background;
     public Screen() {
         this.setLayout(null);
-        player = new Player(50, 50);
-        Thread pThread = new Thread(player);
-        pThread.start();
-        
         setFocusable(true);
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        
-        missiles = new ArrayList<Missile>();
+
+        player = new Player(800, 400);
+        Thread pThread = new Thread(player);
+        pThread.start();
+
+        enemies = new ArrayList<Enemy>();
+        enemies.add(new Enemy(100, 200));
+        for(Enemy e : enemies) {
+            Thread th = new Thread(e);
+            th.start();
+        }
+
+        background = new Background();
+        Thread bThread = new Thread(background);
+        bThread.start();
     }
     public Dimension getPreferredSize() {
         //Sets the size of the panel
         return new Dimension(1600,800);
     }
     public void paintComponent(Graphics g) {
-        g.setColor(Color.white);
+        g.setColor(Color.black);
         g.fillRect(0, 0, 1600, 800);
-        player.drawMe(g);
-        for(int i = 0;i < player.missiles.size();i++) {
-            if(player.missiles.get(i).visible) {
-                player.missiles.get(i).drawMe(g);
+        background.render(g);
+        player.render(g);
+        for(int i = 0;i < enemies.size();i++) {
+            if(enemies.get(i).visible) {
+                enemies.get(i).render(g);
             }
             else {
-                player.missiles.remove(i);
+                enemies.remove(i);
                 i--;
             }
         }
-        
     }
     public void animate() {
         while(true) {   
@@ -60,13 +69,19 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
     public void mousePressed(MouseEvent e) {
-        player.shoot(e.getX(), e.getY());
+        player.shooting = true;
+        //player.shoot(e.getX(), e.getY());
+        player.shoot();
     }
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+        player.shooting = false;
+    }
     public void mouseMoved(MouseEvent e) {
         player.rotate(e.getX(), e.getY());
         repaint();
         //System.out.println("("+e.getX()+", "+e.getY()+")");
     }
-    public void mouseDragged(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
 }
