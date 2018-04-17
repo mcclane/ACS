@@ -24,20 +24,24 @@ public class Player implements Runnable {
         missiles = new ArrayList<Missile>();
     }
     public void rotate(int mx, int my) {
-        double dx = mx - x;
-        double dy = my - y;
+        double dx = mx - (x+width/2);
+        double dy = my - (y+height/2);
         double magnitude = Math.sqrt(dx*dx + dy*dy);
         this.dx = dx/magnitude;
         this.dy = dy/magnitude;
-        if(dx != 0 && dy != 0) {
+        if(dx != 0) {
             angle = Math.atan(dy/dx);
+            if(dx < 0) {
+                angle += Math.PI;
+            }
         }
     }
     public void render(Graphics g) {
         g2 = (Graphics2D) g.create();
-        g2.setColor(Color.red);
-        g.drawString(""+lives, (int)x+width/2, (int)y+height/2);
+        g2.setColor(Color.white);
+        g.drawString("Lives: "+lives, 1500, 50);
         g2.rotate(angle, x+width/2, y+height/2);
+        g2.drawRect((int)x+height/2, (int)y+height/2, width*2, height/4);
         g2.drawRect((int)x, (int)y, height, width);
         for(int i = 0;i < missiles.size();i++) {
             if(missiles.get(i).visible) {
@@ -65,15 +69,19 @@ public class Player implements Runnable {
             ticker++;
             // check collisions:
             for(int i = 0;i < missiles.size();i++) {
+                boolean removeMissile = false;
                 for(int j = 0;j < Screen.enemies.size();j++) {
                     if(Screen.enemies.get(j).collision((int)missiles.get(i).x, (int)missiles.get(i).y, Missile.width, Missile.height)) {
-                        missiles.get(i).visible = false;
-                        missiles.remove(i);
-                        i--;
+                        removeMissile = true;
                         Screen.enemies.get(j).visible = false;
                         Screen.enemies.remove(j);
                         j--;
                     }
+                }
+                if(removeMissile) {
+                    missiles.get(i).visible = false;
+                    missiles.remove(i);
+                    i--;
                 }
             }
             for(int i = 0;i < Screen.enemies.size();i++) {

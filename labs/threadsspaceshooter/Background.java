@@ -2,19 +2,19 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 public class Background implements Runnable {
-    int[][] stars;
+    double[][] stars;
     public Background() {
-        stars = new int[200][3];
+        stars = new double[200][3];
         for(int i = 0;i < stars.length;i++) {
-            stars[i][0] = (int)(Math.random() * 1600);
-            stars[i][1] = (int)(Math.random() * 800);
-            stars[i][2] = (int)(Math.random() * 100);
+            stars[i][0] = Math.random() * 1600;
+            stars[i][1] = Math.random() * 800;
+            stars[i][2] = Math.random() * 100;
         }
     }
     public void render(Graphics g) {
         g.setColor(Color.white);
         for(int i = 0;i < stars.length;i++) {
-            g.drawRect(stars[i][0], stars[i][1], stars[i][2] / 25, stars[i][2] / 50);
+            g.drawRect((int)stars[i][0], (int)stars[i][1], (int)stars[i][2] / 25, (int)stars[i][2] / 50);
         }
     }
     public void run() {
@@ -23,7 +23,7 @@ public class Background implements Runnable {
                 stars[i][0] -= stars[i][2] / 25;
                 if(stars[i][0] <= 0) {
                     stars[i][0] = 1600;
-                    stars[i][1] = (int)(Math.random()*800);
+                    stars[i][1] = Math.random()*800;
                 }
             }
             try {

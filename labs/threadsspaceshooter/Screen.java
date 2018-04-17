@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -14,6 +15,8 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
     static Player player;
     int x = 395;
     int y = 400;
+    boolean loaded = false;
+    boolean started = false;
     static ArrayList<Enemy> enemies;
     Background background;
     public Screen() {
@@ -23,37 +26,76 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
         addMouseListener(this);
         addMouseMotionListener(this);
 
-        player = new Player(800, 400);
-        Thread pThread = new Thread(player);
-        pThread.start();
-
-        enemies = new ArrayList<Enemy>();
-        enemies.add(new Enemy(100, 200));
-        for(Enemy e : enemies) {
-            Thread th = new Thread(e);
-            th.start();
-        }
-
-        background = new Background();
-        Thread bThread = new Thread(background);
-        bThread.start();
+        load();
     }
     public Dimension getPreferredSize() {
         //Sets the size of the panel
         return new Dimension(1600,800);
     }
+    public void load() {
+        player = new Player(1400, 400);
+
+        enemies = new ArrayList<Enemy>();
+        enemies.add(new Enemy(100, 200));
+        enemies.add(new Enemy(200, 200));
+        enemies.add(new Enemy(300, 200));
+        enemies.add(new Enemy(400, 200));
+        enemies.add(new Enemy(500, 200));
+        enemies.add(new Enemy(100, 300));
+        enemies.add(new Enemy(200, 300));
+        enemies.add(new Enemy(300, 300));
+        enemies.add(new Enemy(400, 300));
+        enemies.add(new Enemy(500, 300));
+        enemies.add(new Enemy(100, 400));
+        enemies.add(new Enemy(200, 400));
+        enemies.add(new Enemy(300, 400));
+        enemies.add(new Enemy(400, 400));
+        enemies.add(new Enemy(500, 400));
+        enemies.add(new Enemy(100, 500));
+        enemies.add(new Enemy(200, 500));
+        enemies.add(new Enemy(300, 500));
+        enemies.add(new Enemy(400, 500));
+        enemies.add(new Enemy(500, 500));
+
+        background = new Background();
+        Thread bThread = new Thread(background);
+        bThread.start();
+
+    }
+    public void start() {
+        Thread pThread = new Thread(player);
+        pThread.start();
+        for(Enemy e : enemies) {
+            Thread th = new Thread(e);
+            th.start();
+        }
+    }
+    public void showStartScreen(Graphics g) {
+        g.setFont(new Font("DIALOG", 0, 30));
+        g.drawString("Press Space to Begin", 650, 400);
+    }
     public void paintComponent(Graphics g) {
         g.setColor(Color.black);
         g.fillRect(0, 0, 1600, 800);
         background.render(g);
-        player.render(g);
-        for(int i = 0;i < enemies.size();i++) {
-            if(enemies.get(i).visible) {
-                enemies.get(i).render(g);
-            }
-            else {
-                enemies.remove(i);
-                i--;
+        if(!started) {
+            showStartScreen(g);
+        }
+        else {
+            player.render(g);
+            for(int i = 0;i < enemies.size();i++) {
+                if(enemies.get(i).visible) {
+                    enemies.get(i).render(g);
+                }
+                else {
+                    if(enemies.size() > 0) {
+                        enemies.remove(i);
+                        i--;
+                    }
+                    else {
+                        break;
+                    }
+                }
             }
         }
     }
@@ -62,7 +104,16 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
             repaint();
         }
     }
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+        int keyDown = e.getKeyCode();
+        if(keyDown == 32) {
+            if(!started) {
+                start();
+            }
+            started = true;
+            repaint();
+        }
+    }
     public void keyReleased(KeyEvent e) {}
     public void keyTyped(KeyEvent e) {}
     public void mouseClicked(MouseEvent e) {}
@@ -77,8 +128,10 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
         player.shooting = false;
     }
     public void mouseMoved(MouseEvent e) {
-        player.rotate(e.getX(), e.getY());
-        repaint();
+        if(Math.sqrt(Math.pow(player.x+player.width/2 - e.getX(), 2) + Math.pow(player.y+player.height/2 - e.getY(), 2)) > player.height) {
+            player.rotate(e.getX(), e.getY());
+        }
+        //  repaint();
         //System.out.println("("+e.getX()+", "+e.getY()+")");
     }
     public void mouseDragged(MouseEvent e) {

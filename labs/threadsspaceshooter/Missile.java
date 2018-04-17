@@ -16,14 +16,13 @@ public class Missile implements Runnable {
         this.y = y;
     }
     public void render(Graphics g) {
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         g.drawRect((int)x, (int)y, width, height);
     }
     public void run() {
         while(true) {
             x = x + dx;
             y = y + dy;
-            //y -= speed;
             if(y < 0 || y > 800 || x < 0 || x > 1600) {
                 visible = false;
                 return;

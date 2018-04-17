@@ -11,7 +11,7 @@ public class Enemy implements Runnable {
         this.y = y;
     }
     public void render(Graphics g) {
-        g.setColor(Color.green);
+        g.setColor(Color.white);
         g.drawRect((int)x, (int)y, width, height);
     }
     public void run() {
@@ -36,7 +36,6 @@ public class Enemy implements Runnable {
     }
     public boolean collision(int x, int y, int height, int width) {
         if(this.x + this.width > x && this.x < x + width && this.y + this.height > y && this.y < y + height) {
-            System.out.println("Collision!");
             return true;
         }
         return false;
