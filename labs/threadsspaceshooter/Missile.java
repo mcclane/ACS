@@ -2,6 +2,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 public class Missile implements Runnable {
+	Thread thread;
     static int height = 5;
     static int width = 5;
     double x = 375;
@@ -27,6 +28,9 @@ public class Missile implements Runnable {
                 visible = false;
                 return;
             }
+			if(Thread.interrupted()) {
+				return;
+			}
             try {
                 Thread.sleep(1);
             } catch(InterruptedException e) {

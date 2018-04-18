@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 
 public class Screen extends JPanel implements KeyListener, MouseListener, MouseMotionListener {
+	Game game;
     static Player player;
     int x = 395;
     int y = 400;
@@ -33,6 +34,7 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
         return new Dimension(1600,800);
     }
     public void load() {
+		game = new Game();
         player = new Player(1400, 400);
 
         enemies = new ArrayList<Enemy>();
@@ -78,6 +80,7 @@ public class Screen extends JPanel implements KeyListener, MouseListener, MouseM
         g.setColor(Color.black);
         g.fillRect(0, 0, 1600, 800);
         background.render(g);
+		game.render(g);
         if(!started) {
             showStartScreen(g);
         }

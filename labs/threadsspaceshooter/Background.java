@@ -3,6 +3,7 @@ import java.awt.Color;
 
 public class Background implements Runnable {
     double[][] stars;
+	Thread thread;
     public Background() {
         stars = new double[200][3];
         for(int i = 0;i < stars.length;i++) {
@@ -26,6 +27,9 @@ public class Background implements Runnable {
                     stars[i][1] = Math.random()*800;
                 }
             }
+			if(Thread.interrupted()) {
+				return;
+			}
             try {
                 Thread.sleep(50);
             }
