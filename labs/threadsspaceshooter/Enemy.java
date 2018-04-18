@@ -3,12 +3,14 @@ import java.awt.Color;
 
 public class Enemy implements Runnable {
     double x, y, dx, dy;
+    Player player;
     static int width = 20;
     static int height = 20;
     public boolean visible = true;
-    public Enemy(int x, int y) {
+    public Enemy(int x, int y, Player player) {
         this.x = x;
         this.y = y;
+        this.player = player;
     }
     public void render(Graphics g) {
         g.setColor(Color.white);
@@ -16,8 +18,8 @@ public class Enemy implements Runnable {
     }
     public void run() {
         while(true) {
-            dx = Screen.player.x - x;
-            dy = Screen.player.y - y;
+            dx = player.x - x;
+            dy = player.y - y;
             double magnitude = Math.sqrt(dx*dx + dy*dy);
             dx = dx/magnitude;
             dy = dy/magnitude;
@@ -25,6 +27,9 @@ public class Enemy implements Runnable {
             y = y + dy;
             if(y < 0 || y > 800 || x < 0 || x > 1600) {
                 visible = false;
+                return;
+            }
+            if(Thread.interrupted()) {
                 return;
             }
             try {
