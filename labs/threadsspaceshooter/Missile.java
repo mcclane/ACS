@@ -24,7 +24,7 @@ public class Missile implements Runnable {
         while(true) {
             x = x + dx;
             y = y + dy;
-            if(y < 0 || y > 800 || x < 0 || x > 1600) {
+            if(y < -100 || y > 900 || x < -100 || x > 1700) {
                 visible = false;
                 return;
             }

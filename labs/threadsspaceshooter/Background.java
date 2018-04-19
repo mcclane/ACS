@@ -4,6 +4,7 @@ import java.awt.Color;
 public class Background implements Runnable {
     double[][] stars;
 	Thread thread;
+    int delay = 50;
     public Background() {
         stars = new double[200][3];
         for(int i = 0;i < stars.length;i++) {
@@ -18,6 +19,12 @@ public class Background implements Runnable {
             g.drawRect((int)stars[i][0], (int)stars[i][1], (int)stars[i][2] / 25, (int)stars[i][2] / 50);
         }
     }
+    public void slow() {
+        delay = 50;
+    }
+    public void fast() {
+        delay = 10;
+    }
     public void run() {
         while(true) {
             for(int i = 0;i < stars.length;i++) {
@@ -31,7 +38,7 @@ public class Background implements Runnable {
 				return;
 			}
             try {
-                Thread.sleep(50);
+                Thread.sleep(delay);
             }
             catch(InterruptedException e) {
                 e.printStackTrace();

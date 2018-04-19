@@ -6,15 +6,24 @@ public class Enemy implements Runnable {
     Player player;
     static int width = 20;
     static int height = 20;
+    int lives;
     public boolean visible = true;
-    public Enemy(int x, int y, Player player) {
+    public Enemy(int x, int y, int lives, Player player) {
         this.x = x;
         this.y = y;
+        this.lives = lives;
         this.player = player;
     }
     public void render(Graphics g) {
         g.setColor(Color.white);
         g.drawRect((int)x, (int)y, width, height);
+        g.drawString(""+lives, (int)x + width/2, (int)y + width/2);
+    }
+    public void hit() {
+        lives--;
+    }
+    public boolean dead() {
+        return lives <= 0;
     }
     public void run() {
         while(true) {
