@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.util.stream.Collectors;
 import java.util.ConcurrentModificationException;
 
 public class Level {
