@@ -61,6 +61,7 @@ public class Player {
         invincibleUntilTicker = ticker + 100;
     }
     public synchronized void shoot() {
+        Sound.playSound("bam.wav");
         Missile m = new Missile((int)x+width/2-Missile.width/2, (int)y+height/2-Missile.height/2, dx, dy);
         Thread t = new Thread(m);
         t.start();

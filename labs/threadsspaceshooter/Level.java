@@ -94,6 +94,7 @@ public class Level {
                 	enemies.get(j).hit();
                     //enemies.get(j).visible = false;
                     player.missiles.get(i).visible = false;
+                    Sound.playSound("you_killed.wav");
                 }
             }
         }
@@ -102,6 +103,7 @@ public class Level {
                 player.lives--;
                 player.makeInvincibleForALittle();
                 enemies.get(i).hit();
+                Sound.playSound("you_got_hit.wav");
                 //enemies.get(i).visible = false;
             }
         }

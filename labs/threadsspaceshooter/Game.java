@@ -27,6 +27,7 @@ public class Game {
 		// initialize some stuff
 		player = new Player(1400, 400);
 		currentLevel = new Level(player, (int)(progress));
+
 	}
 	public void start() {
 		currentLevel.start();
@@ -50,6 +51,15 @@ public class Game {
 		else {
 			// means we're in a cutscene, so speed up the background
 			background.fast();
+			if(progress == -0.5) {
+				Sound.playSound("death.wav");
+			}
+			if(progress == 2.5) {
+				Sound.playSound("you_won.wav");
+			}
+			else if(progress == 1.5) {
+				Sound.playSound("levelUp.wav");
+			}
 		}
 	}
 	public void showCutScene(Graphics g, String text) {
