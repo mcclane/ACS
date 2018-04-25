@@ -57,6 +57,9 @@ public class Level {
         }
         g.setColor(Color.white);
         g.drawString("Enemies Left: "+enemies.size(), 1450, 75);
+        if(isFinished()) {
+            g.drawString("Press Space to Continue", 800, 400);
+        }
 	}
 	public synchronized void getRidOfInvisibleObjects() {
 		try {

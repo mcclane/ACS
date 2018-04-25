@@ -37,7 +37,7 @@ public class Sound {
         return initializeSound(sound, null);
     }
  
-    public static boolean initializeSound(String sound, Runnable onInitialized) {
+    public static synchronized boolean initializeSound(String sound, Runnable onInitialized) {
         if(!sounds.containsKey(sound)) {
             Media soundMedia = getSound(sound);
             if(soundMedia != null) {
@@ -64,7 +64,7 @@ public class Sound {
      * @param sound The string of the sound file to play.
      * @return MediaPlayer object. This can be discarded if not needed.
      */
-    public static void playSound(String sound) {
+    public static synchronized void playSound(String sound) {
         playSound(sound, 1, false);
     }
  
