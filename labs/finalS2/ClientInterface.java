@@ -42,7 +42,7 @@ public class ClientInterface {
                 screen.update((HashMap<Integer, Thing>)(in.readObject()));
             } catch(IOException e) {
                 System.out.println("IOException reading in run");
-                break;
+                //break;
             } catch(ClassNotFoundException e) {
                 System.out.println("ClassNotFoundException reading in run");
                 //e.printStackTrace();
