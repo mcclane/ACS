@@ -45,21 +45,23 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         synchronized(state) {
             //System.out.println(state);
             this.state = state;
-            // send a move event for smooth movement.
-            if(input.keyboard[87]) {
-                ci.send(new Event("player_move", playerHashCode, "up"));
-            }
-            // s - down
-            if(input.keyboard[83]) {
-                ci.send(new Event("player_move", playerHashCode, "down"));
-            }
-            // d - right
-            if(input.keyboard[68]) {
-                ci.send(new Event("player_move", playerHashCode, "right"));
-            }
-            // a - left
-            if(input.keyboard[65]) {
-                ci.send(new Event("player_move", playerHashCode, "left"));
+            if(state.containsKey(playerHashCode)) {
+                // send a move event for smooth movement.
+                if(input.keyboard[87]) {
+                    ci.send(new Event("player_move", playerHashCode, "up"));
+                }
+                // s - down
+                if(input.keyboard[83]) {
+                    ci.send(new Event("player_move", playerHashCode, "down"));
+                }
+                // d - right
+                if(input.keyboard[68]) {
+                    ci.send(new Event("player_move", playerHashCode, "right"));
+                }
+                // a - left
+                if(input.keyboard[65]) {
+                    ci.send(new Event("player_move", playerHashCode, "left"));
+                }
             }
         }
         repaint();
@@ -99,27 +101,6 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             }
         }
     }
-    /*public void keyPressed(KeyEvent e) {
-        int keyDown = e.getKeyCode();
-        if(view == 1) {
-            // w - up
-            if(keyDown == 87) {
-                ci.send(new Event("player_move", playerHashCode, "up"));
-            }
-            // s - down
-            else if(keyDown == 83) {
-                ci.send(new Event("player_move", playerHashCode, "down"));
-            }
-            // d - right
-            else if(keyDown == 68) {
-                ci.send(new Event("player_move", playerHashCode, "right"));
-            }
-            // a - left
-            else if(keyDown == 65) {
-                ci.send(new Event("player_move", playerHashCode, "left"));
-            }
-        }
-    }*/
     public void mousePressed(MouseEvent e) {
         if(view == 0) {
             ci.send(new Event("player_connect", playerHashCode));

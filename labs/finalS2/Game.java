@@ -41,7 +41,7 @@ public class Game implements Runnable {
             if(event.operation.equals("player_connect")) {
                 state.put(event.concerns, new Player(event.concerns, Math.random()*1200, Math.random()*800));
             }
-            else if(event.operation.equals("player_move")) {
+            else if(event.operation.equals("player_move") && state.containsKey(event.concerns)) {
                 double dx = 0;
                 double dy = 0;
                 switch(event.direction) {
@@ -72,7 +72,7 @@ public class Game implements Runnable {
                     }
                 }   
             }
-            else if(event.operation.equals("player_shoot")) {
+            else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns)) {
                 // TODO: Move this to a function outside of update
                 double x = state.get(event.concerns).x;
                 double y = state.get(event.concerns).y;
@@ -83,11 +83,25 @@ public class Game implements Runnable {
                 dy /= magnitude;
                 Projectile projectile = new Projectile(x, y, dx, dy);
                 state.put(projectile.hashCode(), projectile);
+                synchronized(projectiles) {
+                    projectiles.add(projectile);
+                }
                 // set the orientation of the shooting player
                 Player player = (Player)(state.get(event.concerns));
                 player.orientationX = dx;
                 player.orientationY = dy;
             }
+        }
+    }
+    public synchronized void remove(Thing thing) {
+        synchronized(state) {
+            state.remove(thing.hashCode());
+        }
+        synchronized(projectiles) {
+            projectiles.remove(thing);
+        }
+        synchronized(obstacles) {
+            obstacles.remove(thing);
         }
     }
     public void broadcastState() {
@@ -106,32 +120,40 @@ public class Game implements Runnable {
             synchronized(state) {
                 // broadcast the state
                 broadcastState();
+
                 toBeRemoved = new ArrayList<Integer>();
                 // check collisions between missiles and everything else
                 synchronized(projectiles) {
                     for(Thing projectile : projectiles) {
                         for(int key : state.keySet()) {
-                            if(key != projectile.hashCode() && projectile.collision(state.get(key))) {
-                                toBeRemoved.add(key);
+                            if(projectile.lives() > 0 && projectile.collision(state.get(key))) {
+                                projectile.hit();
+                                state.get(key).hit();
                                 System.out.println("collision!");
+                                break;
                             }
                         }
                     }
                 }
-                // take care of running the game
+                // get rid of things 
                 for(int key : state.keySet()) {
-                    state.get(key).move();
+                    // that have no lives left
+                    if(state.get(key).lives <= 0) {
+                        toBeRemoved.add(key);
+                    }
+                    // that have moved out of bounds
                     if(!inBounds(state.get(key)) && !state.get(key).type().equals("player")) {
                         toBeRemoved.add(key);
                     }
                 }
-                // get rid of things that have moved out of bounds
+                // get rid of everything previously determined to be removed
                 for(int key : toBeRemoved) {
-                    if(state.containsKey(key)) {
-                        state.remove(key);
-                    }
+                    remove(state.get(key));
                 }
-                
+                // move everything
+                for(int key : state.keySet()) {
+                    state.get(key).move();
+                }
             }
             // sleep
             try {

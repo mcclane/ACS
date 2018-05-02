@@ -12,6 +12,7 @@ public abstract class Thing implements Serializable {
     int width = 25;
     int height = 25;
     boolean armed = true;
+    int lives = 1;
     public Thing(String type, double x, double y, double dx, double dy) {
         this.type = type;
         this.x = x;
@@ -63,5 +64,11 @@ public abstract class Thing implements Serializable {
         int nx = (int)(x + dx);
         int ny = (int)(y  + dy);
         return thing.width + (int)thing.x > nx && nx + width > (int)(thing.x) && thing.height + (int)thing.y > ny && ny + height > (int)(thing.y);
+    }
+    public int lives() {
+        return lives;
+    }
+    public void hit() {
+        lives--;
     }
 }

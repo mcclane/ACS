@@ -8,6 +8,7 @@ public class Player extends Thing {
     public Player(int id, double x, double y) {
         super("player", x, y, 0, 0);
         this.id = id;
+        this.lives = 10;
     }
     public void render(Graphics g) {
         g.setColor(Color.blue);
