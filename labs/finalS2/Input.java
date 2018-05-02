@@ -16,7 +16,7 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener, M
     public static boolean entered;
     public static int mouseWheel;
     public static boolean[] mouseButtons = new boolean[3];
-    public static boolean[] keyboard = new boolean[250];
+    public static boolean[] keyboard = new boolean[10000];
  
     public Input(JPanel jpanel) {
         jpanel.setFocusable(true);

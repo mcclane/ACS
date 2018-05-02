@@ -56,4 +56,12 @@ public abstract class Thing implements Serializable {
             }
         }*/
     }
+    public boolean collision(Thing thing) {
+        return collisionIfMoved(0, 0, thing);
+    }
+    public boolean collisionIfMoved(double dx, double dy, Thing thing) {
+        int nx = (int)(x + dx);
+        int ny = (int)(y  + dy);
+        return thing.width + (int)thing.x > nx && nx + width > (int)(thing.x) && thing.height + (int)thing.y > ny && ny + height > (int)(thing.y);
+    }
 }

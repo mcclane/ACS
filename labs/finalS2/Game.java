@@ -5,10 +5,25 @@ import java.util.HashSet;
 
 public class Game implements Runnable {
     HashMap<Integer, Thing> state;
+    HashSet<Thing> players;
+    HashSet<Thing> obstacles;
+    HashSet<Thing> projectiles;
     ArrayList<ServerThread> threads;
     public Game() {
         state = new HashMap<Integer, Thing>();
+        players = new HashSet<Thing>();
+        obstacles = new HashSet<Thing>();
+        projectiles = new HashSet<Thing>();
         threads = new ArrayList<ServerThread>();
+        
+        //add some objects to create the level
+        for(int i = 0;i < 5;i++) {
+            for(int j = 0;j < 5;j++) {
+                Obstacle o = new Obstacle(i*100, j*100, 50, 50);
+                state.put(o.hashCode(), o);
+                obstacles.add(o);
+            }
+        }
     }
     public void add(ServerThread sv) {
         synchronized(threads) {
@@ -27,20 +42,35 @@ public class Game implements Runnable {
                 state.put(event.concerns, new Player(event.concerns, Math.random()*1200, Math.random()*800));
             }
             else if(event.operation.equals("player_move")) {
+                double dx = 0;
+                double dy = 0;
                 switch(event.direction) {
                     case "up":
-                        state.get(event.concerns).y -= 2;
+                        dy = -2;
                         break;
                     case "down":
-                        state.get(event.concerns).y += 2;
+                        dy = 2;
                         break;
                     case "left":
-                        state.get(event.concerns).x -= 2;
+                        dx = -2;
                         break;
                     case "right":
-                        state.get(event.concerns).x += 2;
+                        dx = 2;
                         break;
                 }
+                synchronized(obstacles) {
+                    boolean move = true;
+                    for(Thing thing : obstacles) {
+                        if(state.get(event.concerns).collisionIfMoved(dx, dy, thing)) {
+                            move = false;
+                            break;
+                        }
+                    }
+                    if(move) {
+                        state.get(event.concerns).x += dx;
+                        state.get(event.concerns).y += dy;
+                    }
+                }   
             }
             else if(event.operation.equals("player_shoot")) {
                 // TODO: Move this to a function outside of update
@@ -51,7 +81,7 @@ public class Game implements Runnable {
                 double magnitude = Math.sqrt(dx*dx + dy*dy);
                 dx /= magnitude;
                 dy /= magnitude;
-                Projectile projectile = new Projectile(x, y, dx*20, dy*20);
+                Projectile projectile = new Projectile(x, y, dx, dy);
                 state.put(projectile.hashCode(), projectile);
                 // set the orientation of the shooting player
                 Player player = (Player)(state.get(event.concerns));
@@ -77,6 +107,17 @@ public class Game implements Runnable {
                 // broadcast the state
                 broadcastState();
                 toBeRemoved = new ArrayList<Integer>();
+                // check collisions between missiles and everything else
+                synchronized(projectiles) {
+                    for(Thing projectile : projectiles) {
+                        for(int key : state.keySet()) {
+                            if(key != projectile.hashCode() && projectile.collision(state.get(key))) {
+                                toBeRemoved.add(key);
+                                System.out.println("collision!");
+                            }
+                        }
+                    }
+                }
                 // take care of running the game
                 for(int key : state.keySet()) {
                     state.get(key).move();
@@ -86,9 +127,11 @@ public class Game implements Runnable {
                 }
                 // get rid of things that have moved out of bounds
                 for(int key : toBeRemoved) {
-                    state.remove(key);
+                    if(state.containsKey(key)) {
+                        state.remove(key);
+                    }
                 }
-                // check collisions between players and objects
+                
             }
             // sleep
             try {

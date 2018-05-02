@@ -12,10 +12,10 @@ public class Player extends Thing {
     public void render(Graphics g) {
         g.setColor(Color.blue);
         g.drawString(""+id, (int)(x), (int)(y));
-        g.drawOval((int)(x-12.5), (int)(y-12.5), 25, 25);
+        g.drawOval((int)(x), (int)(y), 25, 25);
         if(armed) {
             g.setColor(Color.black);
-            g.drawLine((int)(x), (int)(y), (int)((x)+(orientationX*25)), (int)((y)+(orientationY*25)));
+            g.drawLine((int)(x+12.5), (int)(y+12.5), (int)((x+12.5)+(orientationX*25)), (int)((y+12.5)+(orientationY*25)));
         }
     }
     public int hashCode() {
