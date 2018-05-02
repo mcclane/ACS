@@ -29,16 +29,16 @@ public class Game implements Runnable {
             else if(event.operation.equals("player_move")) {
                 switch(event.direction) {
                     case "up":
-                        state.get(event.concerns).y -= 25;
+                        state.get(event.concerns).y -= 2;
                         break;
                     case "down":
-                        state.get(event.concerns).y += 25;
+                        state.get(event.concerns).y += 2;
                         break;
                     case "left":
-                        state.get(event.concerns).x -= 25;
+                        state.get(event.concerns).x -= 2;
                         break;
                     case "right":
-                        state.get(event.concerns).x += 25;
+                        state.get(event.concerns).x += 2;
                         break;
                 }
             }
@@ -53,6 +53,10 @@ public class Game implements Runnable {
                 dy /= magnitude;
                 Projectile projectile = new Projectile(x, y, dx*20, dy*20);
                 state.put(projectile.hashCode(), projectile);
+                // set the orientation of the shooting player
+                Player player = (Player)(state.get(event.concerns));
+                player.orientationX = dx;
+                player.orientationY = dy;
             }
         }
     }

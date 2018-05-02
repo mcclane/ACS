@@ -11,6 +11,7 @@ public abstract class Thing implements Serializable {
     int id;
     int width = 25;
     int height = 25;
+    boolean armed = true;
     public Thing(String type, double x, double y, double dx, double dy) {
         this.type = type;
         this.x = x;
