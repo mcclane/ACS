@@ -37,9 +37,11 @@ class Screen extends JPanel implements KeyListener, MouseListener, MouseMotionLi
 
         state = new HashMap<Integer, Thing>();
     }
-    public synchronized void update(HashMap<Integer, Thing> state) {
-        //System.out.println(state);
-        this.state = state;
+    public void update(HashMap<Integer, Thing> state) {
+        synchronized(state) {
+            //System.out.println(state);
+            this.state = state;
+        }
         repaint();
     }
     public Dimension getPreferredSize() {
@@ -48,8 +50,11 @@ class Screen extends JPanel implements KeyListener, MouseListener, MouseMotionLi
     public void paintComponent(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(0, 0, 1200, 800);
-        for(int key : state.keySet()) {
-            state.get(key).render(g);
+        synchronized(state) {
+            for(int key : state.keySet()) {
+                //System.out.println(key);
+                state.get(key).render(g);
+            }
         }
     }
     public void keyPressed(KeyEvent e) {

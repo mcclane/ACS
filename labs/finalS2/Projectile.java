@@ -8,7 +8,6 @@ public class Projectile extends Thing {
     }
     public void render(Graphics g) {
         g.setColor(Color.green);
-        g.drawRect((int)(x), (int)(y), 5, 5);
         g.drawLine((int)(x), (int)(y), (int)(x + dx*scaleFactor), (int)(y + dy*scaleFactor));
     }
 }

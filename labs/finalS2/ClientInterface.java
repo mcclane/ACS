@@ -28,7 +28,7 @@ public class ClientInterface {
         frame.setVisible(true);
 
     }
-    public void send(Event event) {
+    public synchronized void send(Event event) {
         try {
             out.writeObject(event);
         } catch(IOException e) {
