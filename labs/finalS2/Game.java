@@ -19,11 +19,17 @@ public class Game implements Runnable {
         //add some objects to create the level
         for(int i = 0;i < 5;i++) {
             for(int j = 0;j < 5;j++) {
-                Obstacle o = new Obstacle(i*100, j*100, 50, 50);
+                Obstacle o = new Obstacle(i*100, j*100, 50, 50, 3);
                 state.put(o.hashCode(), o);
                 obstacles.add(o);
             }
         }
+        Tree tree = new Tree(500, 500);
+        state.put(tree.hashCode(), tree);
+        obstacles.add(tree);
+        Tree tree2 = new Tree(560, 500);
+        state.put(tree2.hashCode(), tree2);
+        obstacles.add(tree2);
     }
     public void add(ServerThread sv) {
         synchronized(threads) {
@@ -36,7 +42,7 @@ public class Game implements Runnable {
         }
     }
     public void update(Event event) {
-        System.out.println("Received: "+event);
+        //System.out.println("Received: "+event);
         synchronized(state) {
             if(event.operation.equals("player_connect")) {
                 state.put(event.concerns, new Player(event.concerns, Math.random()*1200, Math.random()*800));
@@ -46,16 +52,16 @@ public class Game implements Runnable {
                 double dy = 0;
                 switch(event.direction) {
                     case "up":
-                        dy = -2;
+                        dy = -4;
                         break;
                     case "down":
-                        dy = 2;
+                        dy = 4;
                         break;
                     case "left":
-                        dx = -2;
+                        dx = -4;
                         break;
                     case "right":
-                        dx = 2;
+                        dx = 4;
                         break;
                 }
                 synchronized(obstacles) {
@@ -74,6 +80,7 @@ public class Game implements Runnable {
             }
             else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns)) {
                 // TODO: Move this to a function outside of update
+                int offset = state.get(event.concerns).height/2;
                 double x = state.get(event.concerns).x;
                 double y = state.get(event.concerns).y;
                 double dx = event.mouseX - x;
@@ -81,7 +88,15 @@ public class Game implements Runnable {
                 double magnitude = Math.sqrt(dx*dx + dy*dy);
                 dx /= magnitude;
                 dy /= magnitude;
-                Projectile projectile = new Projectile(x, y, dx, dy);
+                if(Math.random() > 0.5) {
+                    dx += Math.random()/10;
+                    dy += Math.random()/10;
+                }
+                else {
+                    dx -= Math.random()/10;
+                    dy -= Math.random()/10;
+                }
+                Projectile projectile = new Projectile(x+offset+(dx*30), y+offset+(dy*30), dx, dy);
                 state.put(projectile.hashCode(), projectile);
                 synchronized(projectiles) {
                     projectiles.add(projectile);
@@ -94,6 +109,9 @@ public class Game implements Runnable {
         }
     }
     public synchronized void remove(Thing thing) {
+        if(thing == null) {
+            return;
+        }
         synchronized(state) {
             state.remove(thing.hashCode());
         }
@@ -126,10 +144,10 @@ public class Game implements Runnable {
                 synchronized(projectiles) {
                     for(Thing projectile : projectiles) {
                         for(int key : state.keySet()) {
-                            if(projectile.lives() > 0 && projectile.collision(state.get(key))) {
+                            if(projectile.lives() > 0 && !state.get(key).type.equals("projectile") && projectile.collision(state.get(key))) {
                                 projectile.hit();
                                 state.get(key).hit();
-                                System.out.println("collision!");
+                                //System.out.println("collision! with "+state.get(key).type);
                                 break;
                             }
                         }
@@ -157,7 +175,7 @@ public class Game implements Runnable {
             }
             // sleep
             try {
-                Thread.sleep(17);
+                Thread.sleep(30);
             } catch(InterruptedException e) {
                 System.out.println("InterruptedException");
             }

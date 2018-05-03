@@ -70,7 +70,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         return new Dimension(1200, 800);
     }
     public void paintComponent(Graphics g) {
-        g.setColor(Color.white);
+        g.setColor(Colors.GRASS);
         g.fillRect(0, 0, 1200, 800);
         synchronized(state) {
             if(view == 0) {

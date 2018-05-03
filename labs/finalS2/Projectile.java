@@ -7,10 +7,10 @@ public class Projectile extends Thing {
         super("projectile", x, y, dx, dy);
         this.height = 1;
         this.width = 1;
-        this.lives = 2;
+        this.lives = 1;
     }
     public void render(Graphics g) {
-        g.setColor(Color.green);
+        g.setColor(Colors.PROJECTILE);
         g.drawLine((int)(x), (int)(y), (int)(x + dx*length), (int)(y + dy*length));
     }
     public void move() {
@@ -21,7 +21,7 @@ public class Projectile extends Thing {
         int steps = 100;
         for(int i = 0;i < steps;i++) {
             int nx = (int)(x + i*dx*length/steps);
-            int ny = (int)(y + i*dx*length/steps);
+            int ny = (int)(y + i*dy*length/steps);
             if(nx < thing.x + thing.width && nx > thing.x && ny < thing.y + thing.height && ny > thing.y) {
                 return true;
             }
