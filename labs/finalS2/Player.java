@@ -17,6 +17,8 @@ public class Player extends Thing {
         g.drawString(""+id, (int)(x), (int)(y));
         g.setColor(Colors.PLAYER);
         g.fillOval((int)(x), (int)(y), height, width);
+        g.setColor(Color.black);
+        g.drawOval((int)x, (int)y, height, width);
         if(armed) {
             g.setColor(Color.black);
             g.drawLine((int)(x+height/2), (int)(y+height/2), (int)((x+height/2)+(orientationX*25)), (int)((y+height/2)+(orientationY*25)));

@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.awt.Graphics;
 import java.awt.Color;
 
-public abstract class Thing implements Serializable {
+public abstract class Thing implements Serializable, Comparable<Thing> {
     public static final long serialVersionUID = 2L;
     String type;
     double x, y, dx, dy;
@@ -70,5 +70,11 @@ public abstract class Thing implements Serializable {
     }
     public void hit() {
         lives--;
+    }
+    public int compareTo(Thing thing) {
+        if(thing.id == this.id) {
+            return 0;
+        }
+        return Screen.drawOrder.get(this.type) - Screen.drawOrder.get(thing.type);
     }
 }

@@ -11,6 +11,7 @@ public class Game implements Runnable {
     HashSet<Thing> projectiles;
     ArrayList<ServerThread> threads;
     int mapsize = 4000;
+    boolean started = false;
     public Game() {
         state = new HashMap<Integer, Thing>();
         players = new HashSet<Thing>();
@@ -47,8 +48,9 @@ public class Game implements Runnable {
         synchronized(state) {
             if(event.operation.equals("player_connect")) {
                 state.put(event.concerns, new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
+                started = true;
             }
-            else if(event.operation.equals("player_move") && state.containsKey(event.concerns)) {
+            else if(event.operation.equals("player_move") && state.containsKey(event.concerns) && started) {
                 double dx = 0;
                 double dy = 0;
                 switch(event.direction) {
@@ -79,7 +81,7 @@ public class Game implements Runnable {
                     }
                 }   
             }
-            else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns)) {
+            else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns) && started) {
                 // TODO: Move this to a function outside of update
                 Player player = (Player)(state.get(event.concerns));
                 int offset = player.height/2;

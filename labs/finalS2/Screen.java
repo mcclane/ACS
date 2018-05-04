@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 
 
 class Screen extends JPanel implements MouseListener, MouseMotionListener {
@@ -25,6 +26,8 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
     ClientInterface ci;
     int playerHashCode;
     HashMap<Integer, Thing> state;
+    ArrayList<Thing> orderedState;
+    static HashMap<String, Integer> drawOrder;
     int view = 0;
     public Screen(ClientInterface ci) {
         this.setLayout(null);
@@ -40,11 +43,24 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         //ci.send(new Event("player_connect", playerHashCode));
 
         state = new HashMap<Integer, Thing>();
+        orderedState = new ArrayList<Thing>();
+        
+        drawOrder = new HashMap<String, Integer>();
+        drawOrder.put("player", 0);
+        drawOrder.put("enemy", 1);
+        drawOrder.put("projectile", 2);
+        drawOrder.put("obstacle", 3);
+        drawOrder.put("tree", 4);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
             //System.out.println(state);
             this.state = state;
+            orderedState = new ArrayList<Thing>();
+            for(int key : state.keySet()) {
+                orderedState.add(state.get(key));
+            }
+            Collections.sort(orderedState);
             if(state.containsKey(playerHashCode)) {
                 // send a move event for smooth movement.
                 if(input.keyboard[87]) {
@@ -73,17 +89,23 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         g.setColor(Colors.GRASS);
         g.fillRect(0, 0, 1200, 800);
         synchronized(state) {
+        synchronized(orderedState) {
             if(state.containsKey(playerHashCode)) {
                 //g.translate(0, 0);
                 g.translate(-(int)state.get(playerHashCode).x+600, -(int)state.get(playerHashCode).y+400);
             }
             try {
-                // draw all the players
+                for(Thing thing : orderedState) {
+                    thing.render(g);
+                }
+                /*// draw all the players
                 for(int key : state.keySet()) {
                     if(state.get(key).type.equals("player")) {
                         state.get(key).render(g);
                     }
                 }
+                // draw all the enemies
+                
                 // draw all the projectiles
                 for(int key : state.keySet()) {
                     if(state.get(key).type.equals("projectile")) {
@@ -101,7 +123,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                     if(state.get(key).type.equals("tree")) {
                         state.get(key).render(g);
                     }
-                }
+                }*/
             } catch(NullPointerException e) {
                 System.out.println("oooh another null pointer exception");
             }
@@ -110,6 +132,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 g.setColor(Color.black);
                 g.drawString(""+playerCount, 1020, 620);
             }
+        }
         }
     }
     public void mousePressed(MouseEvent e) {
