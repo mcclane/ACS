@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.ConcurrentModificationException;
 
 
 public class Game implements Runnable {
@@ -9,6 +10,7 @@ public class Game implements Runnable {
     HashSet<Thing> obstacles;
     HashSet<Thing> projectiles;
     ArrayList<ServerThread> threads;
+    int mapsize = 4000;
     public Game() {
         state = new HashMap<Integer, Thing>();
         players = new HashSet<Thing>();
@@ -16,20 +18,19 @@ public class Game implements Runnable {
         projectiles = new HashSet<Thing>();
         threads = new ArrayList<ServerThread>();
         
-        //add some objects to create the level
-        for(int i = 0;i < 5;i++) {
-            for(int j = 0;j < 5;j++) {
-                Obstacle o = new Obstacle(i*100, j*100, 50, 50, 3);
-                state.put(o.hashCode(), o);
-                obstacles.add(o);
-            }
+        //add some obstacles to the game
+        for(int i = 0;i < 50;i++) {
+            int treeSize = (int)(Math.random()*150);
+            Tree t = new Tree(Math.random()*mapsize, Math.random()*mapsize, treeSize, treeSize);
+            state.put(t.hashCode(), t);
+            obstacles.add(t);
         }
-        Tree tree = new Tree(500, 500);
-        state.put(tree.hashCode(), tree);
-        obstacles.add(tree);
-        Tree tree2 = new Tree(560, 500);
-        state.put(tree2.hashCode(), tree2);
-        obstacles.add(tree2);
+        int obstacleSize = 100;
+        for(int i = 0;i < 15;i++) {
+            Obstacle o = new Obstacle(Math.random()*mapsize, Math.random()*mapsize, obstacleSize, obstacleSize, 3);
+            state.put(o.hashCode(), o);
+            obstacles.add(o);
+        }
     }
     public void add(ServerThread sv) {
         synchronized(threads) {
@@ -45,23 +46,23 @@ public class Game implements Runnable {
         //System.out.println("Received: "+event);
         synchronized(state) {
             if(event.operation.equals("player_connect")) {
-                state.put(event.concerns, new Player(event.concerns, Math.random()*1200, Math.random()*800));
+                state.put(event.concerns, new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
             }
             else if(event.operation.equals("player_move") && state.containsKey(event.concerns)) {
                 double dx = 0;
                 double dy = 0;
                 switch(event.direction) {
                     case "up":
-                        dy = -4;
+                        dy = -6;
                         break;
                     case "down":
-                        dy = 4;
+                        dy = 6;
                         break;
                     case "left":
-                        dx = -4;
+                        dx = -6;
                         break;
                     case "right":
-                        dx = 4;
+                        dx = 6;
                         break;
                 }
                 synchronized(obstacles) {
@@ -72,7 +73,7 @@ public class Game implements Runnable {
                             break;
                         }
                     }
-                    if(move) {
+                    if(move && inBoundsIfMoved(state.get(event.concerns), dx, dy)) {
                         state.get(event.concerns).x += dx;
                         state.get(event.concerns).y += dy;
                     }
@@ -80,31 +81,33 @@ public class Game implements Runnable {
             }
             else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns)) {
                 // TODO: Move this to a function outside of update
-                int offset = state.get(event.concerns).height/2;
-                double x = state.get(event.concerns).x;
+                Player player = (Player)(state.get(event.concerns));
+                int offset = player.height/2;
+                /*double x = state.get(event.concerns).x;
                 double y = state.get(event.concerns).y;
                 double dx = event.mouseX - x;
                 double dy = event.mouseY - y;
                 double magnitude = Math.sqrt(dx*dx + dy*dy);
                 dx /= magnitude;
                 dy /= magnitude;
+                */
                 if(Math.random() > 0.5) {
-                    dx += Math.random()/10;
-                    dy += Math.random()/10;
+                    event.dx += Math.random()/10;
+                    event.dy += Math.random()/10;
                 }
                 else {
-                    dx -= Math.random()/10;
-                    dy -= Math.random()/10;
+                    event.dx -= Math.random()/10;
+                    event.dy -= Math.random()/10;
                 }
-                Projectile projectile = new Projectile(x+offset+(dx*30), y+offset+(dy*30), dx, dy);
+                Projectile projectile = new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy);
                 state.put(projectile.hashCode(), projectile);
                 synchronized(projectiles) {
                     projectiles.add(projectile);
                 }
                 // set the orientation of the shooting player
-                Player player = (Player)(state.get(event.concerns));
-                player.orientationX = dx;
-                player.orientationY = dy;
+                
+                player.orientationX = event.dx;
+                player.orientationY = event.dy;
             }
         }
     }
@@ -124,11 +127,15 @@ public class Game implements Runnable {
     }
     public void broadcastState() {
         synchronized(state) {
-            //System.out.println(state);
-            synchronized(threads) {
-                for(ServerThread sv : threads) {
-                    sv.send(state);
+            try {
+                //System.out.println(state);
+                synchronized(threads) {
+                    for(ServerThread sv : threads) {
+                        sv.send(state);
+                    }
                 }
+            } catch(ConcurrentModificationException e) {
+                System.out.println("CME trying to broadcast");
             }
         }
     }
@@ -147,6 +154,9 @@ public class Game implements Runnable {
                             if(projectile.lives() > 0 && !state.get(key).type.equals("projectile") && projectile.collision(state.get(key))) {
                                 projectile.hit();
                                 state.get(key).hit();
+                                if(state.get(key).type.equals("player")) {
+                                    System.out.println("player hit");
+                                }
                                 //System.out.println("collision! with "+state.get(key).type);
                                 break;
                             }
@@ -182,6 +192,9 @@ public class Game implements Runnable {
         }
     }
     public boolean inBounds(Thing thing) {
-        return thing.x < 1200 && thing.x > 0 && thing.y < 800 && thing.y > 0;
+        return inBoundsIfMoved(thing, 0, 0);
+    }
+    public boolean inBoundsIfMoved(Thing thing, double dx, double dy) {
+        return thing.x+dx < mapsize && thing.x+dx > 0 && thing.y+dy < mapsize && thing.y+dy > 0;
     }
 }

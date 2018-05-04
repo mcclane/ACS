@@ -2,11 +2,11 @@ import java.awt.Graphics;
 
 
 public class Tree extends Thing {
-    public Tree(double x, double y) {
+    public Tree(double x, double y, int height, int width) {
         super("tree", x, y, 0, 0);
         this.lives = 5;
-        this.height = 30;
-        this.width = 30;
+        this.height = height;
+        this.width = height;
     }
     public void render(Graphics g) {
         g.setColor(Colors.TREE);

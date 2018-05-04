@@ -7,6 +7,8 @@ public class Event implements Serializable {
     String direction;
     int mouseX;
     int mouseY;
+    double dx;
+    double dy;
     int concerns;
     public Event(String operation, int concerns) {
         this.operation = operation;
@@ -17,11 +19,12 @@ public class Event implements Serializable {
         this.concerns = concerns;
         this.direction = direction;
     }
-    public Event(String operation, int concerns, int mouseX, int mouseY) {
+    // a shoot event
+    public Event(String operation, int concerns, double dx, double dy) {
         this.operation = operation;
         this.concerns = concerns;
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
+        this.dx = dx;
+        this.dy = dy;
     }
     public String toString() {
         return operation+" "+concerns;

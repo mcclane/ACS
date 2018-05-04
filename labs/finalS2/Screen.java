@@ -73,31 +73,42 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         g.setColor(Colors.GRASS);
         g.fillRect(0, 0, 1200, 800);
         synchronized(state) {
-            if(view == 0) {
-                ImageReader.drawImage(g, "images/start_screen.png", 0, 0, 1200, 800);
-                // count the number of players connected:
-                playerCount = 0;
+            if(state.containsKey(playerHashCode)) {
+                //g.translate(0, 0);
+                g.translate(-(int)state.get(playerHashCode).x+600, -(int)state.get(playerHashCode).y+400);
+            }
+            try {
+                // draw all the players
                 for(int key : state.keySet()) {
-                    try {
-                        if(state.get(key).type.equals("player")) {
-                            playerCount++;
-                        }
-                    } catch(NullPointerException e) {
-                        System.out.println("ooooh, another null pointer exception");
+                    if(state.get(key).type.equals("player")) {
+                        state.get(key).render(g);
                     }
                 }
+                // draw all the projectiles
+                for(int key : state.keySet()) {
+                    if(state.get(key).type.equals("projectile")) {
+                        state.get(key).render(g);
+                    }
+                }
+                // draw all the obstacles
+                for(int key : state.keySet()) {
+                    if(state.get(key).type.equals("obstacle")) {
+                        state.get(key).render(g);
+                    }
+                }
+                // draw all the trees
+                for(int key : state.keySet()) {
+                    if(state.get(key).type.equals("tree")) {
+                        state.get(key).render(g);
+                    }
+                }
+            } catch(NullPointerException e) {
+                System.out.println("oooh another null pointer exception");
+            }
+            if(view == 0) {
+                ImageReader.drawImage(g, "images/start_screen.png", 0, 0, 1200, 800);
                 g.setColor(Color.black);
                 g.drawString(""+playerCount, 1020, 620);
-            }
-            // draw a cursor on the screen
-            //ImageReader.drawImage(g, "images/cursor.png", Input.x-12, Input.y-12, 25, 25);
-            for(int key : state.keySet()) {
-                //System.out.println(key);
-                try {
-                    state.get(key).render(g);
-                } catch(NullPointerException e) {
-                    System.out.println("Ooooh, another null pointer exception");
-                }
             }
         }
     }
@@ -107,7 +118,26 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             view++;
         }
         else if(view == 1) {
-            ci.send(new Event("player_shoot", playerHashCode, e.getX(), e.getY()));
+            int x = e.getX();
+            int y = e.getY();
+            int px = 600;
+            int py = 400;
+            if(state.containsKey(playerHashCode)) {
+                //px = (int)state.get(playerHashCode).x;
+                //py = (int)state.get(playerHashCode).y;
+            }
+            // translate mouse coordinates to be relative to the player
+            //x -= px;
+            //y -= py;
+            // find the direction of the click relative to the plaer
+            double dx = x - px;
+            double dy = y - py;
+            // normalize the direction
+            double magnitude = Math.sqrt(dx*dx + dy*dy);
+            dx /= magnitude;
+            dy /= magnitude;
+            // send it to the server!
+            ci.send(new Event("player_shoot", playerHashCode, dx, dy));
         }
     }
     public void mouseReleased(MouseEvent e) {
