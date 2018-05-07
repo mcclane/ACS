@@ -11,7 +11,7 @@ public abstract class Thing implements Serializable, Comparable<Thing> {
     int id;
     int width = 25;
     int height = 25;
-    boolean armed = true;
+    boolean armed = false;
     int lives = 1;
     public Thing(String type, double x, double y, double dx, double dy) {
         this.type = type;
@@ -76,5 +76,8 @@ public abstract class Thing implements Serializable, Comparable<Thing> {
             return 0;
         }
         return Screen.drawOrder.get(this.type) - Screen.drawOrder.get(thing.type);
+    }
+    public boolean inView(Thing player) {
+        return 1200 > Math.sqrt(Math.pow(player.x - x, 2) + Math.pow(player.y - y, 2));
     }
 }

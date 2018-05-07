@@ -9,28 +9,29 @@ public class Game implements Runnable {
     HashSet<Thing> players;
     HashSet<Thing> obstacles;
     HashSet<Thing> projectiles;
+    HashSet<Thing> weapons;
     ArrayList<ServerThread> threads;
-    int mapsize = 4000;
+    static int mapsize = 4000;
     boolean started = false;
     public Game() {
         state = new HashMap<Integer, Thing>();
         players = new HashSet<Thing>();
         obstacles = new HashSet<Thing>();
         projectiles = new HashSet<Thing>();
+        weapons = new HashSet<Thing>();
         threads = new ArrayList<ServerThread>();
-        
+
         //add some obstacles to the game
         for(int i = 0;i < 50;i++) {
             int treeSize = (int)(Math.random()*150);
-            Tree t = new Tree(Math.random()*mapsize, Math.random()*mapsize, treeSize, treeSize);
-            state.put(t.hashCode(), t);
-            obstacles.add(t);
+            add(new Tree(Math.random()*mapsize, Math.random()*mapsize, treeSize, treeSize));
         }
         int obstacleSize = 100;
         for(int i = 0;i < 15;i++) {
-            Obstacle o = new Obstacle(Math.random()*mapsize, Math.random()*mapsize, obstacleSize, obstacleSize, 3);
-            state.put(o.hashCode(), o);
-            obstacles.add(o);
+            add(new Obstacle(Math.random()*mapsize, Math.random()*mapsize, obstacleSize, obstacleSize, 3));
+        }
+        for(int i = 0;i < 15;i++) {
+            add(new Weapon(Math.random()*mapsize, Math.random()*mapsize));
         }
     }
     public void add(ServerThread sv) {
@@ -47,7 +48,7 @@ public class Game implements Runnable {
         //System.out.println("Received: "+event);
         synchronized(state) {
             if(event.operation.equals("player_connect")) {
-                state.put(event.concerns, new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
+                add(new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
                 started = true;
             }
             else if(event.operation.equals("player_move") && state.containsKey(event.concerns) && started) {
@@ -81,7 +82,7 @@ public class Game implements Runnable {
                     }
                 }   
             }
-            else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns) && started) {
+            else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns) && started && state.get(event.concerns).armed) {
                 // TODO: Move this to a function outside of update
                 Player player = (Player)(state.get(event.concerns));
                 int offset = player.height/2;
@@ -101,15 +102,35 @@ public class Game implements Runnable {
                     event.dx -= Math.random()/10;
                     event.dy -= Math.random()/10;
                 }
-                Projectile projectile = new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy);
-                state.put(projectile.hashCode(), projectile);
-                synchronized(projectiles) {
-                    projectiles.add(projectile);
-                }
+                add(new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy));
                 // set the orientation of the shooting player
-                
                 player.orientationX = event.dx;
                 player.orientationY = event.dy;
+            }
+        }
+    }
+    public synchronized void add(Thing thing) {
+        synchronized(state) {
+            state.put(thing.hashCode(), thing);
+        }
+        if(thing.type.equals("projectile")) {
+            synchronized(projectiles) {
+                projectiles.add(thing);
+            }
+        }
+        else if(thing.type.equals("obstacle")) {
+            synchronized(obstacles) {
+                obstacles.add(thing);
+            }
+        }
+        else if(thing.type.equals("weapon")) {
+            synchronized(weapons) {
+                weapons.add(thing);
+            }
+        }
+        else if(thing.type.equals("player")) {
+            synchronized(players) {
+                players.add(thing);
             }
         }
     }
@@ -125,6 +146,12 @@ public class Game implements Runnable {
         }
         synchronized(obstacles) {
             obstacles.remove(thing);
+        }
+        synchronized(weapons) {
+            weapons.remove(thing);
+        }
+        synchronized(players) {
+            players.remove(thing);
         }
     }
     public void broadcastState() {
@@ -164,6 +191,16 @@ public class Game implements Runnable {
                             }
                         }
                     }
+                }
+                // check collisions between players and weapons
+                synchronized(weapons) {
+                synchronized(players) {
+                    for(Thing weapon : weapons) {
+                        for(Thing player : players) {
+                            weapon.collision(player);
+                        }
+                    }
+                }
                 }
                 // get rid of things 
                 for(int key : state.keySet()) {

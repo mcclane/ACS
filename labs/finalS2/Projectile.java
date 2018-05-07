@@ -18,6 +18,9 @@ public class Projectile extends Thing {
         y += dy * 20;
     }
     public boolean collision(Thing thing) {
+        if(thing.type.equals("weapon")) {
+            return false;
+        }
         int steps = 100;
         for(int i = 0;i < steps;i++) {
             int nx = (int)(x + i*dx*length/steps);

@@ -22,7 +22,7 @@ public class Obstacle extends Thing {
     }
     public void hit() {
         lives--;
-        height -= 5;
-        width -= 5;
+        height -= height/4;
+        width -= width/4;
     }
 }

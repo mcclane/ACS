@@ -19,7 +19,7 @@ public class Tree extends Thing {
     }
     public void hit() {
         lives--;
-        height--;
-        width--;
+        height -= height/5;
+        width -= width/5;
     }
 }

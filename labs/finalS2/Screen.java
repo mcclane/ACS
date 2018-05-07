@@ -48,9 +48,10 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder = new HashMap<String, Integer>();
         drawOrder.put("player", 0);
         drawOrder.put("enemy", 1);
-        drawOrder.put("projectile", 2);
-        drawOrder.put("obstacle", 3);
-        drawOrder.put("tree", 4);
+        drawOrder.put("weapon", 2);
+        drawOrder.put("projectile", 3);
+        drawOrder.put("obstacle", 4);
+        drawOrder.put("tree", 5);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
@@ -96,7 +97,12 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             }
             try {
                 for(Thing thing : orderedState) {
-                    thing.render(g);
+                    if(!state.containsKey(playerHashCode)) {
+                        thing.render(g);
+                    }
+                    else if(thing.inView(state.get(playerHashCode))) {
+                        thing.render(g);
+                    }
                 }
                 /*// draw all the players
                 for(int key : state.keySet()) {
