@@ -104,32 +104,6 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                         thing.render(g);
                     }
                 }
-                /*// draw all the players
-                for(int key : state.keySet()) {
-                    if(state.get(key).type.equals("player")) {
-                        state.get(key).render(g);
-                    }
-                }
-                // draw all the enemies
-                
-                // draw all the projectiles
-                for(int key : state.keySet()) {
-                    if(state.get(key).type.equals("projectile")) {
-                        state.get(key).render(g);
-                    }
-                }
-                // draw all the obstacles
-                for(int key : state.keySet()) {
-                    if(state.get(key).type.equals("obstacle")) {
-                        state.get(key).render(g);
-                    }
-                }
-                // draw all the trees
-                for(int key : state.keySet()) {
-                    if(state.get(key).type.equals("tree")) {
-                        state.get(key).render(g);
-                    }
-                }*/
             } catch(NullPointerException e) {
                 System.out.println("oooh another null pointer exception");
             }
@@ -151,14 +125,6 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             int y = e.getY();
             int px = 600;
             int py = 400;
-            if(state.containsKey(playerHashCode)) {
-                //px = (int)state.get(playerHashCode).x;
-                //py = (int)state.get(playerHashCode).y;
-            }
-            // translate mouse coordinates to be relative to the player
-            //x -= px;
-            //y -= py;
-            // find the direction of the click relative to the plaer
             double dx = x - px;
             double dy = y - py;
             // normalize the direction

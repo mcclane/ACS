@@ -86,14 +86,6 @@ public class Game implements Runnable {
                 // TODO: Move this to a function outside of update
                 Player player = (Player)(state.get(event.concerns));
                 int offset = player.height/2;
-                /*double x = state.get(event.concerns).x;
-                double y = state.get(event.concerns).y;
-                double dx = event.mouseX - x;
-                double dy = event.mouseY - y;
-                double magnitude = Math.sqrt(dx*dx + dy*dy);
-                dx /= magnitude;
-                dy /= magnitude;
-                */
                 if(Math.random() > 0.5) {
                     event.dx += Math.random()/10;
                     event.dy += Math.random()/10;
