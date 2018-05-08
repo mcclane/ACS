@@ -22,7 +22,6 @@ import java.util.Collections;
 
 class Screen extends JPanel implements MouseListener, MouseMotionListener {
     Input input;
-    int playerCount = 0;
     ClientInterface ci;
     int playerHashCode;
     HashMap<Integer, Thing> state;
@@ -108,6 +107,12 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 System.out.println("oooh another null pointer exception");
             }
             if(view == 0) {
+                int playerCount = 0;
+                for(Thing thing : orderedState){
+                    if(thing.type.equals("player")) {
+                        playerCount++;
+                    }
+                }
                 ImageReader.drawImage(g, "images/start_screen.png", 0, 0, 1200, 800);
                 g.setColor(Color.black);
                 g.drawString(""+playerCount, 1020, 620);

@@ -110,7 +110,7 @@ public class Game implements Runnable {
                 projectiles.add(thing);
             }
         }
-        else if(thing.type.equals("obstacle")) {
+        else if(thing.type.equals("obstacle") || thing.type.equals("tree")) {
             synchronized(obstacles) {
                 obstacles.add(thing);
             }
