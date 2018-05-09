@@ -51,6 +51,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder.put("projectile", 3);
         drawOrder.put("obstacle", 4);
         drawOrder.put("tree", 5);
+        drawOrder.put("text", 6);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
@@ -78,6 +79,10 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 if(input.keyboard[65]) {
                     ci.send(new Event("player_move", playerHashCode, "left"));
                 }
+                // p - cheat key
+                if(input.keyboard[80]) {
+                    ci.send(new Event("cheat", playerHashCode));
+                }
             }
         }
         repaint();
@@ -101,6 +106,12 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                     }
                     else if(thing.inView(state.get(playerHashCode))) {
                         thing.render(g);
+                    }
+                    else if(thing.type.equals("text")) {
+                        if(state.containsKey(playerHashCode)) {
+                            Text text = (Text)(thing);
+                            text.render(g, (int)(state.get(playerHashCode).x)+400, (int)(state.get(playerHashCode).y)- 200);
+                        }
                     }
                 }
             } catch(NullPointerException e) {

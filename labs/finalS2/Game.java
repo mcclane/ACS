@@ -13,6 +13,10 @@ public class Game implements Runnable {
     ArrayList<ServerThread> threads;
     static int mapsize = 4000;
     boolean started = false;
+    int level = 1;
+    int killedTrees = 0;
+    int killedBoxes = 0;
+    Text levelText;
     public Game() {
         state = new HashMap<Integer, Thing>();
         players = new HashSet<Thing>();
@@ -20,7 +24,8 @@ public class Game implements Runnable {
         projectiles = new HashSet<Thing>();
         weapons = new HashSet<Thing>();
         threads = new ArrayList<ServerThread>();
-
+        levelText = new Text("Level: "+level, -1100, 25);
+        state.put(levelText.hashCode(), levelText);
         //add some obstacles to the game
         for(int i = 0;i < 50;i++) {
             int treeSize = (int)(Math.random()*150);
@@ -50,6 +55,10 @@ public class Game implements Runnable {
             if(event.operation.equals("player_connect")) {
                 add(new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
                 started = true;
+            }
+            else if(event.operation.equals("cheat")) {
+                level++;
+                levelText.setText("Level: "+level);
             }
             else if(event.operation.equals("player_move") && state.containsKey(event.concerns) && started) {
                 double dx = 0;
@@ -186,13 +195,13 @@ public class Game implements Runnable {
                 }
                 // check collisions between players and weapons
                 synchronized(weapons) {
-                synchronized(players) {
-                    for(Thing weapon : weapons) {
-                        for(Thing player : players) {
-                            weapon.collision(player);
+                    synchronized(players) {
+                        for(Thing weapon : weapons) {
+                            for(Thing player : players) {
+                                weapon.collision(player);
+                            }
                         }
                     }
-                }
                 }
                 // get rid of things 
                 for(int key : state.keySet()) {
@@ -223,9 +232,11 @@ public class Game implements Runnable {
         }
     }
     public boolean inBounds(Thing thing) {
+        if(thing.type.equals("text"))
+            return true;
         return inBoundsIfMoved(thing, 0, 0);
     }
     public boolean inBoundsIfMoved(Thing thing, double dx, double dy) {
-        return thing.x+dx < mapsize && thing.x+dx > 0 && thing.y+dy < mapsize && thing.y+dy > 0;
+        return thing.x+dx < mapsize && thing.x+dx > 0 && thing.y+dy < mapsize && thing.y+dy > 0 && !thing.type.equals("text");
     }
 }

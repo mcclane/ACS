@@ -15,4 +15,8 @@ public class Text extends Thing {
         g.setColor(Color.black);
         g.drawString(text, (int)x, (int)y);
     }
+    public void render(Graphics g, int x, int y) {
+        g.setColor(Color.black);
+        g.drawString(text, x, y);
+    }
 }
