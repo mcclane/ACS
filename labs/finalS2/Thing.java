@@ -50,12 +50,6 @@ public abstract class Thing implements Serializable, Comparable<Thing> {
         double magnitude = Math.sqrt(dx*dx + dy*dy);
         this.orientationX = dx/magnitude;
         this.orientationY = dy/magnitude;
-        /*if(dx != 0) {
-            angle = Math.atan(dy/dx);
-            if(dx < 0) {
-                angle += Math.PI;
-            }
-        }*/
     }
     public boolean collision(Thing thing) {
         return collisionIfMoved(0, 0, thing);

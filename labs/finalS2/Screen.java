@@ -51,7 +51,8 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder.put("projectile", 3);
         drawOrder.put("obstacle", 4);
         drawOrder.put("tree", 5);
-        drawOrder.put("text", 6);
+        drawOrder.put("barrel", 6);
+        drawOrder.put("text", 7);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {

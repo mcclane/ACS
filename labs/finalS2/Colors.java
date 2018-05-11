@@ -10,4 +10,5 @@ public class Colors {
     public static Color TREE_WOOD = new Color(53, 33, 14);
     //public static Color TREE = new Color(52, 68, 34);
     public static Color TREE = new Color(42, 56, 27, 200);
+    public static Color BARREL = new Color(34, 36, 40);
 }

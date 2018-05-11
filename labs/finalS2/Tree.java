@@ -10,7 +10,7 @@ public class Tree extends Thing {
     }
     public void render(Graphics g) {
         g.setColor(Colors.TREE);
-        g.drawRect((int)(x), (int)(y), width, height);
+        //g.drawRect((int)(x), (int)(y), width, height);
         g.fillOval((int)(x-9*width/6), (int)(y-9*height/6), width*4, height*4);
         g.setColor(Colors.DARK_TREE_WOOD);
         g.fillOval((int)x-5, (int)y-5, width+10, height+10);

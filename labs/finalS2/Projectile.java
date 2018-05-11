@@ -3,17 +3,30 @@ import java.awt.Color;
 
 public class Projectile extends Thing {
     double length = 100;
+    int rangeCounter = 0;
+    int range = 10;
     public Projectile(double x, double y, double dx, double dy) {
         super("projectile", x, y, dx, dy);
         this.height = 1;
         this.width = 1;
         this.lives = 1;
     }
+    public Projectile(double x, double y, double dx, double dy, int range) {
+        super("projectile", x, y, dx, dy);
+        this.height = 1;
+        this.width = 1;
+        this.lives = 1;
+        this.range = range;
+    }
     public void render(Graphics g) {
         g.setColor(Colors.PROJECTILE);
         g.drawLine((int)(x), (int)(y), (int)(x + dx*length), (int)(y + dy*length));
     }
     public void move() {
+        rangeCounter++;
+        if(rangeCounter > range) {
+            lives = 0;
+        }
         x += dx * 20;
         y += dy * 20;
     }

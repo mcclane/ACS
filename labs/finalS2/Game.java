@@ -24,7 +24,7 @@ public class Game implements Runnable {
         projectiles = new HashSet<Thing>();
         weapons = new HashSet<Thing>();
         threads = new ArrayList<ServerThread>();
-        levelText = new Text("Level: "+level, -1100, 25);
+        levelText = new Text("Level 1: Find a gun and kill 1 tree", -1100, 25);
         state.put(levelText.hashCode(), levelText);
         //add some obstacles to the game
         for(int i = 0;i < 50;i++) {
@@ -38,6 +38,10 @@ public class Game implements Runnable {
         for(int i = 0;i < 15;i++) {
             add(new Weapon(Math.random()*mapsize, Math.random()*mapsize));
         }
+        for(int i = 0;i < 25;i++) {
+            add(new Barrel(Math.random()*mapsize, Math.random()*mapsize, 70, 2));
+        }
+        // add some 
     }
     public void add(ServerThread sv) {
         synchronized(threads) {
@@ -103,7 +107,7 @@ public class Game implements Runnable {
                     event.dx -= Math.random()/10;
                     event.dy -= Math.random()/10;
                 }
-                add(new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy));
+                add(new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy, 100));
                 // set the orientation of the shooting player
                 player.orientationX = event.dx;
                 player.orientationY = event.dy;
@@ -119,7 +123,7 @@ public class Game implements Runnable {
                 projectiles.add(thing);
             }
         }
-        else if(thing.type.equals("obstacle") || thing.type.equals("tree")) {
+        else if(thing.type.equals("obstacle") || thing.type.equals("tree") || thing.type.equals("barrel")) {
             synchronized(obstacles) {
                 obstacles.add(thing);
             }
@@ -216,7 +220,34 @@ public class Game implements Runnable {
                 }
                 // get rid of everything previously determined to be removed
                 for(int key : toBeRemoved) {
+                    if(state.get(key) == null) {
+                        continue;
+                    }
+                    if(state.get(key).type.equals("tree")) {
+                        killedTrees++;
+                    }
+                    else if(state.get(key).type.equals("obstacle")) {
+                        killedBoxes++;
+                    }
+                    else if(state.get(key).type.equals("barrel")) {
+                        for(int i = -3;i < 3;i++) {
+                            for(int j = -3;j < 3;j++) {
+                                double magnitude = Math.sqrt(i*i + j*j);
+                                add(new Projectile(state.get(key).x, state.get(key).y, i/magnitude, j/magnitude, 25));
+                            }
+                        }
+                    }
                     remove(state.get(key));
+                }
+                if(level == 1 && killedTrees > 0) {
+                    level++;
+                    killedTrees = 0;
+                    killedBoxes = 0;
+                    levelText.setText("Level 2: Kill 4 Trees and 4 Boxes");
+                }
+                else if(level == 2 && killedBoxes > 3 && killedTrees > 3) {
+                    level++;
+                    levelText.setText("Level 3: Kill the other player!");
                 }
                 // move everything
                 for(int key : state.keySet()) {
