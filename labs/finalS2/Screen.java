@@ -27,6 +27,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
     HashMap<Integer, Thing> state;
     ArrayList<Thing> orderedState;
     static HashMap<String, Integer> drawOrder;
+    boolean started = false;
     int view = 0;
     public Screen(ClientInterface ci) {
         this.setLayout(null);
@@ -53,6 +54,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder.put("tree", 5);
         drawOrder.put("barrel", 6);
         drawOrder.put("text", 7);
+        drawOrder.put("death_circle", 8);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
@@ -64,6 +66,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             }
             Collections.sort(orderedState);
             if(state.containsKey(playerHashCode)) {
+                started = true;
                 // send a move event for smooth movement.
                 if(input.keyboard[87]) {
                     ci.send(new Event("player_move", playerHashCode, "up"));
@@ -94,13 +97,32 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
     public void paintComponent(Graphics g) {
         g.setColor(Colors.GRASS);
         g.fillRect(0, 0, 1200, 800);
+        
         synchronized(state) {
         synchronized(orderedState) {
             if(state.containsKey(playerHashCode)) {
-                //g.translate(0, 0);
+                g.translate(0, 0);
                 g.translate(-(int)state.get(playerHashCode).x+600, -(int)state.get(playerHashCode).y+400);
             }
             try {
+                // draw the grid lines
+                g.setColor(Colors.GRID_LINES);
+                for(int i = 0;i <= 4000;i += 300) {
+                    g.fillRect(i, 0, 5, 4000);
+                    g.fillRect(0, i, 4000, 5);
+                }
+                // draw the beach and ocean
+                g.setColor(Colors.SAND);
+                g.fillRect(0, 0, 100, 4000);
+                g.fillRect(0, 0, 4000, 100);
+                g.fillRect(0, 3950, 4000, 100);
+                g.fillRect(3950, 0, 100, 4000);
+                // draw the ocean
+                g.setColor(Colors.WATER);
+                g.fillRect(-800, -800, 800, 5600);
+                g.fillRect(-800, -800, 5600, 800);
+                g.fillRect(4000, -800, 800, 5600);
+                g.fillRect(-800, 4050, 5600, 800);
                 for(Thing thing : orderedState) {
                     if(!state.containsKey(playerHashCode)) {
                         thing.render(g);
@@ -129,6 +151,10 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 g.setColor(Color.black);
                 g.drawString(""+playerCount, 1020, 620);
             }
+            if(started && !state.containsKey(playerHashCode))  {
+                g.setColor(Color.black);
+                g.drawString("Game Over! Click to play again", 100, 100);
+            }
         }
         }
     }
@@ -136,6 +162,9 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         if(view == 0) {
             ci.send(new Event("player_connect", playerHashCode));
             view++;
+        }
+        else if(started && !state.containsKey(playerHashCode)) {
+            ci.send(new Event("player_connect", playerHashCode));
         }
         else if(view == 1) {
             int x = e.getX();

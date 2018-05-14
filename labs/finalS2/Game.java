@@ -11,12 +11,14 @@ public class Game implements Runnable {
     HashSet<Thing> projectiles;
     HashSet<Thing> weapons;
     ArrayList<ServerThread> threads;
+    DeathCircle deathCircle;
     static int mapsize = 4000;
     boolean started = false;
     int level = 1;
     int killedTrees = 0;
     int killedBoxes = 0;
     Text levelText;
+    int counter = 0;
     public Game() {
         state = new HashMap<Integer, Thing>();
         players = new HashSet<Thing>();
@@ -24,8 +26,11 @@ public class Game implements Runnable {
         projectiles = new HashSet<Thing>();
         weapons = new HashSet<Thing>();
         threads = new ArrayList<ServerThread>();
+        deathCircle = new DeathCircle();
         levelText = new Text("Level 1: Find a gun and kill 1 tree", -1100, 25);
+        
         state.put(levelText.hashCode(), levelText);
+        state.put(deathCircle.hashCode(), deathCircle);
         //add some obstacles to the game
         for(int i = 0;i < 50;i++) {
             int treeSize = (int)(Math.random()*150);
@@ -207,6 +212,17 @@ public class Game implements Runnable {
                         }
                     }
                 }
+                // check collisions between the deathCircle and players every few frames
+                if(counter % 300 == 0) {
+                    synchronized(players) {
+                        for(Thing player : players) {
+                            if(!deathCircle.contains(player)) {
+                                player.hit();
+                                System.out.println("a player is outside the deathcircle!");
+                            }
+                        }
+                    }
+                }
                 // get rid of things 
                 for(int key : state.keySet()) {
                     // that have no lives left
@@ -260,6 +276,7 @@ public class Game implements Runnable {
             } catch(InterruptedException e) {
                 System.out.println("InterruptedException");
             }
+            counter++;
         }
     }
     public boolean inBounds(Thing thing) {

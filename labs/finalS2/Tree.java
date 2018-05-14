@@ -19,6 +19,8 @@ public class Tree extends Thing {
     }
     public void hit() {
         lives--;
+        x += height/10;
+        y += width/10;
         height -= height/5;
         width -= width/5;
     }

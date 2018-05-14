@@ -22,6 +22,8 @@ public class Obstacle extends Thing {
     }
     public void hit() {
         lives--;
+        x += height/8;
+        y += height/8;
         height -= height/4;
         width -= width/4;
     }
