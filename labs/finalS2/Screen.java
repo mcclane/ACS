@@ -156,8 +156,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 g.drawString(""+playerCount, 1020, 620);
             }
             if(started && !state.containsKey(playerHashCode))  {
-                g.setColor(Color.black);
-                g.drawString("Game Over! Click to play again", 100, 100);
+                ImageReader.drawImage(g, "images/game_over.png", 0, 0, 1200, 800);
             }
         }
         }

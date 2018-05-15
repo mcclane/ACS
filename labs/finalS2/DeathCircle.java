@@ -8,11 +8,11 @@ import java.awt.geom.Rectangle2D;
 public class DeathCircle extends Thing {
     public DeathCircle() {
         super("death_circle", 0, 0, 0, 0);
-        //x = (int)(Math.random()*Game.mapsize);
-        //y = (int)(Math.random()*Game.mapsize);
-        x = Game.mapsize/2;
-        y = Game.mapsize/2;
-        width = (int)(Game.mapsize*1.5);
+        x = (int)(Math.random()*Game.mapsize);
+        y = (int)(Math.random()*Game.mapsize);
+        //x = Game.mapsize/2;
+        //y = Game.mapsize/2;
+        width = (int)(Game.mapsize*4);
         height = width;
     }
     public void render(Graphics g) {
@@ -25,11 +25,28 @@ public class DeathCircle extends Thing {
         g2.fill(area);
     }
     public void contract() {
-        width--;  
+        if(width > Game.mapsize) {
+            width -= width/500;
+        }
+        else {
+            width--;
+        }
+        height = width;
+    }
+    public void reset() {
+        x = (int)(Math.random()*Game.mapsize);
+        y = (int)(Math.random()*Game.mapsize);
+        //x = Game.mapsize/2;
+        //y = Game.mapsize/2;
+        width = (int)(Game.mapsize*4);
         height = width;
     }
     public boolean contains(Thing thing) {
         double distance = Math.sqrt(Math.pow(thing.x - x, 2) + Math.pow(thing.y - y, 2));
+        return distance < width/2;
+    }
+    public boolean contains(double x, double y) {
+        double distance = Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
         return distance < width/2;
     }
     public boolean collision(Thing thing) {

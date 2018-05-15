@@ -62,7 +62,13 @@ public class Game implements Runnable {
         //System.out.println("Received: "+event);
         synchronized(state) {
             if(event.operation.equals("player_connect")) {
-                add(new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
+                double[] spawnPoint = chooseSpawnLocation();
+                if(spawnPoint != null) {
+                    add(new Player(event.concerns, spawnPoint[0], spawnPoint[1]));
+                }
+                else {
+                    add(new Player(event.concerns, Math.random()*mapsize, Math.random()*mapsize));
+                }
                 started = true;
             }
             else if(event.operation.equals("cheat")) {
@@ -276,6 +282,11 @@ public class Game implements Runnable {
                     deathCircle.contract();
                 }
             }
+            // check if we should reset the circle size and the game
+            if(deathCircle.width <= 0 && players.size() == 0) {
+                reset();
+                deathCircle.reset();
+            }
             // sleep
             try {
                 Thread.sleep(30);
@@ -292,5 +303,68 @@ public class Game implements Runnable {
     }
     public boolean inBoundsIfMoved(Thing thing, double dx, double dy) {
         return thing.x+dx < mapsize && thing.x+dx > 0 && thing.y+dy < mapsize && thing.y+dy > 0 && !thing.type.equals("text");
+    }
+    public void init() {
+
+    }
+    public void reset() {
+        synchronized(state) {
+            boolean started = false;
+            int level = 1;
+            int killedTrees = 0;
+            int killedBoxes = 0;
+            state = new HashMap<Integer, Thing>();
+            players = new HashSet<Thing>();
+            obstacles = new HashSet<Thing>();
+            projectiles = new HashSet<Thing>();
+            weapons = new HashSet<Thing>();
+            deathCircle = new DeathCircle();
+            levelText = new Text("Level 1: Find a gun and kill 1 tree", -1100, 25);
+            
+            add(deathCircle);
+            add(levelText);
+            //add some obstacles to the game
+            for(int i = 0;i < 50;i++) {
+                int treeSize = (int)(Math.random()*150);
+                add(new Tree(Math.random()*mapsize, Math.random()*mapsize, treeSize, treeSize));
+            }
+            int obstacleSize = 100;
+            for(int i = 0;i < 15;i++) {
+                add(new Obstacle(Math.random()*mapsize, Math.random()*mapsize, obstacleSize, obstacleSize, 3));
+            }
+            for(int i = 0;i < 15;i++) {
+                add(new Weapon(Math.random()*mapsize, Math.random()*mapsize));
+            }
+            for(int i = 0;i < 25;i++) {
+                add(new Barrel(Math.random()*mapsize, Math.random()*mapsize, 70, 2));
+            }
+        }
+    }
+    public double[] chooseSpawnLocation() {
+        for(int i = 0;i < 1000;i++) {
+            double x = Math.random()*mapsize;
+            double y = Math.random()*mapsize;
+            Thing possibleThing = new Player(123, x, y);
+            boolean valid = false;
+            if(deathCircle.contains(x, y)) {
+                valid = true;
+                synchronized(state) {
+                    for(Thing thing : state.values()) {
+                        if(thing.collision(possibleThing)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(valid) {
+                double[] spawnPoint = new double[2];
+                spawnPoint[0] = x;
+                spawnPoint[1] = y;
+                return spawnPoint;
+            }
+        }
+        System.out.println("Can't find a good one!");
+        return null;
     }
 }
