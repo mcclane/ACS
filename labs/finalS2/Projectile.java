@@ -34,6 +34,9 @@ public class Projectile extends Thing {
         if(thing.type.equals("weapon")) {
             return false;
         }
+        else if(thing.type.equals("death_circle")) {
+            return false;
+        }
         int steps = 100;
         for(int i = 0;i < steps;i++) {
             int nx = (int)(x + i*dx*length/steps);

@@ -127,8 +127,12 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                     if(!state.containsKey(playerHashCode)) {
                         thing.render(g);
                     }
-                    else if(thing.inView(state.get(playerHashCode))) {
+                    else if(thing.inView(state.get(playerHashCode)) || thing.type.equals("death_circle")) {
                         thing.render(g);
+                        if(thing.type.equals("death_circle")) {
+                            g.setColor(Color.green);
+                            g.drawLine((int)(state.get(playerHashCode).x)+20, (int)(state.get(playerHashCode)).y+20, (int)thing.x, (int)thing.y);
+                        }
                     }
                     else if(thing.type.equals("text")) {
                         if(state.containsKey(playerHashCode)) {

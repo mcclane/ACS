@@ -11,7 +11,8 @@ public class Colors {
     //public static Color TREE = new Color(52, 68, 34);
     public static Color TREE = new Color(42, 56, 27, 200);
     public static Color BARREL = new Color(34, 36, 40);
-    public static Color GRID_LINES = new Color(237, 243, 255, 50);
+    public static Color GRID_LINES = new Color(100, 100, 100, 100);
     public static Color WATER = new Color(42, 76, 145);
     public static Color SAND = new Color(227, 229, 98);
+    public static Color DEATH = new Color(255, 0, 0, 100);
 }

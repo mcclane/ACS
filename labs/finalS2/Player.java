@@ -5,10 +5,12 @@ public class Player extends Thing {
     int id;
     double orientationX = 1;
     double orientationY = 1;
+    int originalLives;
     public Player(int id, double x, double y) {
         super("player", x, y, 0, 0);
         this.id = id;
         this.lives = 10;
+        originalLives = lives;
         this.height = 40;
         this.width = 40;
     }
@@ -25,6 +27,10 @@ public class Player extends Thing {
             g.drawLine((int)(x+height/2+1), (int)(y+height/2+1), (int)((x+12.5+1)+(orientationX*25)), (int)((y+height/2+1)+(orientationY*25)));
             g.drawLine((int)(x+height/2+1), (int)(y+height/2-1), (int)((x+height/2+1)+(orientationX*25)), (int)((y+height/2-1)+(orientationY*25)));
         }
+        g.setColor(Color.red);
+        g.fillRect((int)(x), (int)(y - 25), width, 8);
+        g.setColor(Color.green);
+        g.fillRect((int)(x), (int)(y - 25), lives*4, 8);
     }
     public int hashCode() {
         return id;

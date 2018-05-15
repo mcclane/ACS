@@ -29,8 +29,8 @@ public class Game implements Runnable {
         deathCircle = new DeathCircle();
         levelText = new Text("Level 1: Find a gun and kill 1 tree", -1100, 25);
         
-        state.put(levelText.hashCode(), levelText);
-        state.put(deathCircle.hashCode(), deathCircle);
+        add(deathCircle);
+        add(levelText);
         //add some obstacles to the game
         for(int i = 0;i < 50;i++) {
             int treeSize = (int)(Math.random()*150);
@@ -213,7 +213,7 @@ public class Game implements Runnable {
                     }
                 }
                 // check collisions between the deathCircle and players every few frames
-                if(counter % 300 == 0) {
+                if(counter % 10 == 0) {
                     synchronized(players) {
                         for(Thing player : players) {
                             if(!deathCircle.contains(player)) {
@@ -230,13 +230,16 @@ public class Game implements Runnable {
                         toBeRemoved.add(key);
                     }
                     // that have moved out of bounds
-                    if(!inBounds(state.get(key)) && !state.get(key).type().equals("player")) {
+                    if(!inBounds(state.get(key)) && !state.get(key).type().equals("player") && !state.get(key).type.equals("death_circle")) {
                         toBeRemoved.add(key);
                     }
                 }
                 // get rid of everything previously determined to be removed
                 for(int key : toBeRemoved) {
                     if(state.get(key) == null) {
+                        continue;
+                    }
+                    if(state.get(key).type.equals("death_circle")) {
                         continue;
                     }
                     if(state.get(key).type.equals("tree")) {
@@ -268,6 +271,9 @@ public class Game implements Runnable {
                 // move everything
                 for(int key : state.keySet()) {
                     state.get(key).move();
+                }
+                if(started) {
+                    deathCircle.contract();
                 }
             }
             // sleep
