@@ -23,5 +23,9 @@ public class Tree extends Thing {
         y += width/10;
         height -= height/5;
         width -= width/5;
+        Sound.playSound("sound/wood_bullet_hit_03.mp3");
+        if(lives <= 0) {
+            Sound.playSound("sound/tree_break_01.mp3");
+        }
     }
 }

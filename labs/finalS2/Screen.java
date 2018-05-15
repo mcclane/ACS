@@ -182,6 +182,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             dy /= magnitude;
             // send it to the server!
             ci.send(new Event("player_shoot", playerHashCode, dx, dy));
+            Sound.playSound("sound/mac10_01.mp3");
         }
     }
     public void mouseReleased(MouseEvent e) {
