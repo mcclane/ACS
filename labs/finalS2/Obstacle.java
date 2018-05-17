@@ -26,5 +26,9 @@ public class Obstacle extends Thing {
         y += height/8;
         height -= height/4;
         width -= width/4;
+        Sound.playSound("sound/wood_bullet_hit_01.mp3");
+        if(lives <= 0) {
+            Sound.playSound("sound/crate_break_01.mp3");
+        }
     }
 }

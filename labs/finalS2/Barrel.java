@@ -22,6 +22,17 @@ public class Barrel extends Thing {
         y += width/8;
         height -= height/4;
         width -= width/4;
+        Sound.playSound("sound/metal_bullet_hit_03.mp3");
+        if(lives <= 0) {      
+            Sound.playSound("sound/explosion_02.mp3");
+        }
         
+    }
+    public boolean collisionIfMoved(double dx, double dy, Thing thing) {
+        double distance = Math.sqrt(Math.pow((thing.x+dx+thing.width/2) - (x+width/2), 2) + Math.pow((thing.y+dy+thing.height/2) - (y+height/2), 2));
+        return distance < width/2;
+    }
+    public boolean collision(Thing thing) {
+        return collisionIfMoved(0, 0, thing);
     }
 }
