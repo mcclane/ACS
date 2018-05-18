@@ -15,7 +15,6 @@ public class Weapon extends Thing {
         if(thing.type.equals("player") && super.collisionIfMoved(0, 0, thing) && !thing.armed) {
             lives = 0;
             thing.armed = true;
-            Sound.playSound("sound/gun_pickup_01.mp3");
             return true;
         }
         return super.collisionIfMoved(0, 0, thing);

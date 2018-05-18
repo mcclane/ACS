@@ -134,7 +134,7 @@ public class Game implements Runnable {
                 projectiles.add(thing);
             }
         }
-        else if(thing.type.equals("obstacle") || thing.type.equals("tree") || thing.type.equals("barrel")) {
+        else if(thing.type.equals("obstacle") || thing.type.equals("tree") || thing.type.equals("barrel")  || thing.type.equals("sound")) {
             synchronized(obstacles) {
                 obstacles.add(thing);
             }
@@ -200,7 +200,14 @@ public class Game implements Runnable {
                                 projectile.hit();
                                 state.get(key).hit();
                                 if(state.get(key).type.equals("player")) {
+                                    add(new ClientSound("sound/player_bullet_hit_01.mp3"));
                                     System.out.println("player hit");
+                                }
+                                else if(state.get(key).type.equals("tree")) {
+                                    add(new ClientSound("sound/wood_bullet_hit_03.mp3"));
+                                    if(state.get(key).lives <= 0) {
+                                        add(new ClientSound("sound/tree_break_01.mp3"));
+                                    }
                                 }
                                 //System.out.println("collision! with "+state.get(key).type);
                                 break;
@@ -213,7 +220,10 @@ public class Game implements Runnable {
                     synchronized(players) {
                         for(Thing weapon : weapons) {
                             for(Thing player : players) {
-                                weapon.collision(player);
+                                if(weapon.collision(player)) {
+                                    add(new ClientSound("sound/gun_pickup_01.mp3"));
+                                }
+                                
                             }
                         }
                     }
@@ -224,6 +234,7 @@ public class Game implements Runnable {
                         for(Thing player : players) {
                             if(!deathCircle.contains(player)) {
                                 player.hit();
+                                add(new ClientSound("sound/player_bullet_hit_01.mp3"));
                                 System.out.println("a player is outside the deathcircle!");
                             }
                         }
@@ -238,6 +249,11 @@ public class Game implements Runnable {
                     // that have moved out of bounds
                     if(!inBounds(state.get(key)) && !state.get(key).type().equals("player") && !state.get(key).type.equals("death_circle")) {
                         toBeRemoved.add(key);
+                    }
+                    if(state.get(key).type.equals("sound")) {
+                        System.out.println("ASD");
+                        System.out.println(state.get(key).lives);
+                        state.get(key).hit();
                     }
                 }
                 // get rid of everything previously determined to be removed
@@ -302,7 +318,7 @@ public class Game implements Runnable {
         return inBoundsIfMoved(thing, 0, 0);
     }
     public boolean inBoundsIfMoved(Thing thing, double dx, double dy) {
-        return thing.x+dx < mapsize && thing.x+dx > 0 && thing.y+dy < mapsize && thing.y+dy > 0 && !thing.type.equals("text");
+        return thing.x+dx < mapsize && thing.x+dx > 0 && thing.y+dy < mapsize && thing.y+dy > 0 && !thing.type.equals("text") && !thing.type.equals("sound");
     }
     public void init() {
 

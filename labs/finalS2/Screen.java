@@ -55,9 +55,11 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder.put("barrel", 6);
         drawOrder.put("text", 7);
         drawOrder.put("death_circle", 8);
+        drawOrder.put("sound", 9);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
+        synchronized(orderedState) {
             //System.out.println(state);
             this.state = state;
             orderedState = new ArrayList<Thing>();
@@ -88,6 +90,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                     ci.send(new Event("cheat", playerHashCode));
                 }
             }
+        }
         }
         repaint();
     }
