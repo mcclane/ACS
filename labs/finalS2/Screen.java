@@ -127,6 +127,10 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 g.fillRect(4000, -800, 800, 5600);
                 g.fillRect(-800, 4050, 5600, 800);
                 for(Thing thing : orderedState) {
+                    if(thing.type.equals("sound")) {
+                        System.out.println("Rendering a sound!");
+                        thing.render(g);
+                    }
                     if(!state.containsKey(playerHashCode)) {
                         thing.render(g);
                     }
@@ -185,7 +189,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             dy /= magnitude;
             // send it to the server!
             ci.send(new Event("player_shoot", playerHashCode, dx, dy));
-            Sound.playSound("sound/mac10_01.mp3");
+            
         }
     }
     public void mouseReleased(MouseEvent e) {

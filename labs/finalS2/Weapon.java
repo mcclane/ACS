@@ -17,6 +17,7 @@ public class Weapon extends Thing {
             thing.armed = true;
             return true;
         }
-        return super.collisionIfMoved(0, 0, thing);
+        return false;
+        //return super.collisionIfMoved(0, 0, thing);
     }
 }

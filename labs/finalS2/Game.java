@@ -119,6 +119,7 @@ public class Game implements Runnable {
                     event.dy -= Math.random()/10;
                 }
                 add(new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy, 100));
+                add(new ClientSound("sound/mac10_01.mp3"));
                 // set the orientation of the shooting player
                 player.orientationX = event.dx;
                 player.orientationY = event.dy;
@@ -209,6 +210,18 @@ public class Game implements Runnable {
                                         add(new ClientSound("sound/tree_break_01.mp3"));
                                     }
                                 }
+                                else if(state.get(key).type.equals("barrel")) {
+                                    add(new ClientSound("sound/metal_bullet_hit_03.mp3"));
+                                    if(state.get(key).lives <= 0) {
+                                        add(new ClientSound("sound/explosion_02.mp3"));
+                                    }
+                                }
+                                else if(state.get(key).type.equals("obstacle")) {
+                                    add(new ClientSound("sound/wood_bullet_hit_01.mp3"));
+                                    if(state.get(key).lives <= 0) {
+                                        add(new ClientSound("sound/crate_break_01.mp3"));
+                                    }
+                                }
                                 //System.out.println("collision! with "+state.get(key).type);
                                 break;
                             }
@@ -247,12 +260,10 @@ public class Game implements Runnable {
                         toBeRemoved.add(key);
                     }
                     // that have moved out of bounds
-                    if(!inBounds(state.get(key)) && !state.get(key).type().equals("player") && !state.get(key).type.equals("death_circle")) {
+                    if(!inBounds(state.get(key)) && !state.get(key).type().equals("player") && !state.get(key).type.equals("death_circle") && !state.get(key).type.equals("sound")) {
                         toBeRemoved.add(key);
                     }
                     if(state.get(key).type.equals("sound")) {
-                        System.out.println("ASD");
-                        System.out.println(state.get(key).lives);
                         state.get(key).hit();
                     }
                 }
@@ -260,6 +271,10 @@ public class Game implements Runnable {
                 for(int key : toBeRemoved) {
                     if(state.get(key) == null) {
                         continue;
+                    }
+                    if(state.get(key).type.equals("sound")) {
+                        System.out.println("Sound lives: "+state.get(key).lives);
+                        System.out.println("Removing a sound");
                     }
                     if(state.get(key).type.equals("death_circle")) {
                         continue;
