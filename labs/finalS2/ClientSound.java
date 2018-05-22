@@ -5,7 +5,6 @@ public class ClientSound extends Thing {
     String filename;
     public ClientSound(String filename) {
         super("sound", 10, 10, 0, 0);
-        System.out.println("Initializing sound");
         this.filename = filename;
         this.lives = 1;
         this.height = 1;

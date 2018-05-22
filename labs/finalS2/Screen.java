@@ -57,6 +57,16 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder.put("death_circle", 8);
         drawOrder.put("sound", 9);
         drawOrder.put("emote", 10);
+        
+        Sound.initializeSound("sound/mac10_01.wav");
+        Sound.initializeSound("sound/player_bullet_hit_01.wav");
+        Sound.initializeSound("sound/wood_bullet_hit_03.wav");
+        Sound.initializeSound("sound/tree_break_01.wav");
+        Sound.initializeSound("sound/metal_bullet_hit_03.wav");
+        Sound.initializeSound("sound/explosion_02.wav");
+        Sound.initializeSound("sound/wood_bullet_hit_01.wav");
+        Sound.initializeSound("sound/crate_break_01.wav");
+        Sound.initializeSound("sound/gun_pickup_01.wav");
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
