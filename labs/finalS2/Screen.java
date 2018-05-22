@@ -56,6 +56,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
         drawOrder.put("text", 7);
         drawOrder.put("death_circle", 8);
         drawOrder.put("sound", 9);
+        drawOrder.put("emote", 10);
     }
     public synchronized void update(HashMap<Integer, Thing> state) { // this functions as an animate
         synchronized(state) {
@@ -177,18 +178,25 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
             ci.send(new Event("player_connect", playerHashCode));
         }
         else if(view == 1) {
-            int x = e.getX();
-            int y = e.getY();
-            int px = 600;
-            int py = 400;
-            double dx = x - px;
-            double dy = y - py;
-            // normalize the direction
-            double magnitude = Math.sqrt(dx*dx + dy*dy);
-            dx /= magnitude;
-            dy /= magnitude;
-            // send it to the server!
-            ci.send(new Event("player_shoot", playerHashCode, dx, dy));
+            if(e.getButton() == MouseEvent.BUTTON1) {
+                int x = e.getX();
+                int y = e.getY();
+                int px = 600;
+                int py = 400;
+                double dx = x - px;
+                double dy = y - py;
+                // normalize the direction
+                double magnitude = Math.sqrt(dx*dx + dy*dy);
+                dx /= magnitude;
+                dy /= magnitude;
+                // send it to the server!
+                ci.send(new Event("player_shoot", playerHashCode, dx, dy));
+            }
+            else if(e.getButton() == MouseEvent.BUTTON2) {
+                synchronized(state) {
+                    ci.send(new Event("emote", playerHashCode));
+                }
+            }
             
         }
     }

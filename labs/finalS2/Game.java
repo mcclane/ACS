@@ -107,7 +107,6 @@ public class Game implements Runnable {
                 }   
             }
             else if(event.operation.equals("player_shoot") && state.containsKey(event.concerns) && started && state.get(event.concerns).armed) {
-                // TODO: Move this to a function outside of update
                 Player player = (Player)(state.get(event.concerns));
                 int offset = player.height/2;
                 if(Math.random() > 0.5) {
@@ -124,6 +123,9 @@ public class Game implements Runnable {
                 player.orientationX = event.dx;
                 player.orientationY = event.dy;
             }
+            else if(event.operation.equals("emote") && state.containsKey(event.concerns)) {
+                add(new Emote("happy", state.get(event.concerns).x, state.get(event.concerns).y - 30));
+            }
         }
     }
     public synchronized void add(Thing thing) {
@@ -135,7 +137,7 @@ public class Game implements Runnable {
                 projectiles.add(thing);
             }
         }
-        else if(thing.type.equals("obstacle") || thing.type.equals("tree") || thing.type.equals("barrel")  || thing.type.equals("sound")) {
+        else if(thing.type.equals("obstacle") || thing.type.equals("tree") || thing.type.equals("barrel")  || thing.type.equals("sound") || thing.type.equals("emote")) {
             synchronized(obstacles) {
                 obstacles.add(thing);
             }
@@ -263,7 +265,7 @@ public class Game implements Runnable {
                     if(!inBounds(state.get(key)) && !state.get(key).type().equals("player") && !state.get(key).type.equals("death_circle") && !state.get(key).type.equals("sound")) {
                         toBeRemoved.add(key);
                     }
-                    if(state.get(key).type.equals("sound")) {
+                    if(state.get(key).type.equals("sound") || state.get(key).type.equals("emote")) {
                         state.get(key).hit();
                     }
                 }
