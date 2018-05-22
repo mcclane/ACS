@@ -117,7 +117,7 @@ public class Game implements Runnable {
                     event.dy -= Math.random()/10;
                 }
                 add(new Projectile(player.x+offset+(event.dx*offset*2), player.y+offset+(event.dy*offset*2), event.dx, event.dy, 100));
-                add(new ClientSound("sound/mac10_01.mp3"));
+                add(new ClientSound("sound/mac10_01.wav"));
                 // set the orientation of the shooting player
                 player.orientationX = event.dx;
                 player.orientationY = event.dy;
@@ -202,24 +202,24 @@ public class Game implements Runnable {
                                 projectile.hit();
                                 state.get(key).hit();
                                 if(state.get(key).type.equals("player")) {
-                                    add(new ClientSound("sound/player_bullet_hit_01.mp3"));
+                                    add(new ClientSound("sound/player_bullet_hit_01.wav"));
                                 }
                                 else if(state.get(key).type.equals("tree")) {
-                                    add(new ClientSound("sound/wood_bullet_hit_03.mp3"));
+                                    add(new ClientSound("sound/wood_bullet_hit_03.wav"));
                                     if(state.get(key).lives <= 0) {
-                                        add(new ClientSound("sound/tree_break_01.mp3"));
+                                        add(new ClientSound("sound/tree_break_01.wav"));
                                     }
                                 }
                                 else if(state.get(key).type.equals("barrel")) {
-                                    add(new ClientSound("sound/metal_bullet_hit_03.mp3"));
+                                    add(new ClientSound("sound/metal_bullet_hit_03.wav"));
                                     if(state.get(key).lives <= 0) {
-                                        add(new ClientSound("sound/explosion_02.mp3"));
+                                        add(new ClientSound("sound/explosion_02.wav"));
                                     }
                                 }
                                 else if(state.get(key).type.equals("obstacle")) {
-                                    add(new ClientSound("sound/wood_bullet_hit_01.mp3"));
+                                    add(new ClientSound("sound/wood_bullet_hit_01.wav"));
                                     if(state.get(key).lives <= 0) {
-                                        add(new ClientSound("sound/crate_break_01.mp3"));
+                                        add(new ClientSound("sound/crate_break_01.wav"));
                                     }
                                 }
                                 //System.out.println("collision! with "+state.get(key).type);
@@ -234,7 +234,7 @@ public class Game implements Runnable {
                         for(Thing weapon : weapons) {
                             for(Thing player : players) {
                                 if(weapon.collision(player)) {
-                                    add(new ClientSound("sound/gun_pickup_01.mp3"));
+                                    add(new ClientSound("sound/gun_pickup_01.wav"));
                                 }
                                 
                             }
@@ -247,7 +247,7 @@ public class Game implements Runnable {
                         for(Thing player : players) {
                             if(!deathCircle.contains(player)) {
                                 player.hit();
-                                add(new ClientSound("sound/player_bullet_hit_01.mp3"));
+                                add(new ClientSound("sound/player_bullet_hit_01.wav"));
                             }
                         }
                     }
