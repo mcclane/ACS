@@ -52,9 +52,15 @@ public abstract class Thing implements Serializable, Comparable<Thing> {
         this.orientationY = dy/magnitude;
     }
     public boolean collision(Thing thing) {
+        if(thing.type.equals("emote")) {
+            return false;
+        }
         return collisionIfMoved(0, 0, thing);
     }
     public boolean collisionIfMoved(double dx, double dy, Thing thing) {
+        if(thing.type.equals("emote")) {
+            return false;
+        }
         int nx = (int)(x + dx);
         int ny = (int)(y  + dy);
         return thing.width + (int)thing.x > nx && nx + width > (int)(thing.x) && thing.height + (int)thing.y > ny && ny + height > (int)(thing.y);

@@ -28,7 +28,6 @@ public class Game implements Runnable {
         threads = new ArrayList<ServerThread>();
         deathCircle = new DeathCircle();
         levelText = new Text("Level 1: Find a gun and kill 1 tree", -1100, 25);
-        
         add(deathCircle);
         add(levelText);
         //add some obstacles to the game
@@ -204,7 +203,6 @@ public class Game implements Runnable {
                                 state.get(key).hit();
                                 if(state.get(key).type.equals("player")) {
                                     add(new ClientSound("sound/player_bullet_hit_01.mp3"));
-                                    System.out.println("player hit");
                                 }
                                 else if(state.get(key).type.equals("tree")) {
                                     add(new ClientSound("sound/wood_bullet_hit_03.mp3"));
@@ -250,7 +248,6 @@ public class Game implements Runnable {
                             if(!deathCircle.contains(player)) {
                                 player.hit();
                                 add(new ClientSound("sound/player_bullet_hit_01.mp3"));
-                                System.out.println("a player is outside the deathcircle!");
                             }
                         }
                     }
@@ -273,10 +270,6 @@ public class Game implements Runnable {
                 for(int key : toBeRemoved) {
                     if(state.get(key) == null) {
                         continue;
-                    }
-                    if(state.get(key).type.equals("sound")) {
-                        System.out.println("Sound lives: "+state.get(key).lives);
-                        System.out.println("Removing a sound");
                     }
                     if(state.get(key).type.equals("death_circle")) {
                         continue;

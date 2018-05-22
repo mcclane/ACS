@@ -1,5 +1,5 @@
-import java.util.Graphics;
-import java.util.Colors;
+import java.awt.Graphics;
+import java.awt.Color;
 
 
 public class Emote extends Thing {
@@ -7,11 +7,15 @@ public class Emote extends Thing {
     public Emote(String type, double x, double y) {
         super("emote", x, y, 0, 0);
         this.type = type;
-        this.lives = 300;
+        this.lives = 50;
     }
     public void render(Graphics g) {
         if(type.equals("happy")) {
             g.setColor(Color.green);
+            g.fillOval((int)(x), (int)(y), 25, 25);
+        }
+        else if(type.equals("sad")) {
+            g.setColor(Color.red);
             g.fillOval((int)(x), (int)(y), 25, 25);
         }
     }

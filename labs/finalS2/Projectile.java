@@ -31,10 +31,7 @@ public class Projectile extends Thing {
         y += dy * 20;
     }
     public boolean collision(Thing thing) {
-        if(thing.type.equals("weapon")) {
-            return false;
-        }
-        else if(thing.type.equals("death_circle")) {
+        if(thing.type.equals("weapon") || thing.type.equals("death_circle") || thing.type.equals("emote") || thing.type.equals("sound")) {
             return false;
         }
         int steps = 100;

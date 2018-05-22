@@ -12,7 +12,6 @@ public class ClientSound extends Thing {
         this.width = 1;
     }
     public void render(Graphics g) {
-        System.out.println("Playing: "+filename);
         Sound.playSound(filename);
     }
     public boolean collision(Thing thing) {

@@ -129,7 +129,6 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 g.fillRect(-800, 4050, 5600, 800);
                 for(Thing thing : orderedState) {
                     if(thing.type.equals("sound")) {
-                        System.out.println("Rendering a sound!");
                         thing.render(g);
                     }
                     if(!state.containsKey(playerHashCode)) {
@@ -192,7 +191,7 @@ class Screen extends JPanel implements MouseListener, MouseMotionListener {
                 // send it to the server!
                 ci.send(new Event("player_shoot", playerHashCode, dx, dy));
             }
-            else if(e.getButton() == MouseEvent.BUTTON2) {
+            else if(e.getButton() == MouseEvent.BUTTON3) {
                 synchronized(state) {
                     ci.send(new Event("emote", playerHashCode));
                 }
