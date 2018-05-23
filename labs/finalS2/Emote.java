@@ -13,6 +13,10 @@ public class Emote extends Thing {
         if(type.equals("happy")) {
             g.setColor(Color.green);
             g.fillOval((int)(x), (int)(y), 25, 25);
+            g.setColor(Color.black);
+            g.fillOval((int)(x) + 5, (int)(y) + 5, 5, 5);
+            g.fillOval((int)(x) + 15, (int)(y) + 5, 5, 5);
+            g.drawLine((int)(x) + 1, (int)(y)+20, (int)(x) + 11, (int)(y)+20);
         }
         else if(type.equals("sad")) {
             g.setColor(Color.red);
